@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6582f407bbc7b741a5cf2ee76b2b532, type: 3}
+  m_Name: TableTv
+  m_EditorClassIdentifier: 
+  Name: TvTable
+  price: 20
+  priceCombo: 40
+  size: {x: 2, y: 1}
+  prefab: {fileID: 6084753773558195295, guid: 0f665ab8c1651364c9db74d580af3e99, type: 3}
+  typeOfSize: 3
+  compatibles:
+  - {fileID: 11400000, guid: b0169168ff310264292d9af4de8dbe59, type: 2}
+  - {fileID: 11400000, guid: b8f51ccc092acd04cbaa2314f8633258, type: 2}
+  - {fileID: 11400000, guid: 845ccd4d90144b341be38d94a33c57e6, type: 2}
+  sprites:
+  - {fileID: -1031578121, guid: 9440f8eeded21c447a63136e04b17eb0, type: 3}
+  - {fileID: -380579616, guid: 9440f8eeded21c447a63136e04b17eb0, type: 3}

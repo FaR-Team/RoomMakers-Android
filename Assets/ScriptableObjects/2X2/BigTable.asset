@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6582f407bbc7b741a5cf2ee76b2b532, type: 3}
+  m_Name: BigTable
+  m_EditorClassIdentifier: 
+  Name: Big Table
+  price: 40
+  priceCombo: 80
+  size: {x: 2, y: 2}
+  prefab: {fileID: 6084753773558195295, guid: 8b90c481b222158479bbe8c57df82323, type: 3}
+  typeOfSize: 1
+  compatibles:
+  - {fileID: 11400000, guid: 3abd00303a3b14c45a858e84b99533da, type: 2}
+  - {fileID: 11400000, guid: 03e12326fc5b8dd45aed3687ec969955, type: 2}
+  sprites:
+  - {fileID: -105178077, guid: 7aed0aeb1a0485144ab08f7edd2639e8, type: 3}
+  - {fileID: 1968302764, guid: 7aed0aeb1a0485144ab08f7edd2639e8, type: 3}
+  - {fileID: -438001771, guid: 7aed0aeb1a0485144ab08f7edd2639e8, type: 3}
+  - {fileID: 808814901, guid: 7aed0aeb1a0485144ab08f7edd2639e8, type: 3}

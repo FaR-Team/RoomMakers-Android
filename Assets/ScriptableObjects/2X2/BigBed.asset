@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6582f407bbc7b741a5cf2ee76b2b532, type: 3}
+  m_Name: BigBed
+  m_EditorClassIdentifier: 
+  Name: Big Bed
+  price: 40
+  priceCombo: 80
+  size: {x: 2, y: 2}
+  prefab: {fileID: 6084753773558195295, guid: 441e54c1ad27c514fb47f8e56e44aeac, type: 3}
+  typeOfSize: 1
+  compatibles:
+  - {fileID: 11400000, guid: 5ef2e2c77af1e7d478780c49e1c6965f, type: 2}
+  - {fileID: 11400000, guid: 03e12326fc5b8dd45aed3687ec969955, type: 2}
+  sprites:
+  - {fileID: 1570763965, guid: a14ef7028d148d04eaf8280c003b3192, type: 3}
+  - {fileID: -396865226, guid: a14ef7028d148d04eaf8280c003b3192, type: 3}
+  - {fileID: 1109003892, guid: a14ef7028d148d04eaf8280c003b3192, type: 3}
+  - {fileID: 908913364, guid: a14ef7028d148d04eaf8280c003b3192, type: 3}
