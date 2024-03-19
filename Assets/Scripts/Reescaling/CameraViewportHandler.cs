@@ -1,19 +1,17 @@
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
 public class CameraViewportHandler : MonoBehaviour
 {
-    public enum Constraint { Landscape, Portrait }
-
     #region FIELDS
     public Color wireColor = Color.white;
     public float UnitsSize = 1; // size of your scene in unity units
     public Constraint constraint = Constraint.Portrait;
     public static CameraViewportHandler Instance;
     public new Camera camera;
-
-    public bool executeInUpdate;
 
     private float _width;
     private float _height;
@@ -163,10 +161,7 @@ public class CameraViewportHandler : MonoBehaviour
     private void Update()
     {
 #if UNITY_EDITOR
-
-        if (executeInUpdate)
-            ComputeResolution();
-
+        ComputeResolution();
 #endif
     }
 
@@ -190,4 +185,5 @@ public class CameraViewportHandler : MonoBehaviour
     }
     #endregion
 
-} // class
+    public enum Constraint { Landscape, Portrait }
+}

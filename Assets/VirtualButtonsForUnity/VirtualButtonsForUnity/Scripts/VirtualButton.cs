@@ -1,34 +1,40 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class VirtualButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
+    private bool pressed = false;
+    public Sprite sprite;
+    private Image image;
 
-    [SerializeField] private float rotationLimit = 40;
-    [SerializeField] private float rotationSpeed = 15;
-
-    private bool rotate = false;
+    void Start()
+    {
+        image = this.gameObject.GetComponent<Image>();
+    }
 
     void FixedUpdate()
     {
-        float targetRotate = rotate ? rotationLimit : 0f;
+        if (pressed)
+        {
+            image.sprite = sprite;
+            image.color = new Color(image.color.r, image.color.g, image.color.b, 100f);
 
-        // Rotate the cube by converting the angles into a quaternion.
-        Quaternion target = Quaternion.Euler(targetRotate, 0, 0);
-
-        // Dampen towards the target rotation
-        transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotationSpeed);
+        }
+        else
+        {
+            this.gameObject.GetComponent<Image>().sprite = null;
+            image.color = new Color(image.color.r, image.color.g, image.color.b, 0f);
+        }
     }
 
     public void OnPointerDown(PointerEventData pointerEventData)
     {
-        rotate = true;
+        pressed = true;
     }
 
     public void OnPointerUp(PointerEventData pointerEventData)
     {
-        rotate = false;
+        pressed = false;
     }
 }

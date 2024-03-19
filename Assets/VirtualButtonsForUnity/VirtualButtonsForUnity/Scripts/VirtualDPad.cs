@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.Layouts;
 using UnityEngine.InputSystem.OnScreen;
@@ -19,6 +17,7 @@ public class VirtualDPad : OnScreenControl, IPointerDownHandler, IPointerUpHandl
     [SerializeField] private float moveThreshold = 0f;
     [SerializeField] private float uiMovementRange = 10f;
     [SerializeField] private bool forceIntValue = true;
+    [SerializeField] private Image[] directionImages;
 
     private Vector3 startPos;
 
@@ -44,6 +43,11 @@ public class VirtualDPad : OnScreenControl, IPointerDownHandler, IPointerUpHandl
     private void Start()
     {
         startPos = handle.anchoredPosition;
+
+        foreach (var image in directionImages)
+        {
+            image.gameObject.SetActive(false);
+        }
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -70,12 +74,19 @@ public class VirtualDPad : OnScreenControl, IPointerDownHandler, IPointerUpHandl
 
         Vector2 newPos = SanitizePosition(delta);
         SendValueToControl(newPos);
+
+        ToggleDirectionImages(newPos);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
         handle.anchoredPosition = startPos;
         SendValueToControl(Vector2.zero);
+
+        foreach (var image in directionImages)
+        {
+            image.gameObject.SetActive(false);
+        }
     }
 
     private Vector2 SanitizePosition(Vector2 pos)
@@ -100,4 +111,42 @@ public class VirtualDPad : OnScreenControl, IPointerDownHandler, IPointerUpHandl
         return pos;
     }
 
+    private void ToggleDirectionImages(Vector2 direction)
+    {
+        // Turn off all images
+        foreach (var image in directionImages)
+        {
+            image.gameObject.SetActive(false);
+        }
+
+        // Turn on the appropriate image based on the direction
+        if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+        {
+            // Horizontal direction
+            if (direction.x > 0)
+            {
+                // Right image
+                directionImages[0].gameObject.SetActive(true);
+            }
+            else if (direction.x < 0)
+            {
+                // Left image
+                directionImages[1].gameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            // Vertical direction
+            if (direction.y > 0)
+            {
+                // Up image
+                directionImages[2].gameObject.SetActive(true);
+            }
+            else if (direction.y < 0)
+            {
+                // Down image
+                directionImages[3].gameObject.SetActive(true);
+            }
+        }
+    }
 }
