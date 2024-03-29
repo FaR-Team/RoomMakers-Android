@@ -62,10 +62,12 @@ public class LogSaverAndSender : MonoBehaviour
         //Añadirlo a la lista
         logs.logInfoList.Add(logInfo);
 
-        if (type == LogType.Exception || type == LogType.Error || type == LogType.Assert)
-        {
-            hasError = true;
-        }
+        #if !UNITY_EDITOR
+            if (type == LogType.Exception || type == LogType.Error || type == LogType.Assert)
+            {
+                hasError = true;
+            }
+        #endif
     }
 
     private void discordLog()
