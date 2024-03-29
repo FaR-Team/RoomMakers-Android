@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 
 public class PlayerController : MovementController
 {
@@ -52,8 +53,6 @@ public class PlayerController : MovementController
         if (furnitureData == null) return;
         
         StateManager.SwitchEditMode();
-
-        //Debug.Log($"Game State: {StateManager.currentGameState}");
 
 
         foreach (var furniturePreview in furniturePreviews)
