@@ -31,12 +31,11 @@ public class LoseManager : MonoBehaviour
         hasLost = true;
         scoreText.text = House.instance.Score.ToString();
         AudioManager.instance.ChangeMusic(loseMusic);
-        //Debug.Log("Lose");
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && hasLost)
+        if (Input.anyKeyDown && hasLost)
         {
             SceneManager.LoadScene(0);
         }
