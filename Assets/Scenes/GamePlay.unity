@@ -974,7 +974,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 207601626}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed2f7e1ca694477a5a5f9f0d35c6d395, type: 3}
+  m_Script: {fileID: 11500000, guid: 2437a5dcb6c978044a4d69caaf3be76b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: d2c69bb0d82a0a24aa847b28a4b9581c, type: 3}
@@ -1453,7 +1453,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 336766829}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed2f7e1ca694477a5a5f9f0d35c6d395, type: 3}
+  m_Script: {fileID: 11500000, guid: 2437a5dcb6c978044a4d69caaf3be76b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 16caf2d530f43a24e9a28fc97746b879, type: 3}
@@ -2951,7 +2951,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 514586e858c8518429891c00945a3cce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  popUpPrefab: {fileID: 1472060108}
 --- !u!1 &871330502
 GameObject:
   m_ObjectHideFlags: 0
@@ -4495,17 +4494,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &1472060108 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8158556740613534364, guid: 8cad54e402c327741b4cc6ed086d9bfd, type: 3}
-  m_PrefabInstance: {fileID: 48336634}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54a28d09acc11384d8df4482b65786e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1521791839
 GameObject:
   m_ObjectHideFlags: 0
@@ -4752,7 +4740,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1616593455}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed2f7e1ca694477a5a5f9f0d35c6d395, type: 3}
+  m_Script: {fileID: 11500000, guid: 2437a5dcb6c978044a4d69caaf3be76b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 16caf2d530f43a24e9a28fc97746b879, type: 3}
@@ -6293,7 +6281,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2033690652}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed2f7e1ca694477a5a5f9f0d35c6d395, type: 3}
+  m_Script: {fileID: 11500000, guid: 2437a5dcb6c978044a4d69caaf3be76b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: d2c69bb0d82a0a24aa847b28a4b9581c, type: 3}
@@ -6972,7 +6960,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1948882564061245822}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a412b7ad262882a48bb3cdbb170e2f0, type: 3}
+  m_Script: {fileID: 11500000, guid: 5558147f18c129d4bb94a62b84546b8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   centerArea: {fileID: 1948882564343819722}
