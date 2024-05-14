@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,13 +11,15 @@ public class FurniturePreview : MonoBehaviour
     [SerializeField] private Inventory inventory;
 
     private Vector2Int originalSize;
+    private bool firstTimePlacingFurniture = false; 
 
     int rotation = 0;
     private Vector2Int position;
 
     private void Awake()
     {
-        SetFurnitureData();
+        //SetFurnitureData();
+        //furnitureData = new FurnitureData();
     }
 
     private void SetFurnitureData()
@@ -24,13 +27,21 @@ public class FurniturePreview : MonoBehaviour
         originalSize = data.size;
         furnitureData.size = data.size;
         furnitureData.prefab = data.prefab;
-        furnitureData.compatibles = data.compatibles;
         furnitureData.originalData = data;
+    }
+
+    public void SetCurrentFurnitureData(FurnitureData newData, bool firstTimePlacing)
+    {
+        furnitureData = newData; 
+        data = furnitureData.originalData;
+        originalSize = newData.originalData.size;
+        rotation = furnitureData.rotationStep;
+        firstTimePlacingFurniture = firstTimePlacing; // To give points and score when placing furniture for the first time, and avoid adding this to every object's data
     }
 
     private void OnEnable()
     {
-        SetFurnitureData();
+        //SetFurnitureData();
         CheckRotation();
 
         var playerPos = GameObject.FindGameObjectWithTag("Player").transform.position;
@@ -60,8 +71,16 @@ public class FurniturePreview : MonoBehaviour
 
         if (placeFurniture)
         {
+            if (firstTimePlacingFurniture)
+            {
+                PlayerController.instance.Inventory.UpdateMoney(furnitureData.originalData.price);
+                House.instance.UpdateScore(furnitureData.originalData.price);
+                firstTimePlacingFurniture = false;
+            }
+            
             AudioManager.instance.PlaySfx(GlobalSfx.Click);
             inventory.furnitureInventory = null;
+            inventory.furnitureInventoryWithData = null;
             inventory.packageUI.SetActive(false);
             if(StateManager.currentGameState != GameState.Pause) StateManager.SwitchEditMode();
         }
@@ -77,7 +96,8 @@ public class FurniturePreview : MonoBehaviour
 
         if (rotation >= 4)
             rotation = 0;
-        
+
+        furnitureData.rotationStep = rotation;
         CheckRotation();
     }
 
@@ -114,11 +134,29 @@ public class FurniturePreview : MonoBehaviour
         transform.rotation = Quaternion.Euler(furnitureData.VectorRotation);
     }
 }
-public struct FurnitureData
+public class FurnitureData
 {
+    public FurnitureData(FurnitureOriginalData originalData)
+    {
+        this.originalData = originalData;
+        size = originalData.size;
+        prefab = originalData.prefab;
+        VectorRotation = Vector3Int.zero;
+        rotationStep = 0;
+        comboDone = false;
+        localTileCombos = new();
+    }
+
+    public FurnitureData()
+    {
+        // Create empty data
+    }
+        
     public FurnitureOriginalData originalData;
     public Vector2Int size;
     public GameObject prefab;
-    public FurnitureOriginalData[] compatibles;
     public Vector3Int VectorRotation;
+    public int rotationStep;
+    public bool comboDone;
+    public HashSet<Vector2Int> localTileCombos;
 }

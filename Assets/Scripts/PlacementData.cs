@@ -6,19 +6,20 @@ public class PlacementData
 {
     public List<Vector2> occupiedPositions;
 
-    public FurnitureOriginalData furniture;
-    public FurnitureOriginalData furnitureOnTop;
+    public FurnitureData furnitureData;
+    public FurnitureData furnitureOnTopData;
 
-    public GameObject instantiatedFurniture;
-    public GameObject instantiatedFurnitureOnTop;
-    public PlacementData(List<Vector2> occupiedPositions, FurnitureOriginalData furniture)
+    public FurnitureObjectBase instantiatedFurniture;
+    public TopFurnitureObject instantiatedFurnitureOnTop;
+    public PlacementData(List<Vector2> occupiedPositions, FurnitureData furniture)
     {
         this.occupiedPositions = occupiedPositions;
-        this.furniture = furniture;
+
+        furnitureData = furniture;
     }
 
-    public bool IsCompatibleWith(FurnitureOriginalData furnitureData) //es compatible con, esta data.
+    public bool IsCompatibleWith(FurnitureOriginalData topFurnitureData) //es compatible con, esta data.
     {
-        return furniture.compatibles.Contains(furnitureData);
+        return furnitureData.originalData.compatibles.Contains(topFurnitureData);
     }
 }

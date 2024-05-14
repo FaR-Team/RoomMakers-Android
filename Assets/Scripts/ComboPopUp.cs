@@ -16,14 +16,14 @@ public class ComboPopUp : MonoBehaviour
         
     }
 
-    void Setup(uint score)
+    void Setup(int score)
     {
-        scoreText.text = "+" + score;
+        scoreText.text = score.ToString();
     }
 
-    public static void Create(ComboPopUp prefab, uint scoreAmount, Vector2 position, Vector2 offset)
+    public static void Create(ComboPopUp prefab, int scoreAmount, Vector2 position, Vector2 offset)
     {
-        Debug.Log("POPUP?");
+        //Debug.Log("POPUP?");
         Vector2 instantiatePos = position + offset;
 
         ComboPopUp popUp = Instantiate(prefab, instantiatePos, Quaternion.identity);

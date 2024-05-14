@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6084753773558195281}
   - component: {fileID: 6084753773558195280}
+  - component: {fileID: -221332099330481102}
   m_Layer: 8
   m_Name: TableTv
   m_TagString: Untagged
@@ -60,6 +61,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-221332099330481102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6084753773558195295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc2c07814d420624f927b3c233ee82ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalData: {fileID: 11400000, guid: 08219166440a3e240937758d8c04a911, type: 2}
+  comboValue: 30
+  comboStarContainer: {fileID: 0}
 --- !u!1 &6084753775012126759
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,7 +147,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 225030083
-  m_SortingLayer: 2
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: -1031578121, guid: 9440f8eeded21c447a63136e04b17eb0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -215,7 +231,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 225030083
-  m_SortingLayer: 2
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: -380579616, guid: 9440f8eeded21c447a63136e04b17eb0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

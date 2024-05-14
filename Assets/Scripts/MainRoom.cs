@@ -42,7 +42,7 @@ public class MainRoom : Room
         
         foreach (PlacementData placementData in roomFurnitures.PlacementDatasInPosition.Values)
         {
-            if (placementData.furniture.compatibles.Contains(inventoryFurnitureData) && placementData.furnitureOnTop != null)
+            if (placementData.furnitureData.originalData.compatibles.Contains(inventoryFurnitureData) && placementData.furnitureOnTopData != null)
             {
                 Debug.Log("DEBERIA PERDER");
                 return;

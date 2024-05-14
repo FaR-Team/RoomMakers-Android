@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
+    // TODO: fix unnecessary double data
     public FurnitureOriginalData furnitureInventory;
+    public FurnitureData furnitureInventoryWithData;
     public int money;
     public TextMeshProUGUI moneyText;
     public GameObject packageUI;
     [SerializeField] private TextMeshProUGUI text_name;
+    
 
 
     public void UpdateMoney(int intMoney)
@@ -22,7 +25,7 @@ public class Inventory : MonoBehaviour
     {
         if (!collision.CompareTag("Package")) return;
 
-        if (furnitureInventory != null) return;
+        if (furnitureInventory != null || furnitureInventoryWithData != null) return;
         
         if(TutorialHandler.instance) TutorialHandler.instance.CompletedStep();
         TimerManager.StopTimer();

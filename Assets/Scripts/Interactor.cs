@@ -14,29 +14,29 @@ public class Interactor : MonoBehaviour
         if (House.instance.currentRoom.roomFurnitures.PlacementDatasInPosition.TryGetValue(gridPosition, out PlacementData placementData))
         {
             //Debug.Log("hay placement data en: " + (Vector2)gridPosition);
-            if (playerInventory.furnitureInventory != null) return;
+            if (playerInventory.furnitureInventory != null || playerInventory.furnitureInventoryWithData != null) return;
  
 
-            if (placementData.furnitureOnTop == null)
+            if (placementData.furnitureOnTopData == null && placementData.furnitureData != null)
             {
-                text_name.text = placementData.furniture.Name;
-                MainRoom.instance.availableTiles += placementData.furniture.size.x * placementData.furniture.size.y;
-                playerInventory.furnitureInventory = placementData.furniture;
+                text_name.text = placementData.furnitureData.originalData.Name;
+                MainRoom.instance.availableTiles += placementData.furnitureData.originalData.size.x * placementData.furnitureData.originalData.size.y;
+                playerInventory.furnitureInventoryWithData = placementData.furnitureData;
                 playerInventory.EnablePackageUI(true);
-                PlayerController.instance.Inventory.UpdateMoney(-placementData.furniture.price);
-                House.instance.UpdateScore(-placementData.furniture.price);
-                Destroy(placementData.instantiatedFurniture);
+                //PlayerController.instance.Inventory.UpdateMoney(-placementData.furnitureData.originalData.price);
+                //House.instance.UpdateScore(-placementData.furnitureData.originalData.price);
+                Destroy(placementData.instantiatedFurniture.gameObject);
                 House.instance.currentRoom.roomFurnitures.RemoveDataInPositions(placementData.occupiedPositions);
 
             }
-            else
+            else 
             {
-                text_name.text = placementData.furnitureOnTop.Name;
-                playerInventory.furnitureInventory = placementData.furnitureOnTop;
+                text_name.text = placementData.furnitureOnTopData.originalData.Name;
+                playerInventory.furnitureInventoryWithData = placementData.furnitureOnTopData;
                 playerInventory.EnablePackageUI(true);
-                PlayerController.instance.Inventory.UpdateMoney(-placementData.furnitureOnTop.priceCombo);
-                House.instance.UpdateScore(-placementData.furnitureOnTop.priceCombo);
-                Destroy(placementData.instantiatedFurnitureOnTop);
+                //PlayerController.instance.Inventory.UpdateMoney(-placementData.furnitureOnTopData.originalData.priceCombo);
+                //House.instance.UpdateScore(-placementData.furnitureOnTopData.originalData.priceCombo);
+                Destroy(placementData.instantiatedFurnitureOnTop.gameObject);
                 placementData.instantiatedFurnitureOnTop = null;
                 House.instance.currentRoom.roomFurnitures.RemoveTopObjectInPositions(placementData.occupiedPositions);
             }

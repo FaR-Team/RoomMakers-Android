@@ -7,10 +7,13 @@ using UnityEngine.Experimental.Playables;
 public class RoomFurnitures : MonoBehaviour
 {
     public Dictionary<Vector2, PlacementData> PlacementDatasInPosition = new();
+    
+    // TODO: que no se tenga que asignar aca la referencia al prefab
+    [SerializeField] protected ComboPopUp popUpPrefab;
 
     public bool PlaceFurniture(Vector2 position, FurnitureData furnitureData)
     {
-        var data = furnitureData.originalData;
+        var originalData = furnitureData.originalData;
 
         List<Vector2> positionToOccupy = CalculatePositions(position, furnitureData.size);
 
@@ -21,7 +24,7 @@ public class RoomFurnitures : MonoBehaviour
         {
             foreach (var pos in positionToOccupy)
             {
-                PlacementDatasInPosition[pos] = new PlacementData(positionToOccupy, data);
+                PlacementDatasInPosition[pos] = new PlacementData(positionToOccupy, furnitureData);
             }
         }
         else
@@ -34,7 +37,7 @@ public class RoomFurnitures : MonoBehaviour
                 // Se fija si todas las posiciones que va a ocupar el objeto estan dentro de las posiciones que ocupa el objeto debajo, si es compatible y si no hay ya algo encima
                 canPlace = positionToOccupy.Intersect(PlacementDatasInPosition[pos].occupiedPositions).Count() ==
                            positionToOccupy.Count()
-                           && PlacementDatasInPosition[pos].furniture.compatibles.Contains(data)
+                           && PlacementDatasInPosition[pos].IsCompatibleWith(originalData)
                            && PlacementDatasInPosition[pos].occupiedPositions.All(occupied => PlacementDatasInPosition[occupied].instantiatedFurnitureOnTop == null);
                 // Si queremos que se puedan poner varios encima de algo compatible, capaz al remover chequear si hay varias datas y con cual es compatible
 
@@ -49,36 +52,57 @@ public class RoomFurnitures : MonoBehaviour
         var finalPos = GridManager.PositionToCellCenter(position);
 
         // Guardamos el objeto que instanciamos en en cada PlacementData
-        GameObject furniturePrefab = Instantiate(furnitureData.prefab, finalPos, Quaternion.Euler(furnitureData.VectorRotation));
-        GivePoints(data, positionToOccupy, placeOnTop, finalPos, furniturePrefab);
+        FurnitureObjectBase furniturePrefab = Instantiate(furnitureData.prefab, finalPos, Quaternion.Euler(furnitureData.VectorRotation)).GetComponent<FurnitureObjectBase>();
+        furniturePrefab.CopyFurnitureData(furnitureData);
+        
+        GivePoints(furnitureData, positionToOccupy, placeOnTop, finalPos, furniturePrefab);
 
         return true;
     }
 
-    protected virtual void GivePoints(FurnitureOriginalData data, List<Vector2> positionToOccupy, bool placeOnTop, Vector2 finalPos, GameObject furniturePrefab)
+    protected virtual void GivePoints(FurnitureData data, List<Vector2> positionToOccupy, bool placeOnTop, Vector2 finalPos, FurnitureObjectBase furnitureObject)
     {
         if (!placeOnTop)
         {
             if (TryGetComponent(out MainRoom room))
             {
-                MainRoom.instance.availableTiles -= data.size.x * data.size.y;
+                MainRoom.instance.availableTiles -= data.originalData.size.x * data.originalData.size.y;
             }
 
-            PlayerController.instance.Inventory.UpdateMoney(data.price);
-            House.instance.UpdateScore(data.price);
-            positionToOccupy.ForEach(pos => PlacementDatasInPosition[pos].instantiatedFurniture = furniturePrefab);
+            positionToOccupy.ForEach(pos => PlacementDatasInPosition[pos].instantiatedFurniture = furnitureObject);
         }
         else
         {
             // Si el objeto va encima de otro, lo guardamos en el PlacementData y damos doble score por combo
 
-            PlayerController.instance.Inventory.UpdateMoney(data.price * 2);
-            House.instance.UpdateScore(data.price * 2);
+            int totalCombo = 0;
+            
+            TopFurnitureObject topObject = (TopFurnitureObject) furnitureObject;
+            BottomFurnitureObject bottomObject = (BottomFurnitureObject) PlacementDatasInPosition[finalPos]
+                .instantiatedFurniture;
+            
+            // Nos fijamos si el objeto de arriba no hizo combo aún
+            if(!topObject.ComboDone)
+            {
+                // Calculamos y sumamos los puntos por cada tile en el que se hace combo
+                totalCombo += bottomObject.MakeCombo(positionToOccupy.ToArray());
 
+                // Si hubo al menos un tile en el que se hizo combo, gastamos el combo tambien en el objeto de arriba
+                if (totalCombo > 0)
+                {
+                    topObject.MakeCombo();
+                    
+                    PlayerController.instance.Inventory.UpdateMoney(totalCombo);
+                    House.instance.UpdateScore(totalCombo);
+                    
+                    ComboPopUp.Create(popUpPrefab, totalCombo, PlayerController.instance.transform.position, new Vector2(0f, 1.2f));
+                }
+            }
+            
             PlacementDatasInPosition[finalPos].occupiedPositions.ForEach(pos =>
             {
-                PlacementDatasInPosition[pos].instantiatedFurnitureOnTop = furniturePrefab;
-                PlacementDatasInPosition[pos].furnitureOnTop = data;
+                PlacementDatasInPosition[pos].instantiatedFurnitureOnTop = topObject;
+                PlacementDatasInPosition[pos].furnitureOnTopData = data;
             });
         }
     }
@@ -95,7 +119,7 @@ public class RoomFurnitures : MonoBehaviour
     {
         foreach (var pos in positions)
         {
-            PlacementDatasInPosition[pos].furnitureOnTop = null;
+            PlacementDatasInPosition[pos].furnitureOnTopData = null;
             //PlacementDatasInPosition[pos].instantiatedFurnitureOnTop = null;
         }
     }

@@ -23,6 +23,7 @@ public class House : MonoBehaviour
 
     public Room currentRoom;
 
+    public GameObject comboStarSprite;
 
     private int availableSpaces;
     private int doorPrice = 100;

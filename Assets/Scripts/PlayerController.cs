@@ -6,7 +6,7 @@ public class PlayerController : MovementController
 {
     public static PlayerController instance;
     [SerializeField] private Animator anim;
-    [SerializeField] private GameObject[] furniturePreviews;
+    [SerializeField] private FurniturePreview[] furniturePreviews;
     [SerializeField] private Inventory inventory;
     [SerializeField] private TextMeshProUGUI costText;
     [SerializeField] private GameObject costCanvas;
@@ -48,23 +48,43 @@ public class PlayerController : MovementController
     {
         if (!playerInput.Movement.SwitchMode.WasPressedThisFrame() || (IsMoving && StateManager.currentGameState == GameState.Moving) || StateManager.currentGameState == GameState.Pause) return;
 
-        FurnitureOriginalData furnitureData = inventory.furnitureInventory;
+         // TODO: stop calling this everytime Space is pressed, do this only when turning edit mode on and object isn't updated
+        
+        // Create new furniture data if placing object for the first time
+        FurnitureData furnitureData = null;
+        bool firstTimePlacing = false;
+        
+        if (inventory.furnitureInventoryWithData != null)
+        {
+            furnitureData = inventory.furnitureInventoryWithData;
+        }
+        else
+        {
+            if (inventory.furnitureInventory)
+            {
+                firstTimePlacing = true; // If there's no data in the inventory object, we're placing it for the first time, so we tell the furniturePreview to reward points when placed
+                furnitureData = new FurnitureData(inventory.furnitureInventory);
+            }
+        }
 
+        // Return if no data in the inventory
         if (furnitureData == null) return;
         
         StateManager.SwitchEditMode();
 
+        //Debug.Log($"Game State: {StateManager.currentGameState}");
+
 
         foreach (var furniturePreview in furniturePreviews)
         {
-            if (furniturePreview == furniturePreviews[(int)furnitureData.typeOfSize])
+            if (furniturePreview == furniturePreviews[(int)furnitureData.originalData.typeOfSize])
             {
-                furniturePreview.GetComponent<FurniturePreview>().data = furnitureData;
-                furniturePreview.SetActive(!furniturePreview.activeInHierarchy);
+                furniturePreview.SetCurrentFurnitureData(furnitureData, firstTimePlacing);
+                furniturePreview.gameObject.SetActive(!furniturePreview.gameObject.activeInHierarchy);
             }
             else
             {
-                furniturePreview.SetActive(false);
+                furniturePreview.gameObject.SetActive(false);
             }
         }
     }
