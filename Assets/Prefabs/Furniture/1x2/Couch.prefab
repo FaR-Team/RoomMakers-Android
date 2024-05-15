@@ -242,5 +242,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originalData: {fileID: 11400000, guid: c7e7513e3b3b5cb499cf8ace7817d9eb, type: 2}
-  comboValue: 30
+  comboValue: 20
   comboStarContainer: {fileID: 0}

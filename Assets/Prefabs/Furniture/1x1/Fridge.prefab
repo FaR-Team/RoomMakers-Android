@@ -73,7 +73,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originalData: {fileID: 11400000, guid: 8d4f92b150a9a464e951945316d65a50, type: 2}
-  comboValue: 30
+  comboValue: 20
   comboStarContainer: {fileID: 0}
 --- !u!1 &9156776624523312462
 GameObject:

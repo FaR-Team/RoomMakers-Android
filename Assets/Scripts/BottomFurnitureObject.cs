@@ -29,8 +29,6 @@ public class BottomFurnitureObject : FurnitureObjectBase
         comboStarContainer = new GameObject().transform;
         comboStarContainer.SetParent(transform);
         comboStarContainer.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);;
-        
-        
     }
 
     public int MakeCombo(Vector2[] positions)
@@ -48,7 +46,7 @@ public class BottomFurnitureObject : FurnitureObjectBase
             }
         }
         
-        // TODO: Improve, fast fix because it'll stay active after making combo
+        // TODO: Improve, fast fix because it'll stay active after making combo //Popi la concha tuya qué significa esto hijo de puta
         comboStarContainer.gameObject.SetActive(false);
 
         furnitureData.localTileCombos = localTilesCombos;
@@ -80,7 +78,6 @@ public class BottomFurnitureObject : FurnitureObjectBase
                 break;
             default:
                 break;
-
         }
 
         return Vector2Int.RoundToInt(localPosition);

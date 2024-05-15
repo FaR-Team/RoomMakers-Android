@@ -6,7 +6,6 @@ public class FurnitureOriginalData : ScriptableObject
 {
     public string Name;
     public int price;
-    public int priceCombo;
     public Vector2Int size;
     public GameObject prefab;
     public TypeOfSize typeOfSize;
