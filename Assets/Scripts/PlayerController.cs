@@ -105,7 +105,7 @@ public class PlayerController : MovementController
         {
             costText.text = House.instance.DoorPrice.ToString();
             costCanvas.SetActive(true);
-            // House.instance.DoorPrice
+            costCanvas.transform.position = GetCostTextPosition();
         }
         else
         {
@@ -113,6 +113,21 @@ public class PlayerController : MovementController
         }
     }
 
+    private Vector3 GetCostTextPosition()
+    {
+        Vector3 offset = Vector3.zero;
+        
+        if (transform.up == Vector3.up)
+            offset = new Vector3(0, -1, 0);
+        else if (transform.up == Vector3.down)
+            offset = new Vector3(0, 1, 0);
+        else if (transform.up == Vector3.left)
+            offset = new Vector3(0.6f, 1, 0);
+        else if (transform.up == Vector3.right)
+            offset = new Vector3(-1, 1, 0);
+
+        return transform.position + offset;
+    }
 
     private void Animate()
     {
