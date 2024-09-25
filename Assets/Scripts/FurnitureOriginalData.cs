@@ -5,6 +5,7 @@ using UnityEngine;
 public class FurnitureOriginalData : ScriptableObject
 {
     public string Name;
+    public string es_Name;
     public int price;
     public Vector2Int size;
     public GameObject prefab;

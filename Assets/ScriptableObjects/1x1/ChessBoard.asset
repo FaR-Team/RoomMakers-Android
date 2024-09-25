@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ChessBoard
   m_EditorClassIdentifier: 
   Name: Chess Board
+  es_Name: Ajedrez
   price: 10
   priceCombo: 20
   size: {x: 1, y: 1}

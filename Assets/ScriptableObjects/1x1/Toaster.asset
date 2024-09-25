@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Toaster
   m_EditorClassIdentifier: 
   Name: Toaster
+  es_Name: Tostadora
   price: 10
   priceCombo: 20
   size: {x: 1, y: 1}

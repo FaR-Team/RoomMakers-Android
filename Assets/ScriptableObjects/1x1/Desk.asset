@@ -13,14 +13,15 @@ MonoBehaviour:
   m_Name: Desk
   m_EditorClassIdentifier: 
   Name: Desk
+  es_Name: Escritorio
   price: 10
   priceCombo: 20
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 647234363fb737b48a59a3d431e03d96, type: 3}
   typeOfSize: 0
   compatibles:
-  - {fileID: 11400000, guid: 44e8ecc5a2fbc964eb3b637779230196, type: 2}
-  - {fileID: 11400000, guid: a011b37a69b926d46b55da826844c1d6, type: 2}
-  - {fileID: 11400000, guid: 3d965f5679b723448a8836616136b309, type: 2}
+  - {fileID: 11400000, guid: 130f9903c113749488c7a1107aa58724, type: 2}
+  - {fileID: 11400000, guid: 4ea978be7a2118a4b98219ba08fc9a17, type: 2}
+  - {fileID: 11400000, guid: 845ccd4d90144b341be38d94a33c57e6, type: 2}
   sprites:
   - {fileID: 21300000, guid: 7be93ee170611724ebb42d12172d6c1e, type: 3}

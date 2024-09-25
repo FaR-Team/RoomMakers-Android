@@ -5,6 +5,8 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     // TODO: fix unnecessary double data
+
+    [SerializeField] private bool spanish;
     public FurnitureOriginalData furnitureInventory;
     public FurnitureData furnitureInventoryWithData;
     public int money;
@@ -33,7 +35,8 @@ public class Inventory : MonoBehaviour
         furnitureInventory = Package._furnitureInPackage;
         Package.package.SetActive(false);
         EnablePackageUI(true);
-        text_name.text = furnitureInventory.Name;
+        if (!spanish) text_name.text = furnitureInventory.Name;
+        else text_name.text = furnitureInventory.es_Name;
     }
 
     public void EnablePackageUI(bool enabled)

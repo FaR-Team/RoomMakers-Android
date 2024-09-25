@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Iluminati
   m_EditorClassIdentifier: 
   Name: ????
+  es_Name: ????
   price: 40
   priceCombo: 80
   size: {x: 2, y: 2}

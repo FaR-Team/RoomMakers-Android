@@ -13,13 +13,14 @@ MonoBehaviour:
   m_Name: Sarcophagus
   m_EditorClassIdentifier: 
   Name: Sarcophagus
+  es_Name: Sarcofago
   price: 20
   priceCombo: 40
   size: {x: 2, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 48f35a3185905dc48990fc630a5e9c1d, type: 3}
   typeOfSize: 3
   compatibles:
-  - {fileID: 11400000, guid: 9c9dbe46efcb1764cb68fdee5b70e962, type: 2}
+  - {fileID: 11400000, guid: 5ef2e2c77af1e7d478780c49e1c6965f, type: 2}
   sprites:
   - {fileID: 1295230824, guid: 8aac8448dfbc2d64c84a5bb7a928faa7, type: 3}
   - {fileID: -1035610871, guid: 8aac8448dfbc2d64c84a5bb7a928faa7, type: 3}

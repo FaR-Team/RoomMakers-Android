@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6582f407bbc7b741a5cf2ee76b2b532, type: 3}
   m_Name: CompanionCube
   m_EditorClassIdentifier: 
-  Name: ClaBos
+  Name: Strange Cube
+  es_Name: Cubo Raro
   price: 10
   priceCombo: 20
   size: {x: 1, y: 1}

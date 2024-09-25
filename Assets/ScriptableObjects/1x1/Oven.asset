@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Oven
   m_EditorClassIdentifier: 
   Name: Oven
+  es_Name: Horno
   price: 10
   priceCombo: 20
   size: {x: 1, y: 1}

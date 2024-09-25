@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Tv
   m_EditorClassIdentifier: 
   Name: Tv
+  es_Name: TV
   price: 20
   priceCombo: 40
   size: {x: 2, y: 1}

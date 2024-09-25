@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Interactor : MonoBehaviour
 {
+    [SerializeField] private bool spanish;
     [SerializeField] private LayerMask doorLayer;
     [SerializeField] private TextMeshProUGUI text_name;
     public void Interact(Inventory playerInventory)
@@ -19,7 +20,8 @@ public class Interactor : MonoBehaviour
 
             if (placementData.furnitureOnTopData == null && placementData.furnitureData != null)
             {
-                text_name.text = placementData.furnitureData.originalData.Name;
+                if (!spanish) text_name.text = placementData.furnitureData.originalData.Name;
+                else text_name.text = placementData.furnitureData.originalData.es_Name;
                 MainRoom.instance.availableTiles += placementData.furnitureData.originalData.size.x * placementData.furnitureData.originalData.size.y;
                 playerInventory.furnitureInventoryWithData = placementData.furnitureData;
                 playerInventory.EnablePackageUI(true);
@@ -31,7 +33,8 @@ public class Interactor : MonoBehaviour
             }
             else 
             {
-                text_name.text = placementData.furnitureOnTopData.originalData.Name;
+                if (!spanish) text_name.text = placementData.furnitureOnTopData.originalData.Name;
+                else text_name.text = placementData.furnitureOnTopData.originalData.es_Name;
                 playerInventory.furnitureInventoryWithData = placementData.furnitureOnTopData;
                 playerInventory.EnablePackageUI(true);
                 //PlayerController.instance.Inventory.UpdateMoney(-placementData.furnitureOnTopData.originalData.priceCombo);

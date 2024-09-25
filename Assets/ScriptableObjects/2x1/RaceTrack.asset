@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: RaceTrack
   m_EditorClassIdentifier: 
   Name: Race Track
+  es_Name: Pista RC
   price: 20
   priceCombo: 40
   size: {x: 2, y: 1}

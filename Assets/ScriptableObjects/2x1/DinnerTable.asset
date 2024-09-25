@@ -13,15 +13,16 @@ MonoBehaviour:
   m_Name: DinnerTable
   m_EditorClassIdentifier: 
   Name: DinnerTable
+  es_Name: MesaComedor
   price: 20
   priceCombo: 40
   size: {x: 2, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 3bb30eaf4d21ae049a3a2770c70e3377, type: 3}
   typeOfSize: 3
   compatibles:
-  - {fileID: 11400000, guid: 5993dd97d0fc0794ba4c3dfabff12c25, type: 2}
-  - {fileID: 11400000, guid: 3c102d524b8d07d47a3d27b0e578c5a2, type: 2}
-  - {fileID: 11400000, guid: 3d965f5679b723448a8836616136b309, type: 2}
+  - {fileID: 11400000, guid: b8f51ccc092acd04cbaa2314f8633258, type: 2}
+  - {fileID: 11400000, guid: 3abd00303a3b14c45a858e84b99533da, type: 2}
+  - {fileID: 11400000, guid: 845ccd4d90144b341be38d94a33c57e6, type: 2}
   sprites:
   - {fileID: -1030993009, guid: 3fcecbf5f336efc4294f7888d75f4093, type: 3}
   - {fileID: -1119942959, guid: 3fcecbf5f336efc4294f7888d75f4093, type: 3}

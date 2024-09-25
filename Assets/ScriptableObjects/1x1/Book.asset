@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Book
   m_EditorClassIdentifier: 
   Name: Book
+  es_Name: Libro
   price: 10
   priceCombo: 20
   size: {x: 1, y: 1}

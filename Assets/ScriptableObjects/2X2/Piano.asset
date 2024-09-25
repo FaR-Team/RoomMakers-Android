@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Piano
   m_EditorClassIdentifier: 
   Name: Piano
+  es_Name: Piano
   price: 40
   priceCombo: 80
   size: {x: 2, y: 2}

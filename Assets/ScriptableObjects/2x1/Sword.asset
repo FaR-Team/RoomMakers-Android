@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Sword
   m_EditorClassIdentifier: 
   Name: Sword
+  es_Name: Espada
   price: 20
   priceCombo: 40
   size: {x: 2, y: 1}

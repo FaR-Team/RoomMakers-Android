@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Couch
   m_EditorClassIdentifier: 
   Name: Couch
+  es_Name: Sillon
   price: 20
   priceCombo: 40
   size: {x: 2, y: 1}

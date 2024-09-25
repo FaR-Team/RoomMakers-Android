@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Fridge
   m_EditorClassIdentifier: 
   Name: Fridge
+  es_Name: Heladera
   price: 10
   priceCombo: 20
   size: {x: 1, y: 1}

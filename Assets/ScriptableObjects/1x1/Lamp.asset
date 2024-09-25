@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Lamp
   m_EditorClassIdentifier: 
   Name: Lamp
+  es_Name: Lampara
   price: 10
   priceCombo: 20
   size: {x: 1, y: 1}

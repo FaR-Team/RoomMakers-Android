@@ -13,13 +13,14 @@ MonoBehaviour:
   m_Name: BathTub
   m_EditorClassIdentifier: 
   Name: Bathtub
+  es_Name: Banera
   price: 20
   priceCombo: 40
   size: {x: 2, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 234bac2d437868246a215e2b915b80a4, type: 3}
   typeOfSize: 3
   compatibles:
-  - {fileID: 11400000, guid: 9c9dbe46efcb1764cb68fdee5b70e962, type: 2}
+  - {fileID: 11400000, guid: 5ef2e2c77af1e7d478780c49e1c6965f, type: 2}
   sprites:
   - {fileID: 4712758, guid: 467ffdef1d5e8ea408d81198e95893bc, type: 3}
   - {fileID: 591658475, guid: 467ffdef1d5e8ea408d81198e95893bc, type: 3}

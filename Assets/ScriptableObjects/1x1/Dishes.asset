@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Dishes
   m_EditorClassIdentifier: 
   Name: Dishes
+  es_Name: Platos
   price: 10
   priceCombo: 20
   size: {x: 1, y: 1}
