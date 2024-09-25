@@ -644,7 +644,6 @@ MonoBehaviour:
   - {fileID: 5748501362297983718}
   - {fileID: 5748501361348794207}
   cameraVector: {x: 0, y: 0, z: 0}
-  isMain: 0
   paletteNum: 0
   roomFurnitures: {fileID: 0}
 --- !u!114 &-6040292037720730349
@@ -659,6 +658,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5133c3e83fa58c46a42ca2222a009ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  popUpPrefab: {fileID: 8158556740613534364, guid: 8cad54e402c327741b4cc6ed086d9bfd, type: 3}
 --- !u!1 &5748501362297983713
 GameObject:
   m_ObjectHideFlags: 0
