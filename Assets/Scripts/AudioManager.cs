@@ -62,6 +62,12 @@ public class AudioManager : MonoBehaviour
         _clipsDictionary.TryGetValue(clipKey, out AudioClip clip);
         AudioSource.PlayClipAtPoint(clip, pos);
     }
+
+    public AudioSource GetSfxSource(GlobalSfx clipKey)
+    {
+        // This will return the sfxAudioSource which is responsible for playing the sound
+        return sfxAudioSource;
+    }
 }
 
 public enum GlobalSfx

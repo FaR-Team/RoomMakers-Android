@@ -1342,7 +1342,7 @@ PrefabInstance:
     - target: {fileID: 4342737203111764871, guid: b134b40e8d569a44c9e0d0e747ad1276, type: 3}
       propertyPath: clickOkClip
       value: 
-      objectReference: {fileID: 8300000, guid: 6294e1d00cd13e14d8ab0d5ca3d91090, type: 3}
+      objectReference: {fileID: 8300000, guid: 113bfe07f3b1f184380fbaca3d2f3b80, type: 3}
     - target: {fileID: 4342737203111764920, guid: b134b40e8d569a44c9e0d0e747ad1276, type: 3}
       propertyPath: m_RootOrder
       value: 0
