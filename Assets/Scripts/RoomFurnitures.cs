@@ -95,7 +95,7 @@ public class RoomFurnitures : MonoBehaviour
                     PlayerController.instance.Inventory.UpdateMoney(totalCombo);
                     House.instance.UpdateScore(totalCombo);
                     
-                    ComboPopUp.Create(popUpPrefab, totalCombo, PlayerController.instance.transform.position, new Vector2(0f, 1.2f));
+                    ComboPopUp.Create(popUpPrefab, totalCombo, finalPos, new Vector2(0f, 1.2f));
                 }
             }
             
