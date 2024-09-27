@@ -102,7 +102,7 @@ public class RoomFurnitures : MonoBehaviour
             PlacementDatasInPosition[finalPos].occupiedPositions.ForEach(pos =>
             {
                 PlacementDatasInPosition[pos].instantiatedFurnitureOnTop = topObject;
-                PlacementDatasInPosition[pos].furnitureOnTopData = data;
+                PlacementDatasInPosition[pos].furnitureOnTopData = topObject.Data;
             });
         }
     }

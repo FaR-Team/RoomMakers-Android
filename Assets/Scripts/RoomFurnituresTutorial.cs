@@ -10,7 +10,7 @@ public class RoomFurnituresTutorial : RoomFurnitures
         {
             if (TryGetComponent(out MainRoom room))
             {
-                MainRoom.instance.availableTiles -= data.size.x * data.size.y;
+                MainRoom.instance.availableTiles -= data.originalData.size.x * data.originalData.size.y;
             }
             
             positionToOccupy.ForEach(pos => PlacementDatasInPosition[pos].instantiatedFurniture = furnitureObject);
