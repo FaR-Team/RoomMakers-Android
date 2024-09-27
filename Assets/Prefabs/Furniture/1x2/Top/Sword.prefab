@@ -74,7 +74,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1085cdcdcd327034fb590aa030770d48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalData: {fileID: 11400000, guid: 5993dd97d0fc0794ba4c3dfabff12c25, type: 2}
+  originalData: {fileID: 11400000, guid: b8f51ccc092acd04cbaa2314f8633258, type: 2}
   comboStar: {fileID: 6666947477787524309}
 --- !u!1 &6084753775012126759
 GameObject:

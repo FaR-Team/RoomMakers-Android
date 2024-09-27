@@ -157,7 +157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1085cdcdcd327034fb590aa030770d48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalData: {fileID: 11400000, guid: 44e8ecc5a2fbc964eb3b637779230196, type: 2}
+  originalData: {fileID: 11400000, guid: 130f9903c113749488c7a1107aa58724, type: 2}
   comboStar: {fileID: 2678619827563371649}
 --- !u!1001 &1285290740023132926
 PrefabInstance:

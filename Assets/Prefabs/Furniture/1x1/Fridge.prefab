@@ -72,7 +72,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc2c07814d420624f927b3c233ee82ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalData: {fileID: 11400000, guid: 8d4f92b150a9a464e951945316d65a50, type: 2}
+  originalData: {fileID: 11400000, guid: 8bbba5d474c328e4cab8bc0fbfda48c9, type: 2}
   comboValue: 20
   comboStarContainer: {fileID: 0}
 --- !u!1 &9156776624523312462

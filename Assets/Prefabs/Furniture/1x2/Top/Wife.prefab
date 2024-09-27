@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1085cdcdcd327034fb590aa030770d48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalData: {fileID: 11400000, guid: 9c9dbe46efcb1764cb68fdee5b70e962, type: 2}
+  originalData: {fileID: 11400000, guid: 5ef2e2c77af1e7d478780c49e1c6965f, type: 2}
   comboStar: {fileID: 3191334077947706797}
 --- !u!1 &6084753775012126759
 GameObject:

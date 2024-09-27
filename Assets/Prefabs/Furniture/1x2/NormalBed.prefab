@@ -241,6 +241,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc2c07814d420624f927b3c233ee82ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalData: {fileID: 11400000, guid: a2dca2465853ca44e94a38d2c53094bc, type: 2}
+  originalData: {fileID: 11400000, guid: b68bf80269199644997ee63af01065fc, type: 2}
   comboValue: 20
   comboStarContainer: {fileID: 0}

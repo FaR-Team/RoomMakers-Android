@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1085cdcdcd327034fb590aa030770d48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalData: {fileID: 11400000, guid: 4fb05338c52bad047b2fc37005bef2d0, type: 2}
+  originalData: {fileID: 11400000, guid: 03e12326fc5b8dd45aed3687ec969955, type: 2}
   comboStar: {fileID: 3384762701392273140}
 --- !u!95 &8119991340944250316
 Animator:
