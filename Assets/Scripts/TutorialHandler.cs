@@ -9,7 +9,11 @@ public class TutorialHandler : MonoBehaviour
     [SerializeField] private GameObject tutorialObject;
 
     private bool animPlaying;
-    private int tutorialStep;
+    [SerializeField] private int tutorialStep;
+
+    [SerializeField] private float reminderTimer = 0f;
+    private const float reminderDelay = 30f;
+
 
     public bool onTutorial;
     
@@ -30,10 +34,19 @@ public class TutorialHandler : MonoBehaviour
     {
         
     }
-
     void Update()
     {
-        if(Input.GetMouseButtonDown(0)) CloseTutorialWindow();
+        if(Input.anyKeyDown) CloseTutorialWindow();
+
+        if (tutorialStep == 3 && !tutorialObject.activeSelf)
+        {
+            reminderTimer += Time.deltaTime;
+            if (reminderTimer >= reminderDelay)
+            {
+                ReminderStep();
+                reminderTimer = 0f;
+            }
+        }
     }
 
     public void CompletedStep()
@@ -44,19 +57,38 @@ public class TutorialHandler : MonoBehaviour
         anim.SetInteger("TutorialStep", tutorialStep);
         animPlaying = true;
     }
+
+    public void ReminderStep()
+    {
+        StateManager.currentGameState = GameState.Pause;
+        tutorialObject.SetActive(true);
+        anim.SetInteger("TutorialStep", 10);
+        animPlaying = true;
+    }
     
     public void AnimationStopped()
     {
         animPlaying = false;
     }
-
     public void CloseTutorialWindow()
     {
         if(!tutorialObject.activeSelf || animPlaying) return;
         tutorialObject.SetActive(false);
-        StateManager.currentGameState = GameState.Moving;
-        
         if(tutorialStep != 3) onTutorial = false;
-        if(tutorialStep >= 4) Destroy(gameObject);
+    
+        StateManager.currentGameState = GameState.Moving;
+
+        if (tutorialStep == 4)
+        {
+            CompletedStep();
+            return;
+        }
+    
+        reminderTimer = 0f; // Reset the timer when closing the window
+    
+        if(tutorialStep > 4)
+        {
+            Destroy(gameObject);
+        }
     }
 }

@@ -17,12 +17,6 @@ public class DestroyMovementOverTime : MonoBehaviour
 
     void Update()
     {
-        if (Input.anyKey)
-        {
-            Destroy(this.GetComponent<SimpleMoveWithSpeed>());
-            this.transform.position = new Vector3(0, 0.2284598f, 0);
-        }
-
         if (!this.TryGetComponent<SimpleMoveWithSpeed>(out SimpleMoveWithSpeed simpleMoveWithSpeed))
         {
             if (!sfxPlayed)
@@ -32,6 +26,12 @@ public class DestroyMovementOverTime : MonoBehaviour
 
                 StartCoroutine(WaitForSfxAndLoadScene());
             }
+        }
+
+        if (Input.anyKey)
+        {
+            Destroy(this.GetComponent<SimpleMoveWithSpeed>());
+            this.transform.position = new Vector3(0, 0.2284598f, 0);
         }
     }
 

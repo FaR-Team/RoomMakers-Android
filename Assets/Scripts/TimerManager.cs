@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class TimerManager : MonoBehaviour
 {
+    public static TimerManager Instance;
+
     private static float maxTime = 150f;
     private static float time;
     [SerializeField] private SpriteRenderer clock;
@@ -13,6 +15,12 @@ public class TimerManager : MonoBehaviour
     [SerializeField] private float flickerInterval = 0.5f;
     private float flickerTimer = 0f;
     private bool isVisible = true;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     private void Start()
     {
         time = maxTime;
@@ -68,9 +76,18 @@ public class TimerManager : MonoBehaviour
     {
         time = maxTime;
         if(timerAction == null) timerAction += Timer;
+        Instance.ResetClockVisibility();
     }
     public static void StopTimer()
     {
         timerAction -= Timer;
+    }
+    public void ResetClockVisibility()
+    {
+        isVisible = true;
+        Color clockColor = clock.color;
+        clockColor.a = 1f;
+        clock.color = clockColor;
+        flickerTimer = 0f;
     }
 }
