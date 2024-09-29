@@ -60,6 +60,12 @@ public class TutorialHandler : MonoBehaviour
 
     public void ReminderStep()
     {
+        if (StateManager.IsEditing()) 
+	    {
+		    reminderTimer = 0f;
+		    return;
+	    }
+        
         StateManager.currentGameState = GameState.Pause;
         tutorialObject.SetActive(true);
         anim.SetInteger("TutorialStep", 10);
