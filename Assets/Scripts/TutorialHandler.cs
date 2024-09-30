@@ -61,17 +61,14 @@ public class TutorialHandler : MonoBehaviour
     public void ReminderStep()
     {
         if (StateManager.IsEditing()) 
-	    {
-		    reminderTimer = 0f;
-		    return;
-	    }
-        
+        {
+            PlayerController.instance.ForceSwitchEditingMode();
+        }
         StateManager.currentGameState = GameState.Pause;
         tutorialObject.SetActive(true);
         anim.SetInteger("TutorialStep", 10);
         animPlaying = true;
     }
-    
     public void AnimationStopped()
     {
         animPlaying = false;

@@ -89,6 +89,46 @@ public class PlayerController : MovementController
         }
     }
 
+    public void ForceSwitchEditingMode()
+    {
+        // Create new furniture data if placing object for the first time
+        FurnitureData furnitureData = null;
+        bool firstTimePlacing = false;
+        
+        if (inventory.furnitureInventoryWithData != null)
+        {
+            furnitureData = inventory.furnitureInventoryWithData;
+        }
+        else
+        {
+            if (inventory.furnitureInventory)
+            {
+                firstTimePlacing = true; // If there's no data in the inventory object, we're placing it for the first time, so we tell the furniturePreview to reward points when placed
+                furnitureData = new FurnitureData(inventory.furnitureInventory);
+            }
+        }
+
+        // Return if no data in the inventory
+        if (furnitureData == null) return;
+        
+        StateManager.SwitchEditMode();
+
+        //Debug.Log($"Game State: {StateManager.currentGameState}");
+
+
+        foreach (var furniturePreview in furniturePreviews)
+        {
+            if (furniturePreview == furniturePreviews[(int)furnitureData.originalData.typeOfSize])
+            {
+                furniturePreview.SetCurrentFurnitureData(furnitureData, firstTimePlacing);
+                furniturePreview.gameObject.SetActive(!furniturePreview.gameObject.activeInHierarchy);
+            }
+            else
+            {
+                furniturePreview.gameObject.SetActive(false);
+            }
+        }
+    }
     private void CheckInteract()
     {
         if(playerInput.Movement.Interact.WasPressedThisFrame() && !IsMoving)
