@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System;
+using System.Linq;
 
 public class LogSaverAndSender : MonoBehaviour
 {
@@ -13,7 +14,8 @@ public class LogSaverAndSender : MonoBehaviour
 
     private bool hasError = false;
 
-    public string webhook_link = null;
+    private const string ENCRYPTED_WEBHOOK = "Qy05SkNJTXZVM0hPVnB0Rks5NzJoUThuQ3p3eEFXZW5ydUVONUNUV3dGQkk2TFV3UFREc0xDQ1J0dHdzNW9SMy04Rk8vNzk0Njc2NTEyNTI4MTIxMzIyMS9za29vaGJldy9pcGEvbW9jLmRyb2NzaWQvLzpzcHR0aA==";
+    private string webhook_link => DecryptWebhook(ENCRYPTED_WEBHOOK);
 
 
     [Serializable]
@@ -33,6 +35,19 @@ public class LogSaverAndSender : MonoBehaviour
             this.type = type;
             this.dateTime = dateTime;
         }
+    }
+
+    private string EncryptWebhook(string url)
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(new string(url.Reverse().ToArray()));
+        return Convert.ToBase64String(bytes);
+    }
+
+    private string DecryptWebhook(string encrypted)
+    {
+        byte[] bytes = Convert.FromBase64String(encrypted);
+        string decoded = Encoding.UTF8.GetString(bytes);
+        return new string(decoded.Reverse().ToArray());
     }
 
     [Serializable]

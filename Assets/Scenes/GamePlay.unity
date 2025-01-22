@@ -2772,7 +2772,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableSave: 1
   enableDiscord: 1
-  webhook_link: https://discord.com/api/webhooks/1223121825215676497/OF8-3Ro5swttRCCLsDTPwUL6IBFwWTC5NEurneWAxwzCn8Qh279KFtpVOH3UvMICJ9-C
+  webhook_link: Qy05SkNJTXZVM0hPVnB0Rks5NzJoUThuQ3p3eEFXZW5ydUVONUNUV3dGQkk2TFV3UFREc0xDQ1J0dHdzNW9SMy04Rk8vNzk0Njc2NTEyNTI4MTIxMzIyMS9za29vaGJldy9pcGEvbW9jLmRyb2NzaWQvLzpzcHR0aA==
 --- !u!1 &858450939
 GameObject:
   m_ObjectHideFlags: 0
@@ -3746,6 +3746,7 @@ MonoBehaviour:
   - {fileID: -1405026272, guid: 893088e3de0c8214c9686c4e0b24a350, type: 3}
   - {fileID: -510924987, guid: 893088e3de0c8214c9686c4e0b24a350, type: 3}
   - {fileID: -890283570, guid: 893088e3de0c8214c9686c4e0b24a350, type: 3}
+  flickerInterval: 0.5
 --- !u!4 &1136728207
 Transform:
   m_ObjectHideFlags: 0
