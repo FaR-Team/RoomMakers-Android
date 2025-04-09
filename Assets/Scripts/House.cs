@@ -26,7 +26,16 @@ public class House : MonoBehaviour
     public GameObject comboStarSprite;
 
     private int availableSpaces;
-    private int doorPrice = 100;
+    
+    [Header("Door Price Settings")]
+    [SerializeField] [Tooltip("Precio inicial")] private int baseDoorPrice = 100;
+    [SerializeField] [Tooltip("Controla qué tan rápido suben los precios")] private float priceGrowthFactor = 1.2f;
+    [SerializeField] [Tooltip("Cantidad a añadir para el crecimiento lineal")] private int priceAdditive = 200;
+    [SerializeField] [Tooltip("Usar o no el precio exponencial")] private bool useExponentialGrowth = true;
+    [SerializeField] [Tooltip("Cap opcional en los precios (0 significa ilimitado)")] private int maxDoorPrice = 0;
+    
+    private int doorPrice;
+    private int roomsBuilt = 0;
     private int score = 0;
 
     public int roomHeight = 9;
@@ -37,6 +46,8 @@ public class House : MonoBehaviour
     [SerializeField] private float roomTransitionTime = .3f;
     private Camera _mainCam;
 
+    [SerializeField] private GameObject uiContainer;
+
     void Awake()
     {
         if (instance == null || instance != this)
@@ -45,17 +56,18 @@ public class House : MonoBehaviour
         }
 
         _mainCam = Camera.main;
-        doorPrice = 100;
+        doorPrice = baseDoorPrice;
         score = 0;
+        roomsBuilt = 0;
     }
-
     public Room SpawnRoom(Vector3 position)
     {
         if (!Habitaciones.TryGetValue(position, out Room room))
         {
-            // Agregamos el score antes de aumentarlo
             UpdateScore(doorPrice);
-            doorPrice += 200;
+            roomsBuilt++;
+            CalculateNextDoorPrice();
+        
             int x = (int)position.x / roomWidth;
             int y = (int)position.y / roomHeight;
             WhichRoomToSpawnPos(x, y);
@@ -67,6 +79,25 @@ public class House : MonoBehaviour
             return _room;
         }
         else return GetRoom(position);
+    }
+    private void CalculateNextDoorPrice()
+    {
+        if (useExponentialGrowth)
+        {
+            // Fórmula de crecimiento exponencial: baseDoorPrice * (growthFactor ^ roomsBuilt)
+            doorPrice = Mathf.RoundToInt(baseDoorPrice * Mathf.Pow(priceGrowthFactor, roomsBuilt));
+        }
+        else
+        {
+            // Crecimiento lineal
+            doorPrice = baseDoorPrice + (priceAdditive * roomsBuilt);
+        }
+
+        // Aplicar cap al precio si hay
+        if (maxDoorPrice > 0 && doorPrice > maxDoorPrice)
+        {
+            doorPrice = maxDoorPrice;
+        }
     }
 
     public void UpdateScore(int scoreToAdd)
@@ -141,22 +172,32 @@ public class House : MonoBehaviour
 
     IEnumerator MoveCamNextRoom(Vector3 position, int color)
     {
+        // Esconder UI temporalmente
+        uiContainer.SetActive(false);
+        
         Vector3 initialCameraPos = _mainCam.transform.position;
-        // Igualamos la distancia en Z para evitar problemas
         position.z = initialCameraPos.z;
 
         float elapsedTime = 0;
-        // float waitTime = roomTransitionTime;
+        float startTime = Time.unscaledTime;
 
         while (elapsedTime < roomTransitionTime)
         {
-            _mainCam.transform.position = Vector3.Lerp(initialCameraPos, position, elapsedTime / roomTransitionTime);
-            elapsedTime += Time.deltaTime;
+            elapsedTime = Time.unscaledTime - startTime;
+            float normalizedTime = Mathf.Clamp01(elapsedTime / roomTransitionTime);
+            
+            float t = Mathf.SmoothStep(0f, 1f, normalizedTime);
+            _mainCam.transform.position = Vector3.Lerp(initialCameraPos, position, t);
+            
             yield return null;
         }
-        // Para que se complete el Lerp
-        _mainCam.transform.position = Vector3.Lerp(initialCameraPos, position, 1f);
+        
+        _mainCam.transform.position = position;
         ColourChanger.instance.ChangeColour(color);
+        
+        // Mostrar UI tras la transición
+        uiContainer.SetActive(true);
+        
         yield return null;
     }
 

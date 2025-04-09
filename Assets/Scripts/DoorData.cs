@@ -26,7 +26,6 @@ public class DoorData : MonoBehaviour
 
     void Start()
     {
-        
         roomPosition = transform.parent;
         thisRoom = transform.parent.GetComponent<Room>();
 
@@ -39,7 +38,6 @@ public class DoorData : MonoBehaviour
         {
             roomPosition = transform.parent;
         }
-
 
         switch (doorType)
         {
@@ -66,19 +64,15 @@ public class DoorData : MonoBehaviour
         {
             case DoorType.Top:
                 NextRoom.doors.First(x => x.doorType == DoorType.Bottom)?.UnlockDoor();
-                //NextRoom.doors[1].UnlockDoor();
                 break;
             case DoorType.Bottom:
                 NextRoom.doors.First(x => x.doorType == DoorType.Top)?.UnlockDoor();
-               // NextRoom.doors[0].UnlockDoor();
                 break;
             case DoorType.Left:
                 NextRoom.doors.First(x => x.doorType == DoorType.Right)?.UnlockDoor();
-                //NextRoom.doors[3].UnlockDoor();
                 break;
             case DoorType.Right:
                 NextRoom.doors.First(x => x.doorType == DoorType.Left)?.UnlockDoor();
-                //NextRoom.doors[2].UnlockDoor();
                 break;
         }
     }
@@ -95,11 +89,17 @@ public class DoorData : MonoBehaviour
         else Debug.Log("NO FUNCIONA");
     }
 
-    public void BuyNextRoom()
+    // Modified to support free doors from debug menu
+    public void BuyNextRoom(bool isFree = false)
     {
-        if (!isUnlocked && PlayerController.instance.Inventory.money >= House.instance.DoorPrice)
+        if (!isUnlocked && (isFree || PlayerController.instance.Inventory.money >= House.instance.DoorPrice))
         {
-            PlayerController.instance.Inventory.UpdateMoney(-House.instance.DoorPrice);
+            // Only deduct money if it's not a free door
+            if (!isFree)
+            {
+                PlayerController.instance.Inventory.UpdateMoney(-House.instance.DoorPrice);
+            }
+            
             NextRoom = House.instance.SpawnRoom(spawnPoint);
             AudioManager.instance.PlaySfx(GlobalSfx.Grab);
             UnlockDoor();
@@ -139,13 +139,11 @@ public class DoorData : MonoBehaviour
             default: checkPos = Vector2.zero;
                 break;
         } 
-        //Debug.Log("Check pos: " + checkPos);
         
         var door = Physics2D.OverlapCircle(checkPos, 0.2f, 1 << 10);
         // Si al instanciar esta puerta existe una al lado, desbloqueamos ambas
         if (door)
         {
-            //Debug.Log("Hay puerta en " + door.transform.position);
             door.TryGetComponent(out DoorData doorData);
 
             if (doorData)
