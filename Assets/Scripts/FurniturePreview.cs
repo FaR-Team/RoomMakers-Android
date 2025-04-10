@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,12 +10,19 @@ public class FurniturePreview : MonoBehaviour
 
     [SerializeField] private FurnitureData furnitureData;
     [SerializeField] private Inventory inventory;
+    
+    [Header("Shake Effect")]
+    [SerializeField] private float shakeDuration = 0.2f;
+    [SerializeField] private float shakeAmount = 0.05f;
+    [SerializeField] private float decreaseFactor = 1.0f;
 
     private Vector2Int originalSize;
     private bool firstTimePlacingFurniture = false; 
 
     int rotation = 0;
     private Vector2Int position;
+    private Vector3 originalPosition;
+    private bool isShaking = false;
 
     private void Awake()
     {
@@ -87,7 +95,37 @@ public class FurniturePreview : MonoBehaviour
         else
         {
             AudioManager.instance.PlaySfx(GlobalSfx.Error);
+            StartShake();
         }
+    }
+
+    private void StartShake()
+    {
+        if (!isShaking)
+        {
+            originalPosition = transform.position;
+            StartCoroutine(ShakeCoroutine());
+        }
+    }
+
+    private IEnumerator ShakeCoroutine()
+    {
+        isShaking = true;
+        float elapsed = 0.0f;
+        
+        while (elapsed < shakeDuration)
+        {
+            float x = Random.Range(-1f, 1f) * shakeAmount;
+            float y = Random.Range(-1f, 1f) * shakeAmount;
+            
+            transform.position = new Vector3(originalPosition.x + x, originalPosition.y + y, originalPosition.z);
+            
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        
+        transform.position = originalPosition;
+        isShaking = false;
     }
 
     public void Rotate()

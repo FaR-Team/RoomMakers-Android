@@ -848,6 +848,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 0}
   inventory: {fileID: 2043652587}
+  shakeDuration: 0.2
+  shakeAmount: 0.04
+  decreaseFactor: 1
 --- !u!114 &194237385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2141,6 +2144,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 0}
   inventory: {fileID: 2043652587}
+  shakeDuration: 0.2
+  shakeAmount: 0.04
+  decreaseFactor: 1
 --- !u!4 &664401297
 Transform:
   m_ObjectHideFlags: 0
@@ -3201,6 +3207,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 0}
   inventory: {fileID: 2043652587}
+  shakeDuration: 0.2
+  shakeAmount: 0.04
+  decreaseFactor: 1
 --- !u!4 &871330505
 Transform:
   m_ObjectHideFlags: 0
@@ -4881,6 +4890,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 0}
   inventory: {fileID: 2043652587}
+  shakeDuration: 0.2
+  shakeAmount: 0.04
+  decreaseFactor: 1
 --- !u!4 &1521791842
 Transform:
   m_ObjectHideFlags: 0
@@ -5510,6 +5522,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 0}
   inventory: {fileID: 2043652587}
+  shakeDuration: 0.2
+  shakeAmount: 0.04
+  decreaseFactor: 1
 --- !u!4 &1828525996
 Transform:
   m_ObjectHideFlags: 0
