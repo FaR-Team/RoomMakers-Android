@@ -15,13 +15,14 @@ MonoBehaviour:
   Name: Big Table
   es_Name: Mesa Grande
   price: 40
-  priceCombo: 80
   size: {x: 2, y: 2}
   prefab: {fileID: 6084753773558195295, guid: 8b90c481b222158479bbe8c57df82323, type: 3}
   typeOfSize: 1
   compatibles:
   - {fileID: 11400000, guid: 3abd00303a3b14c45a858e84b99533da, type: 2}
   - {fileID: 11400000, guid: 03e12326fc5b8dd45aed3687ec969955, type: 2}
+  - {fileID: 11400000, guid: 5540817b85aa1cd40aa62cdcd2dc2ddf, type: 2}
+  - {fileID: 11400000, guid: 845ccd4d90144b341be38d94a33c57e6, type: 2}
   sprites:
   - {fileID: -105178077, guid: 7aed0aeb1a0485144ab08f7edd2639e8, type: 3}
   - {fileID: 1968302764, guid: 7aed0aeb1a0485144ab08f7edd2639e8, type: 3}
