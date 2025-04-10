@@ -6,15 +6,12 @@ public class Inventory : MonoBehaviour
 {
     // TODO: fix unnecessary double data
 
-    [SerializeField] private bool spanish;
     public FurnitureOriginalData furnitureInventory;
     public FurnitureData furnitureInventoryWithData;
     public int money;
     public TextMeshProUGUI moneyText;
     public GameObject packageUI;
     [SerializeField] private TextMeshProUGUI text_name;
-    
-
 
     public void UpdateMoney(int intMoney)
     {
@@ -35,13 +32,23 @@ public class Inventory : MonoBehaviour
         furnitureInventory = Package._furnitureInPackage;
         Package.package.SetActive(false);
         EnablePackageUI(true);
-        if (!spanish) text_name.text = furnitureInventory.Name;
-        else text_name.text = furnitureInventory.es_Name;
+        
+        // Get language preference safely
+        bool isSpanish = false;
+        if (LocalizationManager.Instance != null)
+        {
+            isSpanish = LocalizationManager.Instance.IsSpanish;
+        }
+        
+        // Set the text based on language
+        if (furnitureInventory != null)
+        {
+            text_name.text = isSpanish ? furnitureInventory.es_Name : furnitureInventory.Name;
+        }
     }
 
     public void EnablePackageUI(bool enabled)
     {
         packageUI.SetActive(enabled);
-        
     }
 }

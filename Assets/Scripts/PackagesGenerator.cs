@@ -55,7 +55,7 @@ public class PackagesGenerator : MonoBehaviour
             return wife;
         }
 
-        if(Random.Range(0, 1f) <= 0.01f)
+        if(Random.Range(0, 100f) <= 1f)
         {
             return onePercent[Random.Range(0, onePercent.Length)];
         }
