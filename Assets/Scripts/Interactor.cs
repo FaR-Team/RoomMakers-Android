@@ -17,31 +17,37 @@ public class Interactor : MonoBehaviour
             //Debug.Log("hay placement data en: " + (Vector2)gridPosition);
             if (playerInventory.furnitureInventory != null || playerInventory.furnitureInventoryWithData != null) return;
  
-
-            if (placementData.furnitureOnTopData == null && placementData.furnitureData != null)
+            FurnitureData topFurnitureData = placementData.GetTopFurnitureData(gridPosition);
+            
+            if (topFurnitureData == null && placementData.furnitureData != null)
             {
-                if (!spanish) text_name.text = placementData.furnitureData.originalData.Name;
-                else text_name.text = placementData.furnitureData.originalData.es_Name;
-                MainRoom.instance.availableTiles += placementData.furnitureData.originalData.size.x * placementData.furnitureData.originalData.size.y;
-                playerInventory.furnitureInventoryWithData = placementData.furnitureData;
-                playerInventory.EnablePackageUI(true);
-                //PlayerController.instance.Inventory.UpdateMoney(-placementData.furnitureData.originalData.price);
-                //House.instance.UpdateScore(-placementData.furnitureData.originalData.price);
-                Destroy(placementData.instantiatedFurniture.gameObject);
-                House.instance.currentRoom.roomFurnitures.RemoveDataInPositions(placementData.occupiedPositions);
-
+                if (placementData.topPlacementDatas.Count == 0)
+                {
+                    if (!spanish) text_name.text = placementData.furnitureData.originalData.Name;
+                    else text_name.text = placementData.furnitureData.originalData.es_Name;
+                    MainRoom.instance.availableTiles += placementData.furnitureData.originalData.size.x *
+                                                        placementData.furnitureData.originalData.size.y;
+                    playerInventory.furnitureInventoryWithData = placementData.furnitureData;
+                    playerInventory.EnablePackageUI(true);
+                    House.instance.currentRoom.roomFurnitures.RemoveDataInPosition(gridPosition);
+                }
+                else
+                {
+                    topFurnitureData = placementData.GetAndClearFirstObject();
+                    
+                    if (!spanish) text_name.text = topFurnitureData.originalData.Name;
+                    else text_name.text = topFurnitureData.originalData.es_Name;
+                    playerInventory.furnitureInventoryWithData = topFurnitureData;
+                    playerInventory.EnablePackageUI(true);
+                }
             }
             else 
             {
-                if (!spanish) text_name.text = placementData.furnitureOnTopData.originalData.Name;
-                else text_name.text = placementData.furnitureOnTopData.originalData.es_Name;
-                playerInventory.furnitureInventoryWithData = placementData.furnitureOnTopData;
+                if (!spanish) text_name.text = topFurnitureData.originalData.Name;
+                else text_name.text = topFurnitureData.originalData.es_Name;
+                playerInventory.furnitureInventoryWithData = topFurnitureData;
                 playerInventory.EnablePackageUI(true);
-                //PlayerController.instance.Inventory.UpdateMoney(-placementData.furnitureOnTopData.originalData.priceCombo);
-                //House.instance.UpdateScore(-placementData.furnitureOnTopData.originalData.priceCombo);
-                Destroy(placementData.instantiatedFurnitureOnTop.gameObject);
-                placementData.instantiatedFurnitureOnTop = null;
-                House.instance.currentRoom.roomFurnitures.RemoveTopObjectInPositions(placementData.occupiedPositions);
+                House.instance.currentRoom.roomFurnitures.RemoveTopObjectInPosition(gridPosition);
             }
 
             

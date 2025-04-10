@@ -13,7 +13,8 @@ public class RoomFurnituresTutorial : RoomFurnitures
                 MainRoom.instance.availableTiles -= data.originalData.size.x * data.originalData.size.y;
             }
             
-            positionToOccupy.ForEach(pos => PlacementDatasInPosition[pos].instantiatedFurniture = furnitureObject);
+            PlacementDatasInPosition[finalPos].instantiatedFurniture = furnitureObject; // Testing if this is enough to update all positions
+            //positionToOccupy.ForEach(pos => PlacementDatasInPosition[pos].instantiatedFurniture = furnitureObject);
         }
         else
         {
@@ -51,11 +52,13 @@ public class RoomFurnituresTutorial : RoomFurnitures
             }
             
 
+            PlacementDatasInPosition[finalPos].PlaceObjectOnTop(positionToOccupy, topObject);
+            /*
             PlacementDatasInPosition[finalPos].occupiedPositions.ForEach(pos =>
             {
                 PlacementDatasInPosition[pos].instantiatedFurnitureOnTop = topObject;
                 PlacementDatasInPosition[pos].furnitureOnTopData = topObject.Data;
-            });
+            });*/
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Experimental.Playables;
 
@@ -22,29 +23,39 @@ public class RoomFurnitures : MonoBehaviour
 
         if (canPlace)
         {
+            PlacementData data = new PlacementData(positionToOccupy, furnitureData);
             foreach (var pos in positionToOccupy)
             {
-                PlacementDatasInPosition[pos] = new PlacementData(positionToOccupy, furnitureData);
+                PlacementDatasInPosition[pos] = data;
             }
         }
         else
         {
-            // Mejorar esta parte, capaz fijarnos si es compatible arriba dentro del Any() y aca retornar
+            bool check = true;
             foreach (var pos in positionToOccupy)
             {
-                if (!PlacementDatasInPosition.ContainsKey(pos)) break;
+                if (!PlacementDatasInPosition.ContainsKey(pos)) check = false;
+            }
 
-                // Se fija si todas las posiciones que va a ocupar el objeto estan dentro de las posiciones que ocupa el objeto debajo, si es compatible y si no hay ya algo encima
-                canPlace = positionToOccupy.Intersect(PlacementDatasInPosition[pos].occupiedPositions).Count() ==
+            if (check)
+            {
+                canPlace = positionToOccupy.Intersect(PlacementDatasInPosition[position].occupiedPositions).Count() == // Check if all TopObject tiles are on top of BottomObject
                            positionToOccupy.Count()
-                           && PlacementDatasInPosition[pos].IsCompatibleWith(originalData)
-                           && PlacementDatasInPosition[pos].occupiedPositions.All(occupied => PlacementDatasInPosition[occupied].instantiatedFurnitureOnTop == null);
-                // Si queremos que se puedan poner varios encima de algo compatible, capaz al remover chequear si hay varias datas y con cual es compatible
+                           && PlacementDatasInPosition[position].IsCompatibleWith(originalData)
+                           && PlacementDatasInPosition[position].HasFreePositions(positionToOccupy); // Check if any of the positions TopObject will occupy are already occupied
 
                 placeOnTop = canPlace;
+            }
+            /*// Mejorar esta parte, capaz fijarnos si es compatible arriba dentro del Any() y aca retornar)
+            foreach (var pos in positionToOccupy)
+            {
+                if (!PlacementDatasInPosition.ContainsKey(pos)) break; //TODO: Revisar bien, lo comenté porque creo es lo mismo que se hace arriba, en canPlace
+
+                // Se fija si todas las posiciones que va a ocupar el objeto estan dentro de las posiciones que ocupa el objeto debajo, si es compatible y si no hay ya algo encima
+
 
                 break;
-            }
+            }*/
         }
 
         if (!canPlace) return false;
@@ -69,7 +80,8 @@ public class RoomFurnitures : MonoBehaviour
                 MainRoom.instance.availableTiles -= data.originalData.size.x * data.originalData.size.y;
             }
 
-            positionToOccupy.ForEach(pos => PlacementDatasInPosition[pos].instantiatedFurniture = furnitureObject);
+            PlacementDatasInPosition[finalPos].instantiatedFurniture = furnitureObject; // Testing if this is enough to update all positions
+            //positionToOccupy.ForEach(pos => PlacementDatasInPosition[pos].instantiatedFurniture = furnitureObject);
         }
         else
         {
@@ -99,11 +111,13 @@ public class RoomFurnitures : MonoBehaviour
                 }
             }
             
-            PlacementDatasInPosition[finalPos].occupiedPositions.ForEach(pos =>
+            // Updateamos la placement data con el objeto que pusimos encima
+            PlacementDatasInPosition[finalPos].PlaceObjectOnTop(positionToOccupy, topObject);
+            /*    occupiedPositions.ForEach(pos =>
             {
                 PlacementDatasInPosition[pos].instantiatedFurnitureOnTop = topObject;
                 PlacementDatasInPosition[pos].furnitureOnTopData = topObject.Data;
-            });
+            });*/
         }
     }
 
@@ -114,14 +128,29 @@ public class RoomFurnitures : MonoBehaviour
             PlacementDatasInPosition.Remove(pos);
         }
     }
+    
+    public void RemoveDataInPosition(Vector2 pos)
+    {
+        var data = PlacementDatasInPosition[pos];
+        Destroy(data.instantiatedFurniture.gameObject);
+        foreach (var tile in data.occupiedPositions)
+        {
+            PlacementDatasInPosition.Remove(tile);
+        }
+    }
 
     public void RemoveTopObjectInPositions(List<Vector2> positions)
     {
         foreach (var pos in positions)
         {
-            PlacementDatasInPosition[pos].furnitureOnTopData = null;
+            //PlacementDatasInPosition[pos].furnitureOnTopData = null;
             //PlacementDatasInPosition[pos].instantiatedFurnitureOnTop = null;
         }
+    }
+
+    public void RemoveTopObjectInPosition(Vector2 pos)
+    {
+        PlacementDatasInPosition[pos].ClearTopObject(pos);
     }
 
     private List<Vector2> CalculatePositions(Vector2 position, Vector2Int size)

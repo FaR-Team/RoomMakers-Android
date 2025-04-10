@@ -926,11 +926,15 @@ public class DebugManager : MonoBehaviour
             {
                 furnitureToRemove.Add(placementData.instantiatedFurniture);
             }
-            
-                        if (placementData.instantiatedFurnitureOnTop != null && !furnitureToRemove.Contains(placementData.instantiatedFurnitureOnTop))
+
+            for (int i = 0; i < placementData.topPlacementDatas.Count; i++)
             {
-                furnitureToRemove.Add(placementData.instantiatedFurnitureOnTop);
+                if (placementData.topPlacementDatas[i].instantiatedFurnitureOnTop != null && !furnitureToRemove.Contains(placementData.topPlacementDatas[i].instantiatedFurnitureOnTop))
+                {
+                    furnitureToRemove.Add(placementData.topPlacementDatas[i].instantiatedFurnitureOnTop);
+                }
             }
+            
         }
         
         // Destroy all furniture objects
