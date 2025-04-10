@@ -32,30 +32,42 @@ public class RoomFurnitures : MonoBehaviour
         else
         {
             bool check = true;
+            Vector2 validBottomPosition = Vector2.zero;
+            bool foundValidPosition = false;
+            
+            // First check if all positions are contained in the dictionary
             foreach (var pos in positionToOccupy)
             {
-                if (!PlacementDatasInPosition.ContainsKey(pos)) check = false;
+                if (!PlacementDatasInPosition.ContainsKey(pos)) 
+                {
+                    check = false;
+                    break;
+                }
+                
+                // Find a valid position that we can use for compatibility checks
+                if (!foundValidPosition)
+                {
+                    validBottomPosition = pos;
+                    foundValidPosition = true;
+                }
             }
 
-            if (check)
+            if (check && foundValidPosition)
             {
-                canPlace = positionToOccupy.Intersect(PlacementDatasInPosition[position].occupiedPositions).Count() == // Check if all TopObject tiles are on top of BottomObject
+                // Use the valid position we found for compatibility checks
+                canPlace = positionToOccupy.Intersect(PlacementDatasInPosition[validBottomPosition].occupiedPositions).Count() == 
                            positionToOccupy.Count()
-                           && PlacementDatasInPosition[position].IsCompatibleWith(originalData)
-                           && PlacementDatasInPosition[position].HasFreePositions(positionToOccupy); // Check if any of the positions TopObject will occupy are already occupied
+                           && PlacementDatasInPosition[validBottomPosition].IsCompatibleWith(originalData)
+                           && PlacementDatasInPosition[validBottomPosition].HasFreePositions(positionToOccupy);
 
                 placeOnTop = canPlace;
+                
+                // If we can place it, update the position to use for instantiation
+                if (canPlace)
+                {
+                    position = validBottomPosition;
+                }
             }
-            /*// Mejorar esta parte, capaz fijarnos si es compatible arriba dentro del Any() y aca retornar)
-            foreach (var pos in positionToOccupy)
-            {
-                if (!PlacementDatasInPosition.ContainsKey(pos)) break; //TODO: Revisar bien, lo comenté porque creo es lo mismo que se hace arriba, en canPlace
-
-                // Se fija si todas las posiciones que va a ocupar el objeto estan dentro de las posiciones que ocupa el objeto debajo, si es compatible y si no hay ya algo encima
-
-
-                break;
-            }*/
         }
 
         if (!canPlace) return false;
