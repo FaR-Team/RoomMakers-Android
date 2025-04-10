@@ -93,10 +93,15 @@ public class House : MonoBehaviour
             doorPrice = baseDoorPrice + (priceAdditive * roomsBuilt);
         }
 
+        // Round to nearest 5
+        doorPrice = Mathf.RoundToInt(doorPrice / 5f) * 5;
+
         // Aplicar cap al precio si hay
         if (maxDoorPrice > 0 && doorPrice > maxDoorPrice)
         {
             doorPrice = maxDoorPrice;
+            // Ensure the cap also ends in 0 or 5
+            doorPrice = Mathf.RoundToInt(doorPrice / 5f) * 5;
         }
     }
 
