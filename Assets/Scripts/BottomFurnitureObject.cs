@@ -10,11 +10,14 @@ public class BottomFurnitureObject : FurnitureObjectBase
     [SerializeField] private int comboValue = 30;
     [SerializeField] private Transform comboStarContainer;
     private HashSet<Vector2Int> localTilesCombos = new();
+    
+    // Track the current top furniture to know when to change sprites
+    private FurnitureOriginalData currentTopFurniture;
+    private SpriteRenderer spriteRenderer;
 
     private void OnEnable()
     {
         Initialize();
-
         StateManager.OnStateChanged += EnableStars;
     }
 
@@ -25,13 +28,15 @@ public class BottomFurnitureObject : FurnitureObjectBase
 
     private void Initialize()
     {
-        // TODO: Fix initializing stars (Object initalizes before copying data so no stars appear)
         comboStarContainer = new GameObject().transform;
         comboStarContainer.SetParent(transform);
-        comboStarContainer.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);;
+        comboStarContainer.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+        
+        // Get sprite renderer
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
-    public int MakeCombo(Vector2[] positions)
+    public int MakeCombo(Vector2[] positions, FurnitureOriginalData topFurnitureData)
     {
         int totalCombo = 0;
         for (int i = 0; i < positions.Length; i++)
@@ -46,13 +51,56 @@ public class BottomFurnitureObject : FurnitureObjectBase
             }
         }
         
-        // TODO: Improve, fast fix because it'll stay active after making combo //Popi la concha tuya qué significa esto hijo de puta
+        // Always check for sprite change, regardless of whether points were awarded
+        CheckAndUpdateSprite(topFurnitureData);
+        
+        // TODO: Improve, fast fix because it'll stay active after making combo
         comboStarContainer.gameObject.SetActive(false);
 
         furnitureData.localTileCombos = localTilesCombos;
         
         // Return total combo
         return totalCombo;
+    }
+    
+    private void CheckAndUpdateSprite(FurnitureOriginalData topFurnitureData)
+    {
+        // Always update the current top furniture
+        currentTopFurniture = topFurnitureData;
+        
+        // Check if this is a specific combo that should trigger sprite change
+        if (furnitureData.originalData.hasComboSprite && 
+            furnitureData.originalData.comboTriggerFurniture == topFurnitureData)
+        {
+            // Change to combo sprite
+            ChangeToComboSprite();
+        }
+        else
+        {
+            // Change back to default sprite
+            ResetToDefaultSprite();
+        }
+    }
+    
+    private void ChangeToComboSprite()
+    {
+        if (furnitureData.originalData.hasComboSprite && 
+            furnitureData.originalData.sprites != null && 
+            furnitureData.originalData.sprites.Length > 1 &&
+            spriteRenderer != null)
+        {
+            spriteRenderer.sprite = furnitureData.originalData.sprites[1]; // Use the combo sprite (index 1)
+        }
+    }
+    
+    private void ResetToDefaultSprite()
+    {
+        if (furnitureData.originalData.sprites != null && 
+            furnitureData.originalData.sprites.Length > 0 &&
+            spriteRenderer != null)
+        {
+            spriteRenderer.sprite = furnitureData.originalData.sprites[0]; // Use the default sprite (index 0)
+        }
     }
 
     public Vector2Int ConvertWorldToLocalTile(Vector2 worldPosition)
@@ -90,6 +138,10 @@ public class BottomFurnitureObject : FurnitureObjectBase
         furnitureData.localTileCombos = newData.localTileCombos;
         localTilesCombos = furnitureData.localTileCombos;
         
+        // Initialize sprite renderer if not already done
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        
         foreach (var tile in localTilesCombos)
         {
             CreateStarIcon(tile);
@@ -107,6 +159,5 @@ public class BottomFurnitureObject : FurnitureObjectBase
         star.SetParent(comboStarContainer);
         star.localPosition = new Vector3(local.x, local.y, 0);
         star.eulerAngles = Vector3.zero;
-
     }
 }

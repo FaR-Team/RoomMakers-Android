@@ -6,7 +6,7 @@
             {
                 "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 "key": "buildOutputDirList",
-                "value": "{\"m_Value\":\"D:/GithubProjects/RoomMakersTest;C:/Users/jerem/OneDrive/Escritorio/GBJAM11/Android;C:/Users/jerem/OneDrive/Escritorio/Android;C:/Users/jerem/OneDrive/Escritorio/GBJAM11;;;;;;\"}"
+                "value": "{\"m_Value\":\"D:/GithubProjects/RoomMakersDemo/Android;D:/GithubProjects/RoomMakersTest;C:/Users/jerem/OneDrive/Escritorio/GBJAM11/Android;C:/Users/jerem/OneDrive/Escritorio/Android;C:/Users/jerem/OneDrive/Escritorio/GBJAM11;;;;;\"}"
             }
         ]
     }

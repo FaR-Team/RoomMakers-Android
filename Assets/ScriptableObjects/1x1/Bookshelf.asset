@@ -15,10 +15,12 @@ MonoBehaviour:
   Name: Bookshelf
   es_Name: Biblioteca
   price: 10
-  priceCombo: 20
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 24d995c1b1d2d894fabbcd024da84f71, type: 3}
   typeOfSize: 0
-  compatibles: []
+  compatibles:
+  - {fileID: 11400000, guid: 4ea978be7a2118a4b98219ba08fc9a17, type: 2}
   sprites:
   - {fileID: 887262761, guid: 77e9d006cb8ce7d4aa29cf0584ee3814, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}

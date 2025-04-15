@@ -37,12 +37,12 @@ public class RoomFurnituresTutorial : RoomFurnitures
             if(!topObject.ComboDone)
             {
                 // Calculamos y sumamos los puntos por cada tile en el que se hace combo
-                totalCombo += bottomObject.MakeCombo(positionToOccupy.ToArray());
+                totalCombo += bottomObject.MakeCombo(positionToOccupy.ToArray(), data.originalData);
 
                 // Si hubo al menos un tile en el que se hizo combo, gastamos el combo tambien en el objeto de arriba
                 if (totalCombo > 0)
                 {
-                    topObject.MakeCombo();
+                    topObject.MakeCombo(bottomObject.Data.originalData);
                     
                     PlayerController.instance.Inventory.UpdateMoney(totalCombo);
                     House.instance.UpdateScore(totalCombo);

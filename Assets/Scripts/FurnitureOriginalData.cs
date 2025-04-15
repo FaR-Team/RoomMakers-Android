@@ -12,6 +12,9 @@ public class FurnitureOriginalData : ScriptableObject
     public TypeOfSize typeOfSize;
     public FurnitureOriginalData[] compatibles;
     public Sprite[] sprites;
+    public bool hasComboSprite = false; 
+    [Tooltip("If hasComboSprite is true, this furniture will change its sprite when combined with this specific furniture")]
+    public FurnitureOriginalData comboTriggerFurniture;
     //Los objetos que son compatibles con este objeto, más no así, los que este son compatibles con.
 }
 public enum TypeOfSize
