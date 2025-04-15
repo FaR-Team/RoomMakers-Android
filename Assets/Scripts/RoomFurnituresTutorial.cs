@@ -33,16 +33,19 @@ public class RoomFurnituresTutorial : RoomFurnitures
             BottomFurnitureObject bottomObject = (BottomFurnitureObject) PlacementDatasInPosition[finalPos]
                 .instantiatedFurniture;
             
+            // Check for sprite changes regardless of combo status
+            topObject.CheckAndUpdateSprite(bottomObject.originalData);
+            
             // Nos fijamos si el objeto de arriba no hizo combo aún
             if(!topObject.ComboDone)
             {
                 // Calculamos y sumamos los puntos por cada tile en el que se hace combo
-                totalCombo += bottomObject.MakeCombo(positionToOccupy.ToArray(), data.originalData);
+                totalCombo += bottomObject.MakeCombo(positionToOccupy.ToArray());
 
                 // Si hubo al menos un tile en el que se hizo combo, gastamos el combo tambien en el objeto de arriba
                 if (totalCombo > 0)
                 {
-                    topObject.MakeCombo(bottomObject.Data.originalData);
+                    topObject.MakeCombo();
                     
                     PlayerController.instance.Inventory.UpdateMoney(totalCombo);
                     House.instance.UpdateScore(totalCombo);

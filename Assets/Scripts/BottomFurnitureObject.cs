@@ -36,7 +36,7 @@ public class BottomFurnitureObject : FurnitureObjectBase
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
-    public int MakeCombo(Vector2[] positions, FurnitureOriginalData topFurnitureData)
+    public int MakeCombo(Vector2[] positions)
     {
         int totalCombo = 0;
         for (int i = 0; i < positions.Length; i++)
@@ -52,7 +52,7 @@ public class BottomFurnitureObject : FurnitureObjectBase
         }
         
         // Always check for sprite change, regardless of whether points were awarded
-        CheckAndUpdateSprite(topFurnitureData);
+        //CheckAndUpdateSprite(topFurnitureData);
         
         // TODO: Improve, fast fix because it'll stay active after making combo
         comboStarContainer.gameObject.SetActive(false);

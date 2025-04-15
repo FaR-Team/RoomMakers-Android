@@ -107,19 +107,18 @@ public class RoomFurnitures : MonoBehaviour
             FurnitureOriginalData bottomFurnitureData = bottomObject.Data.originalData;
             
             // Check for sprite changes regardless of combo status
-            //CheckForSpriteChanges(topObject, bottomFurnitureData);
             topObject.CheckAndUpdateSprite(bottomFurnitureData);
             
             // Only calculate and award points if combo hasn't been done yet
             if(!topObject.ComboDone)
             {
                 // Calculamos y sumamos los puntos por cada tile en el que se hace combo
-                totalCombo += bottomObject.MakeCombo(positionToOccupy.ToArray(), topObject.Data.originalData);
+                totalCombo += bottomObject.MakeCombo(positionToOccupy.ToArray());
 
                 // Si hubo al menos un tile en el que se hizo combo, gastamos el combo tambien en el objeto de arriba
                 if (totalCombo > 0)
                 {
-                    topObject.MakeCombo(bottomFurnitureData);
+                    topObject.MakeCombo();
                     
                     PlayerController.instance.Inventory.UpdateMoney(totalCombo);
                     House.instance.UpdateScore(totalCombo);
@@ -132,43 +131,7 @@ public class RoomFurnitures : MonoBehaviour
             PlacementDatasInPosition[finalPos].PlaceObjectOnTop(positionToOccupy, topObject);
         }
     }
-    // New method to check for sprite changes
-    private void CheckForSpriteChanges(TopFurnitureObject topObject, FurnitureOriginalData bottomFurnitureData)
-    {
-        if (topObject == null || bottomFurnitureData == null)
-            return;
-        
-        // Check if this top furniture should change sprite when placed on specific bottom furniture
-        if (topObject.Data != null && 
-            topObject.Data.originalData != null && 
-            topObject.Data.originalData.hasComboSprite)
-        {
-            // Get the sprite renderer
-            SpriteRenderer spriteRenderer = topObject.GetComponentInChildren<SpriteRenderer>();
-            if (spriteRenderer == null)
-                return;
-            
-            // Check if this is the specific combo that triggers sprite change
-            if (topObject.Data.originalData.comboTriggerFurniture == bottomFurnitureData)
-            {
-                // Change to combo sprite
-                if (topObject.Data.originalData.sprites != null && 
-                    topObject.Data.originalData.sprites.Length > 1)
-                {
-                    spriteRenderer.sprite = topObject.Data.originalData.sprites[1];
-                }
-            }
-            else
-            {
-                // Reset to default sprite
-                if (topObject.Data.originalData.sprites != null && 
-                    topObject.Data.originalData.sprites.Length > 0)
-                {
-                    spriteRenderer.sprite = topObject.Data.originalData.sprites[0];
-                }
-            }
-        }
-    }
+    
     public void RemoveDataInPositions(List<Vector2> positions)
     {
         foreach (var pos in positions)

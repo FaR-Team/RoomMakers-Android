@@ -55,7 +55,7 @@ public class FurnitureObjectBase : MonoBehaviour
         }
     }
     
-    public virtual bool ChangeToComboSprite()
+    /*public virtual bool ChangeToComboSprite()
     {
         // Only change sprite if this furniture has combo sprites enabled
         if (furnitureData.originalData.hasComboSprite && 
@@ -66,5 +66,5 @@ public class FurnitureObjectBase : MonoBehaviour
             return true;
         }
         return false;
-    }
+    }*/
 }
