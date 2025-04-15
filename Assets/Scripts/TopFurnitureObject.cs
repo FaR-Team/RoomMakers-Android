@@ -36,7 +36,7 @@ public class TopFurnitureObject : FurnitureObjectBase
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
-    public void MakeCombo(FurnitureOriginalData bottomFurnitureData)
+    public void MakeCombo()
     {
         comboDone = true;
         
@@ -47,14 +47,6 @@ public class TopFurnitureObject : FurnitureObjectBase
         }
         
         furnitureData.comboDone = true;
-        
-        // Check if this top furniture should change sprite when placed on specific bottom furniture
-        if (furnitureData.originalData != null && 
-            furnitureData.originalData.hasComboSprite && 
-            furnitureData.originalData.comboTriggerFurniture == bottomFurnitureData)
-        {
-            ChangeToComboSprite();
-        }
     }
 
     public void CheckAndUpdateSprite(FurnitureOriginalData bottomFurnitureData)
@@ -75,6 +67,7 @@ public class TopFurnitureObject : FurnitureObjectBase
 
     private void ChangeToComboSprite()
     {
+        //Debug.Log("Changing to combo sprite");
         if (furnitureData == null || furnitureData.originalData == null)
         {
             Debug.LogWarning("FurnitureData or OriginalData is null in TopFurnitureObject.ChangeToComboSprite");
@@ -97,10 +90,12 @@ public class TopFurnitureObject : FurnitureObjectBase
             
             spriteRenderer.sprite = furnitureData.originalData.sprites[1]; // Use the combo sprite (index 1)
         }
+        
     }
 
     private void ResetToDefaultSprite()
     {
+        //Debug.Log("Setting default sprite");
         if (furnitureData.originalData.sprites != null && 
             furnitureData.originalData.sprites.Length > 0 &&
             spriteRenderer != null)
