@@ -34,7 +34,7 @@ public class RoomFurnituresTutorial : RoomFurnitures
                 .instantiatedFurniture;
             
             // Check for sprite changes regardless of combo status
-            topObject.CheckAndUpdateSprite(bottomObject.originalData);
+            topObject.CheckAndUpdateSprite(bottomObject);
             
             // Nos fijamos si el objeto de arriba no hizo combo aún
             if(!topObject.ComboDone)

@@ -49,14 +49,16 @@ public class TopFurnitureObject : FurnitureObjectBase
         furnitureData.comboDone = true;
     }
 
-    public void CheckAndUpdateSprite(FurnitureOriginalData bottomFurnitureData)
+    public void CheckAndUpdateSprite(BottomFurnitureObject bottomFurniture)
     {        
         // Check if this is a specific combo that should trigger sprite change
         if (furnitureData.originalData.hasComboSprite && 
-            furnitureData.originalData.comboTriggerFurniture == bottomFurnitureData)
+            furnitureData.originalData.comboTriggerFurniture == bottomFurniture.originalData)
         {
             // Change to combo sprite
             ChangeToComboSprite();
+            // Update rotation according to bottom object's rotation
+            CopyRotation(bottomFurniture);
         }
         else
         {
@@ -102,6 +104,13 @@ public class TopFurnitureObject : FurnitureObjectBase
         {
             spriteRenderer.sprite = furnitureData.originalData.sprites[0]; // Use the default sprite (index 0)
         }
+    }
+
+    void CopyRotation(FurnitureObjectBase furnitureToCopy)
+    {
+        furnitureData.rotationStep = furnitureToCopy.Data.rotationStep;
+        furnitureData.VectorRotation = furnitureToCopy.Data.VectorRotation;
+        gameObject.transform.rotation = furnitureToCopy.gameObject.transform.rotation;
     }
     
     public void EnableStar(GameState newState)

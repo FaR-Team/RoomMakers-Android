@@ -103,11 +103,8 @@ public class RoomFurnitures : MonoBehaviour
             BottomFurnitureObject bottomObject = (BottomFurnitureObject) PlacementDatasInPosition[finalPos]
                 .instantiatedFurniture;
             
-            // Get the bottom furniture's original data
-            FurnitureOriginalData bottomFurnitureData = bottomObject.Data.originalData;
-            
             // Check for sprite changes regardless of combo status
-            topObject.CheckAndUpdateSprite(bottomFurnitureData);
+            topObject.CheckAndUpdateSprite(bottomObject);
             
             // Only calculate and award points if combo hasn't been done yet
             if(!topObject.ComboDone)
