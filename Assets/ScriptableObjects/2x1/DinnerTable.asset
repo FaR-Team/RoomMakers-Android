@@ -30,3 +30,4 @@ MonoBehaviour:
   furnitureTag: 5
   tagMatchBonusPoints: 50
   isLabeler: 0
+  hasReceivedTagBonus: 0

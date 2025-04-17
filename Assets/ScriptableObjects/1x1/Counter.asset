@@ -28,3 +28,4 @@ MonoBehaviour:
   furnitureTag: 1
   tagMatchBonusPoints: 50
   isLabeler: 0
+  hasReceivedTagBonus: 0
