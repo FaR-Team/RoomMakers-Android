@@ -24,6 +24,6 @@ MonoBehaviour:
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
   furnitureTag: 1
-  tagMatchBonusPoints: 50
+  tagMatchBonusPoints: 20
   isLabeler: 0
   hasReceivedTagBonus: 0
