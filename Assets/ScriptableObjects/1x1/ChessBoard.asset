@@ -15,10 +15,14 @@ MonoBehaviour:
   Name: Chess Board
   es_Name: Ajedrez
   price: 10
-  priceCombo: 20
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 6148c2560f0f015429b87441d3d4fa6a, type: 3}
   typeOfSize: 0
   compatibles: []
   sprites:
   - {fileID: 21300000, guid: b3e80fb7a3286c14f8d4ad44d77839ef, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 2
+  tagMatchBonusPoints: 50
+  isLabeler: 0

@@ -28,3 +28,8 @@ MonoBehaviour:
   - {fileID: 1968302764, guid: 7aed0aeb1a0485144ab08f7edd2639e8, type: 3}
   - {fileID: -438001771, guid: 7aed0aeb1a0485144ab08f7edd2639e8, type: 3}
   - {fileID: 808814901, guid: 7aed0aeb1a0485144ab08f7edd2639e8, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 5
+  tagMatchBonusPoints: 50
+  isLabeler: 0

@@ -15,10 +15,14 @@ MonoBehaviour:
   Name: Computer
   es_Name: Computadora
   price: 10
-  priceCombo: 20
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 81505e51d3c821c4582a89010c92fb9e, type: 3}
   typeOfSize: 0
   compatibles: []
   sprites:
   - {fileID: 645668682, guid: cb1cadfad9087f04f933284a297080b0, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 6
+  tagMatchBonusPoints: 50
+  isLabeler: 0

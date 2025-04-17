@@ -15,7 +15,6 @@ MonoBehaviour:
   Name: Sword
   es_Name: Espada
   price: 20
-  priceCombo: 40
   size: {x: 2, y: 1}
   prefab: {fileID: 6084753773558195295, guid: 15eab611baae5f44fb2aa87225a64c33, type: 3}
   typeOfSize: 3
@@ -23,3 +22,8 @@ MonoBehaviour:
   sprites:
   - {fileID: 468862550, guid: cdcf1dd7cb160164b814e9ee76794af9, type: 3}
   - {fileID: -1748928786, guid: cdcf1dd7cb160164b814e9ee76794af9, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 4
+  tagMatchBonusPoints: 50
+  isLabeler: 0

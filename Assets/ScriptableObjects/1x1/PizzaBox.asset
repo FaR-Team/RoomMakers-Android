@@ -21,3 +21,8 @@ MonoBehaviour:
   compatibles: []
   sprites:
   - {fileID: 21300000, guid: f104e5b2d84fd8f44bea3bbffccffab0, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 1
+  tagMatchBonusPoints: 50
+  isLabeler: 0

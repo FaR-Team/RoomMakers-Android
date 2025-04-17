@@ -15,7 +15,6 @@ MonoBehaviour:
   Name: Sarcophagus
   es_Name: Sarcofago
   price: 20
-  priceCombo: 40
   size: {x: 2, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 48f35a3185905dc48990fc630a5e9c1d, type: 3}
   typeOfSize: 3
@@ -24,3 +23,8 @@ MonoBehaviour:
   sprites:
   - {fileID: 1295230824, guid: 8aac8448dfbc2d64c84a5bb7a928faa7, type: 3}
   - {fileID: -1035610871, guid: 8aac8448dfbc2d64c84a5bb7a928faa7, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 2
+  tagMatchBonusPoints: 50
+  isLabeler: 0

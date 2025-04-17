@@ -15,7 +15,6 @@ MonoBehaviour:
   Name: Bathtub
   es_Name: Banera
   price: 20
-  priceCombo: 40
   size: {x: 2, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 234bac2d437868246a215e2b915b80a4, type: 3}
   typeOfSize: 3
@@ -24,3 +23,8 @@ MonoBehaviour:
   sprites:
   - {fileID: 4712758, guid: 467ffdef1d5e8ea408d81198e95893bc, type: 3}
   - {fileID: 591658475, guid: 467ffdef1d5e8ea408d81198e95893bc, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 3
+  tagMatchBonusPoints: 50
+  isLabeler: 0

@@ -15,10 +15,14 @@ MonoBehaviour:
   Name: Dishes
   es_Name: Platos
   price: 10
-  priceCombo: 20
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: d83266bb1e61ec140aa3ae4b220ed6a9, type: 3}
   typeOfSize: 0
   compatibles: []
   sprites:
   - {fileID: 21300000, guid: 75a539c6927ebaf43ad7bf251b00c679, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 1
+  tagMatchBonusPoints: 50
+  isLabeler: 0

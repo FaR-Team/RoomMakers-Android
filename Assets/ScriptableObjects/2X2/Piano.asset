@@ -15,7 +15,6 @@ MonoBehaviour:
   Name: Piano
   es_Name: Piano
   price: 40
-  priceCombo: 80
   size: {x: 2, y: 2}
   prefab: {fileID: 6084753773558195295, guid: 27b3ecbe6ebf4c149b62925f67a4f49e, type: 3}
   typeOfSize: 1
@@ -25,3 +24,8 @@ MonoBehaviour:
   - {fileID: -1668120892, guid: 3ab89705dfecf1546a78eda017c75c55, type: 3}
   - {fileID: 1835571918, guid: 3ab89705dfecf1546a78eda017c75c55, type: 3}
   - {fileID: 1907866493, guid: 3ab89705dfecf1546a78eda017c75c55, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 4
+  tagMatchBonusPoints: 50
+  isLabeler: 0

@@ -15,10 +15,14 @@ MonoBehaviour:
   Name: 'S. Couch '
   es_Name: Sillon I.
   price: 10
-  priceCombo: 20
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 1e241111bb434634c8b65aa750cdb01c, type: 3}
   typeOfSize: 0
   compatibles: []
   sprites:
   - {fileID: 21300000, guid: 0812fc86d707b9d4294f8516f5903122, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 4
+  tagMatchBonusPoints: 50
+  isLabeler: 0

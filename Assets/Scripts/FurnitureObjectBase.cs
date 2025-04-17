@@ -10,8 +10,15 @@ public class FurnitureObjectBase : MonoBehaviour
     [SerializeField] protected SpriteRenderer spriteRenderer;
     
     protected int currentSpriteIndex = 0;
+    protected bool hasReceivedTagBonus = false;
 
     public FurnitureData Data => furnitureData;
+    public bool HasReceivedTagBonus => hasReceivedTagBonus;
+    
+    public void MarkTagBonusReceived()
+    {
+        hasReceivedTagBonus = true;
+    }
     
     private void Awake()
     {
@@ -33,6 +40,7 @@ public class FurnitureObjectBase : MonoBehaviour
         furnitureData.originalData = newData.originalData;
         furnitureData.VectorRotation = newData.VectorRotation;
         furnitureData.rotationStep = newData.rotationStep;
+        furnitureData.hasReceivedTagBonus = newData.hasReceivedTagBonus;
         
         // Set initial sprite if needed
         if (spriteRenderer == null)

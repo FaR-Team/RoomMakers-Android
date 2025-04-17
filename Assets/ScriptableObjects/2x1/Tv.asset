@@ -15,7 +15,6 @@ MonoBehaviour:
   Name: Tv
   es_Name: TV
   price: 20
-  priceCombo: 40
   size: {x: 2, y: 1}
   prefab: {fileID: 5954944119824593527, guid: bac6742669297f44fbb660acc504e2f1, type: 3}
   typeOfSize: 3
@@ -23,3 +22,8 @@ MonoBehaviour:
   sprites:
   - {fileID: -518771065, guid: f1a74a1031b0384408f660f8759efa4c, type: 3}
   - {fileID: 629548532, guid: f1a74a1031b0384408f660f8759efa4c, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 4
+  tagMatchBonusPoints: 50
+  isLabeler: 0

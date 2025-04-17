@@ -15,10 +15,15 @@ MonoBehaviour:
   Name: Fridge
   es_Name: Heladera
   price: 10
-  priceCombo: 20
   size: {x: 1, y: 1}
   prefab: {fileID: 9156776624177822006, guid: 9c6cf5d2a447b3a4e944e13b5733a892, type: 3}
   typeOfSize: 0
   compatibles: []
   sprites:
   - {fileID: -1260001303, guid: dc5b13df87b08f844b650ad122006005, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 1
+  tagMatchBonusPoints: 50
+  isLabeler: 0
+  hasReceivedTagBonus: 0

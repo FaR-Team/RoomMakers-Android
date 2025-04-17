@@ -15,10 +15,14 @@ MonoBehaviour:
   Name: Sink
   es_Name: Lavamanos
   price: 10
-  priceCombo: 20
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: f1a9c4033a66e7640844c33e887ed499, type: 3}
   typeOfSize: 0
   compatibles: []
   sprites:
   - {fileID: 1152587871, guid: 5a4a6a5695782714d8b235351573a803, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 1
+  tagMatchBonusPoints: 50
+  isLabeler: 0

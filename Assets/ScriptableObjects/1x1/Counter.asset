@@ -15,7 +15,6 @@ MonoBehaviour:
   Name: Counter
   es_Name: Mesada
   price: 10
-  priceCombo: 20
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 8e0250bdc5f9fbc4cab36fb3ee024408, type: 3}
   typeOfSize: 0
@@ -24,3 +23,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3abd00303a3b14c45a858e84b99533da, type: 2}
   sprites:
   - {fileID: 21300000, guid: 179e9086a88553d4f9c8b84f5183b811, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 1
+  tagMatchBonusPoints: 50
+  isLabeler: 0

@@ -15,7 +15,12 @@ public class FurnitureOriginalData : ScriptableObject
     public bool hasComboSprite = false; 
     [Tooltip("If hasComboSprite is true, this furniture will change its sprite when combined with this specific furniture")]
     public FurnitureOriginalData comboTriggerFurniture;
-    //Los objetos que son compatibles con este objeto, más no así, los que este son compatibles con.
+    
+    [Header("Tagging System")]
+    public RoomTag furnitureTag = RoomTag.None;
+    public int tagMatchBonusPoints = 50; // Points awarded when furniture tag matches room tag
+    public bool isLabeler = false; // Whether this furniture is a labeler item
+    public bool hasReceivedTagBonus = false;
 }
 public enum TypeOfSize
 {

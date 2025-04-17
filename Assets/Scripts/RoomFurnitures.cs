@@ -85,6 +85,47 @@ public class RoomFurnitures : MonoBehaviour
 
     protected virtual void GivePoints(FurnitureData data, List<Vector2> positionToOccupy, bool placeOnTop, Vector2 finalPos, FurnitureObjectBase furnitureObject)
     {
+        // Get the room component
+        Room currentRoom = GetComponent<Room>();
+        
+        // Handle labeler item
+        if (data.originalData.isLabeler)
+        {
+            // Show tag selection UI
+            TagSelectionUI.ShowTagSelection(currentRoom, () => {
+                // This callback will be called after tag selection
+                // Destroy the labeler item after use
+                Destroy(furnitureObject.gameObject);
+                RemoveDataInPositions(positionToOccupy);
+            });
+            return;
+        }
+        
+        // Check if this furniture has a tag and the room doesn't have one yet
+        RoomTag furnitureTag = data.originalData.furnitureTag;
+        if (furnitureTag != RoomTag.None && currentRoom != null)
+        {
+            // Try to set the room tag from furniture
+            currentRoom.TrySetRoomTagFromFurniture(furnitureTag);
+        }
+        
+        // Calculate bonus points for tag matching - only if not already received
+        int tagBonus = 0;
+        if (currentRoom != null && 
+            furnitureTag != RoomTag.None && 
+            furnitureTag == currentRoom.roomTag && 
+            !data.hasReceivedTagBonus) // Check using the data field
+        {
+            tagBonus = data.originalData.tagMatchBonusPoints;
+            data.hasReceivedTagBonus = true; // Mark as received in the data
+            
+            // Show bonus points popup
+            if (tagBonus > 0)
+            {
+                ComboPopUp.Create(popUpPrefab, tagBonus, finalPos, new Vector2(0f, 1.5f));
+            }
+        }
+        
         if (!placeOnTop)
         {
             if (TryGetComponent(out MainRoom room))
@@ -93,6 +134,13 @@ public class RoomFurnitures : MonoBehaviour
             }
 
             PlacementDatasInPosition[finalPos].instantiatedFurniture = furnitureObject;
+            
+            // Add tag bonus points
+            if (tagBonus > 0)
+            {
+                PlayerController.instance.Inventory.UpdateMoney(tagBonus);
+                House.instance.UpdateScore(tagBonus);
+            }
         }
         else
         {
@@ -117,10 +165,21 @@ public class RoomFurnitures : MonoBehaviour
                 {
                     topObject.MakeCombo();
                     
+                    // Add tag bonus to combo points
+                    totalCombo += tagBonus;
+                    
                     PlayerController.instance.Inventory.UpdateMoney(totalCombo);
                     House.instance.UpdateScore(totalCombo);
                     
                     ComboPopUp.Create(popUpPrefab, totalCombo, finalPos, new Vector2(0f, 1.2f));
+                }
+                else if (tagBonus > 0)
+                {
+                    // If there's no combo but there is a tag bonus, add it separately
+                    PlayerController.instance.Inventory.UpdateMoney(tagBonus);
+                    House.instance.UpdateScore(tagBonus);
+                    
+                    ComboPopUp.Create(popUpPrefab, tagBonus, finalPos, new Vector2(0f, 1.2f));
                 }
             }
             

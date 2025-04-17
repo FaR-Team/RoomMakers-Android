@@ -15,7 +15,6 @@ MonoBehaviour:
   Name: Race Track
   es_Name: Pista RC
   price: 20
-  priceCombo: 40
   size: {x: 2, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 74158df3adc310e448e65f793a93f255, type: 3}
   typeOfSize: 3
@@ -23,3 +22,8 @@ MonoBehaviour:
   sprites:
   - {fileID: 1705823530, guid: 75fe03d300d28a94387bf241a2be99d6, type: 3}
   - {fileID: -1548659895, guid: 75fe03d300d28a94387bf241a2be99d6, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 4
+  tagMatchBonusPoints: 50
+  isLabeler: 0

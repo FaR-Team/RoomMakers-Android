@@ -183,6 +183,7 @@ public class FurnitureData
         rotationStep = 0;
         comboDone = false;
         localTileCombos = new();
+        hasReceivedTagBonus = false;
     }
 
     public FurnitureData()
@@ -197,4 +198,5 @@ public class FurnitureData
     public int rotationStep;
     public bool comboDone;
     public HashSet<Vector2Int> localTileCombos;
+    public bool hasReceivedTagBonus = false;
 }

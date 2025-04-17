@@ -15,7 +15,6 @@ MonoBehaviour:
   Name: DinnerTable
   es_Name: MesaComedor
   price: 20
-  priceCombo: 40
   size: {x: 2, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 3bb30eaf4d21ae049a3a2770c70e3377, type: 3}
   typeOfSize: 3
@@ -26,3 +25,8 @@ MonoBehaviour:
   sprites:
   - {fileID: -1030993009, guid: 3fcecbf5f336efc4294f7888d75f4093, type: 3}
   - {fileID: -1119942959, guid: 3fcecbf5f336efc4294f7888d75f4093, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 5
+  tagMatchBonusPoints: 50
+  isLabeler: 0

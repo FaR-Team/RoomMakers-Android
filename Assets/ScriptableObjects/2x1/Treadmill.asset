@@ -22,3 +22,8 @@ MonoBehaviour:
   sprites:
   - {fileID: -1989195346, guid: ed915e1b6eee89a4985aef5aa392e171, type: 3}
   - {fileID: -1250495333, guid: ed915e1b6eee89a4985aef5aa392e171, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  furnitureTag: 8
+  tagMatchBonusPoints: 50
+  isLabeler: 0
