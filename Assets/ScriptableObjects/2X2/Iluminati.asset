@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: ????
   es_Name: ????
-  price: 40
+  price: 100
   size: {x: 2, y: 2}
   prefab: {fileID: 6084753773558195295, guid: 30e4fc0ea83cb3e46b763981004b32f0, type: 3}
   typeOfSize: 1
@@ -26,7 +26,7 @@ MonoBehaviour:
   - {fileID: -1553342661, guid: ec830e396b2684d488182d2e7758dbec, type: 3}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
-  furnitureTag: 7
+  furnitureTag: 0
   tagMatchBonusPoints: 50
   isLabeler: 0
   hasReceivedTagBonus: 0

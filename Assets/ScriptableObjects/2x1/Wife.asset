@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Darling
   es_Name: Querida
-  price: 0
+  price: 100
   size: {x: 2, y: 1}
   prefab: {fileID: 6084753773558195295, guid: c3516afda6bdd144a990be98749e154a, type: 3}
   typeOfSize: 3
@@ -24,7 +24,7 @@ MonoBehaviour:
   - {fileID: -1142530706, guid: 443a4591e3811f04e88d6dc5304c5b78, type: 3}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
-  furnitureTag: 1
+  furnitureTag: 0
   tagMatchBonusPoints: 50
   isLabeler: 0
   hasReceivedTagBonus: 0

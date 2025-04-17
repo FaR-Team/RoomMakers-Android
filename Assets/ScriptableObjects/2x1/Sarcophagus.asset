@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Sarcophagus
   es_Name: Sarcofago
-  price: 20
+  price: 50
   size: {x: 2, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 48f35a3185905dc48990fc630a5e9c1d, type: 3}
   typeOfSize: 3

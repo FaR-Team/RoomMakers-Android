@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6582f407bbc7b741a5cf2ee76b2b532, type: 3}
   m_Name: SingleCouch
   m_EditorClassIdentifier: 
-  Name: 'S. Couch '
+  Name: S. Couch
   es_Name: Sillon I.
   price: 10
   size: {x: 1, y: 1}

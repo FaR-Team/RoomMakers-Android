@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Strange Cube
   es_Name: Cubo Raro
-  price: 10
+  price: 100
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 692b54df45b45624eb53086265717971, type: 3}
   typeOfSize: 0
@@ -24,6 +24,6 @@ MonoBehaviour:
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
   furnitureTag: 7
-  tagMatchBonusPoints: 50
+  tagMatchBonusPoints: 100
   isLabeler: 0
   hasReceivedTagBonus: 0

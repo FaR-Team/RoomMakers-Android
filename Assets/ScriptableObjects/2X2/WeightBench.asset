@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WeightBench
   m_EditorClassIdentifier: 
   Name: WeightBench
-  es_Name: Cama Pesas
+  es_Name: Banco Pesas
   price: 40
   size: {x: 2, y: 2}
   prefab: {fileID: 6084753773558195295, guid: d99e28b31de9e394181a949b7940ef4d, type: 3}
