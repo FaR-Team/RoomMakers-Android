@@ -445,6 +445,8 @@ MonoBehaviour:
   cameraVector: {x: 0, y: 0, z: 0}
   paletteNum: 0
   roomFurnitures: {fileID: 0}
+  roomTag: 0
+  hasTagBeenSet: 0
 --- !u!114 &-79038053544743697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -458,6 +460,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popUpPrefab: {fileID: 8158556740613534364, guid: 8cad54e402c327741b4cc6ed086d9bfd, type: 3}
+  matchPrefab: {fileID: 8158556740613534364, guid: 54835c0a87bfc9e449123aa7cdb0aee0, type: 3}
 --- !u!1 &5748501362297983713
 GameObject:
   m_ObjectHideFlags: 0

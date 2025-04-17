@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
 using Unity.VisualScripting;
@@ -11,6 +12,7 @@ public class RoomFurnitures : MonoBehaviour
     
     // TODO: que no se tenga que asignar aca la referencia al prefab
     [SerializeField] protected ComboPopUp popUpPrefab;
+    [SerializeField] protected ComboPopUp matchPrefab;
 
     public bool PlaceFurniture(Vector2 position, FurnitureData furnitureData)
     {
@@ -82,12 +84,11 @@ public class RoomFurnitures : MonoBehaviour
 
         return true;
     }
-
     protected virtual void GivePoints(FurnitureData data, List<Vector2> positionToOccupy, bool placeOnTop, Vector2 finalPos, FurnitureObjectBase furnitureObject)
     {
         // Get the room component
         Room currentRoom = GetComponent<Room>();
-        
+    
         // Handle labeler item
         if (data.originalData.isLabeler)
         {
@@ -100,7 +101,7 @@ public class RoomFurnitures : MonoBehaviour
             });
             return;
         }
-        
+    
         // Check if this furniture has a tag and the room doesn't have one yet
         RoomTag furnitureTag = data.originalData.furnitureTag;
         if (furnitureTag != RoomTag.None && currentRoom != null)
@@ -108,7 +109,7 @@ public class RoomFurnitures : MonoBehaviour
             // Try to set the room tag from furniture
             currentRoom.TrySetRoomTagFromFurniture(furnitureTag);
         }
-        
+    
         // Calculate bonus points for tag matching - only if not already received
         int tagBonus = 0;
         if (currentRoom != null && 
@@ -119,13 +120,14 @@ public class RoomFurnitures : MonoBehaviour
             tagBonus = data.originalData.tagMatchBonusPoints;
             data.hasReceivedTagBonus = true; // Mark as received in the data
             
-            // Show bonus points popup
-            if (tagBonus > 0)
+            // Show bonus points popup only if we're actually awarding points and not placing on top
+            // (if placing on top, we'll handle it differently below)
+            if (tagBonus > 0 && !placeOnTop)
             {
-                ComboPopUp.Create(popUpPrefab, tagBonus, finalPos, new Vector2(0f, 1.5f));
+                ComboPopUp.Create(matchPrefab, tagBonus, finalPos, new Vector2(0f, 1.5f));
             }
         }
-        
+    
         if (!placeOnTop)
         {
             if (TryGetComponent(out MainRoom room))
@@ -146,14 +148,14 @@ public class RoomFurnitures : MonoBehaviour
         {
             // Si el objeto va encima de otro, lo guardamos en el PlacementData y damos doble score por combo
             int totalCombo = 0;
-            
+        
             TopFurnitureObject topObject = (TopFurnitureObject) furnitureObject;
             BottomFurnitureObject bottomObject = (BottomFurnitureObject) PlacementDatasInPosition[finalPos]
                 .instantiatedFurniture;
-            
+        
             // Check for sprite changes regardless of combo status
             topObject.CheckAndUpdateSprite(bottomObject);
-            
+        
             // Only calculate and award points if combo hasn't been done yet
             if(!topObject.ComboDone)
             {
@@ -166,26 +168,46 @@ public class RoomFurnitures : MonoBehaviour
                     topObject.MakeCombo();
                     
                     // Add tag bonus to combo points
-                    totalCombo += tagBonus;
+                    int comboPoints = totalCombo;
+                    if (tagBonus > 0)
+                    {
+                        comboPoints += tagBonus;
+                    }
                     
-                    PlayerController.instance.Inventory.UpdateMoney(totalCombo);
-                    House.instance.UpdateScore(totalCombo);
+                    PlayerController.instance.Inventory.UpdateMoney(comboPoints);
+                    House.instance.UpdateScore(comboPoints);
                     
-                    ComboPopUp.Create(popUpPrefab, totalCombo, finalPos, new Vector2(0f, 1.2f));
+                    // Show combo popup immediately
+                    ComboPopUp.Create(popUpPrefab, comboPoints, finalPos, new Vector2(0f, 1.2f));
+                    
+                    // If there's also a tag bonus, show it after a delay
+                    if (tagBonus > 0)
+                    {
+                        StartCoroutine(ShowMatchPopupDelayed(tagBonus, finalPos));
+                    }
                 }
                 else if (tagBonus > 0)
                 {
                     // If there's no combo but there is a tag bonus, add it separately
                     PlayerController.instance.Inventory.UpdateMoney(tagBonus);
                     House.instance.UpdateScore(tagBonus);
-                    
-                    ComboPopUp.Create(popUpPrefab, tagBonus, finalPos, new Vector2(0f, 1.2f));
+                
+                    ComboPopUp.Create(matchPrefab, tagBonus, finalPos, new Vector2(0f, 1.2f));
                 }
             }
-            
+        
             // Updateamos la placement data con el objeto que pusimos encima
             PlacementDatasInPosition[finalPos].PlaceObjectOnTop(positionToOccupy, topObject);
         }
+    }
+    
+    private IEnumerator ShowMatchPopupDelayed(int tagBonus, Vector2 position)
+    {
+        // Wait for half a second
+        yield return new WaitForSeconds(0.7f);
+        
+        // Show the match popup
+        ComboPopUp.Create(matchPrefab, tagBonus, position, new Vector2(0f, 1f)); // Slightly higher position
     }
     
     public void RemoveDataInPositions(List<Vector2> positions)

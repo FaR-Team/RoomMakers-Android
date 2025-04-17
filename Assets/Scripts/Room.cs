@@ -31,23 +31,25 @@ public class Room : MonoBehaviour
         }
     }
     
-    public void SetRoomTag(RoomTag newTag)
+    public delegate void RoomTagChangedHandler(RoomTag newTag);
+    public event RoomTagChangedHandler OnRoomTagChanged;
+    
+    public virtual void SetRoomTag(RoomTag newTag)
     {
-        roomTag = newTag;
-        hasTagBeenSet = true;
-        
-        // TODO: UI para esto, ya sea iconitos, o lo que verga haya
-        Debug.Log($"Room tag set to: {newTag}");
+        if (roomTag != newTag)
+        {
+            roomTag = newTag;
+            OnRoomTagChanged?.Invoke(roomTag);
+        }
     }
     
-    public bool TrySetRoomTagFromFurniture(RoomTag furnitureTag)
+    public virtual bool TrySetRoomTagFromFurniture(RoomTag newTag)
     {
-        // Only set the room tag if it hasn't been set before
-        if (!hasTagBeenSet && furnitureTag != RoomTag.None)
+        if (roomTag == RoomTag.None && newTag != RoomTag.None)
         {
-            SetRoomTag(furnitureTag);
+            roomTag = newTag;
+            OnRoomTagChanged?.Invoke(roomTag);
             return true;
         }
         return false;
-    }
-}
+    }}
