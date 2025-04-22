@@ -30,8 +30,8 @@ public static class FurnitureDataExcelUtility
         // Create CSV content
         StringBuilder csv = new StringBuilder();
         
-        // Write header
-        csv.AppendLine("AssetPath,Name,es_Name,Price,SizeX,SizeY,TypeOfSize,PrefabPath,FurnitureTag,TagMatchBonusPoints,IsLabeler,HasComboSprite,ComboTriggerFurniturePath");
+        // Write header - removed isLabeler, added wallObject and compatibles
+        csv.AppendLine("AssetPath,Name,es_Name,Price,SizeX,SizeY,TypeOfSize,PrefabPath,FurnitureTag,TagMatchBonusPoints,WallObject,HasComboSprite,ComboTriggerFurniturePath,Compatibles");
         
         // Write data rows
         foreach (FurnitureOriginalData data in furnitureData)
@@ -40,7 +40,22 @@ public static class FurnitureDataExcelUtility
             string prefabPath = data.prefab != null ? AssetDatabase.GetAssetPath(data.prefab) : "";
             string comboTriggerPath = data.comboTriggerFurniture != null ? AssetDatabase.GetAssetPath(data.comboTriggerFurniture) : "";
             
-            csv.AppendLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12}",
+            // Create compatibles list as semicolon-separated paths
+            string compatiblesStr = "";
+            if (data.compatibles != null && data.compatibles.Count() > 0)
+            {
+                List<string> compatiblePaths = new List<string>();
+                foreach (var compatible in data.compatibles)
+                {
+                    if (compatible != null)
+                    {
+                        compatiblePaths.Add(AssetDatabase.GetAssetPath(compatible));
+                    }
+                }
+                compatiblesStr = string.Join(";", compatiblePaths);
+            }
+            
+            csv.AppendLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13}",
                 assetPath,
                 EscapeCSV(data.Name),
                 EscapeCSV(data.es_Name),
@@ -51,9 +66,10 @@ public static class FurnitureDataExcelUtility
                 EscapeCSV(prefabPath),
                 data.furnitureTag,
                 data.tagMatchBonusPoints,
-                data.isLabeler,
+                data.wallObject, // Added wallObject instead of isLabeler
                 data.hasComboSprite,
-                EscapeCSV(comboTriggerPath)
+                EscapeCSV(comboTriggerPath),
+                EscapeCSV(compatiblesStr) // Added compatibles list
             ));
         }
         
@@ -91,7 +107,7 @@ public static class FurnitureDataExcelUtility
                 continue;
                 
             string[] values = ParseCSVLine(line);
-            if (values.Length < 13)
+            if (values.Length < 14) // Updated for new fields
             {
                 Debug.LogError($"Line {i} has incorrect format: {line}");
                 continue;
@@ -121,22 +137,40 @@ public static class FurnitureDataExcelUtility
             // Parse enum
             data.furnitureTag = (RoomTag)Enum.Parse(typeof(RoomTag), values[8]);
             data.tagMatchBonusPoints = int.Parse(values[9]);
-            data.isLabeler = bool.Parse(values[10]);
+            data.wallObject = bool.Parse(values[10]); // Changed from isLabeler to wallObject
             data.hasComboSprite = bool.Parse(values[11]);
             
             // Load combo trigger furniture
             string comboTriggerPath = values[12];
             if (!string.IsNullOrEmpty(comboTriggerPath))
                 data.comboTriggerFurniture = AssetDatabase.LoadAssetAtPath<FurnitureOriginalData>(comboTriggerPath);
+            
+            // Load compatibles list
+            string compatiblesStr = values[13];
+            List<FurnitureOriginalData> compatiblesList = new List<FurnitureOriginalData>();
+            if (!string.IsNullOrEmpty(compatiblesStr))
+            {
+                string[] compatiblePaths = compatiblesStr.Split(';');
+                foreach (string path in compatiblePaths)
+                {
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        FurnitureOriginalData compatible = AssetDatabase.LoadAssetAtPath<FurnitureOriginalData>(path);
+                        if (compatible != null)
+                        {
+                            compatiblesList.Add(compatible);
+                        }
+                    }
+                }
+            }
+            data.compatibles = compatiblesList.ToArray();
                 
             EditorUtility.SetDirty(data);
         }
         
         AssetDatabase.SaveAssets();
         Debug.Log($"Imported furniture data from {filePath}");
-    }
-    
-    private static string EscapeCSV(string value)
+    }    private static string EscapeCSV(string value)
     {
         if (string.IsNullOrEmpty(value))
             return "";

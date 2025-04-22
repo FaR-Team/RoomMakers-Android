@@ -23,6 +23,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 03e12326fc5b8dd45aed3687ec969955, type: 2}
   - {fileID: 11400000, guid: 5540817b85aa1cd40aa62cdcd2dc2ddf, type: 2}
   - {fileID: 11400000, guid: 845ccd4d90144b341be38d94a33c57e6, type: 2}
+  - {fileID: 11400000, guid: 288af28ddbf120849a152d00a5d8f6c7, type: 2}
   sprites:
   - {fileID: -105178077, guid: 7aed0aeb1a0485144ab08f7edd2639e8, type: 3}
   - {fileID: 1968302764, guid: 7aed0aeb1a0485144ab08f7edd2639e8, type: 3}
@@ -30,6 +31,7 @@ MonoBehaviour:
   - {fileID: 808814901, guid: 7aed0aeb1a0485144ab08f7edd2639e8, type: 3}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
+  wallObject: 0
   furnitureTag: 5
   tagMatchBonusPoints: 50
   isLabeler: 0

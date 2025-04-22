@@ -21,10 +21,12 @@ MonoBehaviour:
   compatibles:
   - {fileID: 11400000, guid: 5540817b85aa1cd40aa62cdcd2dc2ddf, type: 2}
   - {fileID: 11400000, guid: 3abd00303a3b14c45a858e84b99533da, type: 2}
+  - {fileID: 11400000, guid: 288af28ddbf120849a152d00a5d8f6c7, type: 2}
   sprites:
   - {fileID: 21300000, guid: 179e9086a88553d4f9c8b84f5183b811, type: 3}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
+  wallObject: 0
   furnitureTag: 1
   tagMatchBonusPoints: 20
   isLabeler: 0

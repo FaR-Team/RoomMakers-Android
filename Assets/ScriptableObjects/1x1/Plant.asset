@@ -23,6 +23,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: f5bf83417c3d1f94aa25544948b9e4bf, type: 3}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
+  wallObject: 0
   furnitureTag: 4
   tagMatchBonusPoints: 30
   isLabeler: 0

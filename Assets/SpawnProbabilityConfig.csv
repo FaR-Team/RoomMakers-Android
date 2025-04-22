@@ -1,18 +1,18 @@
-# SpawnProbabilityConfig
+# SpawnProbabilityConfig,
 ConfigName,SpawnProbabilityConfig
 DefaultTagProbability,10
-
-# Tag Probabilities
+,
+# Tag Probabilities,
 TagName,Probability
-Kitchen,0
-Bedroom,0
-Bathroom,0
-LivingRoom,0
-DiningRoom,0
-Office,0
-Lab,0
-Gym,0
-
-# Furniture Specific Probabilities
+Kitchen,5
+Bedroom,15
+Bathroom,15
+LivingRoom,5
+DiningRoom,15
+Office,15
+Lab,7
+Gym,15
+,
+# Furniture Specific Probabilities,
 FurniturePath,Probability
 Assets/ScriptableObjects/1x1/Computer.asset,2.9

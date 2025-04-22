@@ -15,19 +15,21 @@ MonoBehaviour:
   defaultTagProbability: 10
   tagProbabilities:
   - tag: 1
-    spawnProbability: 10
+    spawnProbability: 5
   - tag: 2
-    spawnProbability: 10
+    spawnProbability: 15
   - tag: 3
-    spawnProbability: 10
+    spawnProbability: 15
   - tag: 4
-    spawnProbability: 10
+    spawnProbability: 5
   - tag: 5
-    spawnProbability: 10
+    spawnProbability: 15
   - tag: 6
-    spawnProbability: 10
+    spawnProbability: 15
   - tag: 7
-    spawnProbability: 10
+    spawnProbability: 7
   - tag: 8
-    spawnProbability: 10
-  furnitureSpecificProbabilities: []
+    spawnProbability: 15
+  furnitureSpecificProbabilities:
+  - furniture: {fileID: 11400000, guid: 130f9903c113749488c7a1107aa58724, type: 2}
+    spawnProbability: 2.9

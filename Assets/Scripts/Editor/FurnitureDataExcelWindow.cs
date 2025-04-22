@@ -6,6 +6,7 @@ public class FurnitureDataExcelWindow : EditorWindow
 {
     private string exportPath = "Assets/FurnitureData.csv";
     private string importPath = "Assets/FurnitureData.csv";
+    private Vector2 scrollPosition;
     
     [MenuItem("Tools/Furniture Data Excel Tool")]
     public static void ShowWindow()
@@ -15,6 +16,8 @@ public class FurnitureDataExcelWindow : EditorWindow
     
     private void OnGUI()
     {
+        scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+        
         GUILayout.Label("Furniture Data Excel Tool", EditorStyles.boldLabel);
         
         EditorGUILayout.Space(10);
@@ -59,6 +62,16 @@ public class FurnitureDataExcelWindow : EditorWindow
                 FurnitureDataExcelUtility.ImportFromCSV(importPath);
             }
         }
+        
+        EditorGUILayout.Space(10);
+        EditorGUILayout.HelpBox(
+            "CSV Format:\n" +
+            "- Removed 'isLabeler' field\n" +
+            "- Added 'wallObject' field\n" +
+            "- Added 'compatibles' field (semicolon-separated list of asset paths)", 
+            MessageType.Info);
+            
+        EditorGUILayout.EndScrollView();
     }
     
     private string GetRelativePath(string fullPath)
