@@ -18,10 +18,33 @@ public class PackagesGenerator : MonoBehaviour
     [SerializeField] private List<FurnitureOriginalData> deletedFurnitures;
 
     [SerializeField] private List<FurnitureOriginalData> tutorialObjects;
+
+    [Header("Spawn Probability Configuration")]
+    [SerializeField] private SpawnProbabilityConfig spawnConfig;
+    [SerializeField] private bool useTagBasedProbabilities = true;
+    
+    // Dictionary to track furniture spawn chances
+    private Dictionary<FurnitureOriginalData, float> furnitureSpawnChances = new Dictionary<FurnitureOriginalData, float>();
     private void Start()
     {
         InvokeRepeating("GeneratePackage", 2f, 5f);
         SetPossibleFurnitures();
+
+        if (useTagBasedProbabilities && spawnConfig != null)
+        {
+            CalculateFurnitureSpawnChances();
+        }
+    }
+
+    private void CalculateFurnitureSpawnChances()
+    {
+        furnitureSpawnChances.Clear();
+        
+        foreach (var furniture in allFurnitures)
+        {
+            float probability = spawnConfig.GetProbabilityForFurniture(furniture);
+            furnitureSpawnChances[furniture] = probability;
+        }
     }
 
     private void GeneratePackage()
@@ -67,23 +90,82 @@ public class PackagesGenerator : MonoBehaviour
             deletedFurnitures.RemoveAt(index_deleted);
             possibleFurnitures.Add(value);
         }
+
         if (possibleFurnitures.Count == 0)
         {
             deletedFurnitures.Clear();
             SetPossibleFurnitures();
         }
 
-        int index_possibles = GetRandomValueIn(possibleFurnitures);
+        if (possibleFurnitures.Count == 0)
+        {
+            deletedFurnitures.Clear();
+            SetPossibleFurnitures();
+        }
 
-        FurnitureOriginalData furniture = possibleFurnitures[index_possibles];
-        possibleFurnitures.RemoveAt(index_possibles);
-        deletedFurnitures.Add(furniture);
-
-        quantityOfObjectSpawned++;
-
-        return furniture;
+        if (useTagBasedProbabilities && spawnConfig != null)
+        {
+            return GetRandomFurnitureByProbability();
+        }
+        else
+        {
+            // Original method
+            int index_possibles = GetRandomValueIn(possibleFurnitures);
+            FurnitureOriginalData furniture = possibleFurnitures[index_possibles];
+            possibleFurnitures.RemoveAt(index_possibles);
+            deletedFurnitures.Add(furniture);
+            quantityOfObjectSpawned++;
+            return furniture;
+        }
     }
-    
+
+    private FurnitureOriginalData GetRandomFurnitureByProbability()
+    {
+        // Calculate total probability weight
+        float totalWeight = 0f;
+        Dictionary<FurnitureOriginalData, float> availableFurniture = new Dictionary<FurnitureOriginalData, float>();
+        
+        foreach (var furniture in possibleFurnitures)
+        {
+            float weight = furnitureSpawnChances.ContainsKey(furniture) ? 
+                furnitureSpawnChances[furniture] : spawnConfig.defaultTagProbability;
+            availableFurniture[furniture] = weight;
+            totalWeight += weight;
+        }
+        
+        // No furniture available
+        if (totalWeight <= 0f)
+        {
+            return possibleFurnitures[0]; // Fallback
+        }
+        
+        // Select a random value within the total weight
+        float randomValue = Random.Range(0f, totalWeight);
+        float currentWeight = 0f;
+        
+        // Find the furniture that corresponds to the random value
+        foreach (var kvp in availableFurniture)
+        {
+            currentWeight += kvp.Value;
+            if (randomValue <= currentWeight)
+            {
+                // Found our furniture
+                FurnitureOriginalData selectedFurniture = kvp.Key;
+                possibleFurnitures.Remove(selectedFurniture);
+                deletedFurnitures.Add(selectedFurniture);
+                quantityOfObjectSpawned++;
+                return selectedFurniture;
+            }
+        }
+        
+        // Fallback (should not reach here)
+        int index = GetRandomValueIn(possibleFurnitures);
+        FurnitureOriginalData fallbackFurniture = possibleFurnitures[index];
+        possibleFurnitures.RemoveAt(index);
+        deletedFurnitures.Add(fallbackFurniture);
+        quantityOfObjectSpawned++;
+        return fallbackFurniture;
+    }
 
     private int GetRandomValueIn(List<FurnitureOriginalData> list)
     {

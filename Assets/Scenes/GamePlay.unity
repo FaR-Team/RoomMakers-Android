@@ -4731,6 +4731,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5d3bf39e9b59b5e4fabbf6c92e9df8ef, type: 2}
   - {fileID: 11400000, guid: b0169168ff310264292d9af4de8dbe59, type: 2}
   - {fileID: 11400000, guid: 6e00cf28cf6b3724892f7167e0e46a54, type: 2}
+  spawnConfig: {fileID: 11400000, guid: 56307d80e4810f34998d0a2c19420e49, type: 2}
+  useTagBasedProbabilities: 1
 --- !u!1 &1406673783
 GameObject:
   m_ObjectHideFlags: 0
