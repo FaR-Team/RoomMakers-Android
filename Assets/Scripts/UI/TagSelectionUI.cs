@@ -120,7 +120,7 @@ public class TagSelectionUI : MonoBehaviour
     }
     
     // Para cuando hagamos la UI
-    private void SelectTag(RoomTag tag, Button button)
+    public void SelectTag(RoomTag tag, Button button)
     {
         selectedTag = tag;
         

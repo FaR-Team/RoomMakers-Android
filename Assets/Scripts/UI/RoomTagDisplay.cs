@@ -20,7 +20,7 @@ public class RoomTagDisplay : MonoBehaviour
     private void Update()
     {
         // Check if the current room has changed
-        if (currentRoom != House.instance.currentRoom)
+        if (currentRoom != House.instance.currentRoom) // TODO: Usar un evento cuando se cambia el current room en House, no update
         {
             UpdateRoomTagDisplay(House.instance.currentRoom);
         }

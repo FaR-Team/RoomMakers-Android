@@ -134,41 +134,13 @@ public class FurniturePreview : MonoBehaviour
 
         if (rotation >= 4)
             rotation = 0;
-
-        furnitureData.rotationStep = rotation;
+        
         CheckRotation();
     }
-
+    
     void CheckRotation()
     {
-        switch (rotation)
-        {
-            case 0:
-                furnitureData.VectorRotation = new Vector3Int(0, 0, 0);
-
-                furnitureData.size = originalSize;
-                break;
-            case 1:
-                furnitureData.VectorRotation = new Vector3Int(0, 0, 90);
-
-                furnitureData.size.x = -originalSize.y;
-                furnitureData.size.y = originalSize.x;
-                break;
-            case 2:
-                furnitureData.VectorRotation = new Vector3Int(0, 0, 180);
-
-                furnitureData.size = -originalSize;
-                break;
-            case 3:
-                furnitureData.VectorRotation = new Vector3Int(0, 0, 270);
-
-                furnitureData.size.x = originalSize.y;
-                furnitureData.size.y = -originalSize.x;
-                break;
-            default:
-                break;
-        }
-
+        furnitureData.SetRotationByStep(rotation);
         transform.rotation = Quaternion.Euler(furnitureData.VectorRotation);
     }
 }
@@ -199,4 +171,41 @@ public class FurnitureData
     public bool comboDone;
     public HashSet<Vector2Int> localTileCombos;
     public bool hasReceivedTagBonus = false;
+
+    public void SetRotationByStep(int step)
+    {
+        rotationStep = Mathf.Clamp(step, 0, 3);
+        if(step == 0) VectorRotation = new Vector3Int(0, 0, 0);
+        else if(step == 1) VectorRotation = new Vector3Int(0, 0, 90);
+        else if(step == 2) VectorRotation = new Vector3Int(0, 0, 180);
+        else VectorRotation = new Vector3Int(0, 0, 270);
+        
+        switch (step)
+        {
+            case 0:
+                VectorRotation = new Vector3Int(0, 0, 0);
+
+                size = originalData.size;
+                break;
+            case 1:
+                VectorRotation = new Vector3Int(0, 0, 90);
+
+                size.x = -originalData.size.y;
+                size.y = originalData.size.x;
+                break;
+            case 2:
+                VectorRotation = new Vector3Int(0, 0, 180);
+
+                size = -originalData.size;
+                break;
+            case 3:
+                VectorRotation = new Vector3Int(0, 0, 270);
+
+                size.x = originalData.size.y;
+                size.y = -originalData.size.x;
+                break;
+            default:
+                break;
+        }
+    }
 }

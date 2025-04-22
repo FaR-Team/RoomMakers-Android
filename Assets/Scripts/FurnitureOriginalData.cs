@@ -15,6 +15,8 @@ public class FurnitureOriginalData : ScriptableObject
     public bool hasComboSprite = false; 
     [Tooltip("If hasComboSprite is true, this furniture will change its sprite when combined with this specific furniture")]
     public FurnitureOriginalData comboTriggerFurniture;
+
+    public bool wallObject;
     
     [Header("Tagging System")]
     public RoomTag furnitureTag = RoomTag.None;

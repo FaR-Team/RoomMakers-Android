@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
@@ -14,13 +15,22 @@ public class RoomFurnitures : MonoBehaviour
     [SerializeField] protected ComboPopUp popUpPrefab;
     [SerializeField] protected ComboPopUp matchPrefab;
 
+    private LayerMask wallsLayerMask;
+
+    private void Start()
+    {
+        wallsLayerMask = LayerMask.GetMask("Walls", "InnerWalls");
+    }
+
     public bool PlaceFurniture(Vector2 position, FurnitureData furnitureData)
     {
         var originalData = furnitureData.originalData;
 
         List<Vector2> positionToOccupy = CalculatePositions(position, furnitureData.size);
 
-        bool canPlace = !positionToOccupy.Any(x => PlacementDatasInPosition.ContainsKey(x) || Physics2D.OverlapCircle(x, 0.2f));
+        bool canPlace =
+            (!positionToOccupy.Any(x => PlacementDatasInPosition.ContainsKey(x) || Physics2D.OverlapCircle(x, 0.2f))) &&
+            (!furnitureData.originalData.wallObject || CheckWallsAndRotate(position, furnitureData));
         bool placeOnTop = false;
 
         if (canPlace)
@@ -84,6 +94,39 @@ public class RoomFurnitures : MonoBehaviour
 
         return true;
     }
+
+    private bool CheckWallsAndRotate(Vector2 position, FurnitureData data)
+    {
+        bool isWallUp = Physics2D.Raycast(position, Vector2.up, 1f, wallsLayerMask);
+        bool isWallLeft = Physics2D.Raycast(position, Vector2.left, 1f, wallsLayerMask);
+        bool isWallBottom = Physics2D.Raycast(position, Vector2.down, 1f, wallsLayerMask);
+        bool isWallRight = Physics2D.Raycast(position, Vector2.right, 1f, wallsLayerMask);
+        
+        if (!(isWallBottom || isWallRight || isWallLeft || isWallUp)) return false;
+        
+        bool[] availableWalls = {isWallUp, isWallLeft, isWallBottom, isWallRight};
+        
+        RotateToWall(data, availableWalls);
+        return true;
+    }
+
+    void RotateToWall(FurnitureData data, bool[] availableWalls)
+    {
+        bool correctRotation = availableWalls[data.rotationStep];
+
+        if (!correctRotation)
+        {
+            for (int i = 0; i < availableWalls.Length; i++)
+            {
+                if (availableWalls[i])
+                {
+                    data.SetRotationByStep(i);
+                    break;
+                }
+            }
+        }
+    }
+
     protected virtual void GivePoints(FurnitureData data, List<Vector2> positionToOccupy, bool placeOnTop, Vector2 finalPos, FurnitureObjectBase furnitureObject)
     {
         // Get the room component
