@@ -136,7 +136,7 @@ public class RoomFurnitures : MonoBehaviour
         if (data.originalData.isLabeler)
         {
             // Show tag selection UI
-            TagSelectionUI.ShowTagSelection(currentRoom, () => {
+            TagSelectionUI.instance.ShowTagSelection(currentRoom, () => {
                 // This callback will be called after tag selection
                 // Destroy the labeler item after use
                 Destroy(furnitureObject.gameObject);
@@ -167,6 +167,8 @@ public class RoomFurnitures : MonoBehaviour
             // (if placing on top, we'll handle it differently below)
             if (tagBonus > 0 && !placeOnTop)
             {
+                PlayerController.instance.Inventory.UpdateMoney(tagBonus);
+                House.instance.UpdateScore(tagBonus);
                 ComboPopUp.Create(matchPrefab, tagBonus, finalPos, new Vector2(0f, 1.5f));
             }
         }

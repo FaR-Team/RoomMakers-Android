@@ -1,22 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.InputSystem;
 
 public class TagSelectionUI : MonoBehaviour
 {
     public static TagSelectionUI instance;
     
-    [SerializeField] private GameObject tagSelectionPanel;
-    [SerializeField] private Transform tagButtonsContainer;
-    [SerializeField] private Button tagButtonPrefab;
-    [SerializeField] private Button confirmButton;
-    [SerializeField] private Button cancelButton;
+    [SerializeField] private Transform selectedImage;
+    [SerializeField] private TagButton[] tagButtons;
+    private TagButton selectedButton;
     
     private Room targetRoom;
     private RoomTag selectedTag = RoomTag.None;
     private Action onConfirmCallback;
+
+    private Controls playerInput;
     
     private void Awake()
     {
@@ -31,19 +33,59 @@ public class TagSelectionUI : MonoBehaviour
             return;
         }
         
+        playerInput = PlayerController.instance.playerInput;
+        gameObject.SetActive(false);
+        
         //tagSelectionPanel.SetActive(false);
         
         //confirmButton.onClick.AddListener(ConfirmTagSelection);
         //cancelButton.onClick.AddListener(CancelTagSelection);
     }
-    
-    public static void ShowTagSelection(Room room, Action callback)
+
+    private void OnEnable()
+    {
+        playerInput.Movement.Movement.performed += Navigate;
+    }
+
+    private void OnDisable()
+    {
+        playerInput.Movement.Movement.performed -= Navigate;
+    }
+
+    private void Navigate(InputAction.CallbackContext obj)
+    {
+        if (!obj.performed) return;
+
+        var dir = obj.ReadValue<Vector2>();
+        selectedButton.SelectNext(dir);
+    }
+
+    public void ShowTagSelection(Room room, Action callback)
     {
         if (instance == null) return;
+        gameObject.SetActive(true);
+        targetRoom = room;
+        onConfirmCallback = callback;
+        StateManager.currentGameState = GameState.Pause; // TODO: Mejorar
+
+        if (room.roomTag == RoomTag.None)
+        {
+            selectedTag = tagButtons[0].Tag;
+        }
+        else selectedTag = room.roomTag;
         
-        // Debug version - show a simple debug menu instead of the UI
-        instance.ShowDebugTagSelection(room, callback);
+        
+        var selectedTagButton = tagButtons.FirstOrDefault(b => b.Tag == selectedTag);
+        if (selectedTagButton != null)
+        {
+            selectedButton = selectedTagButton;
+            selectedTagButton.Select();
+            //selectedImage.transform.position = selectedTagButton.transform.position;
+        }
+        else selectedImage.transform.position = tagButtons[0].transform.position;
+        //ShowDebugTagSelection(room, callback);
     }
+    
     
     private void ShowDebugTagSelection(Room room, Action callback)
     {
@@ -120,18 +162,11 @@ public class TagSelectionUI : MonoBehaviour
     }
     
     // Para cuando hagamos la UI
-    public void SelectTag(RoomTag tag, Button button)
+    public void SelectTag(RoomTag tag, TagButton button)
     {
         selectedTag = tag;
-        
-        // Reset all button colors
-        foreach (Transform child in tagButtonsContainer)
-        {
-            child.GetComponent<Image>().color = Color.white;
-        }
-        
-        // Highlight selected button
-        button.GetComponent<Image>().color = new Color(0.8f, 0.8f, 1f);
+        selectedImage.position = button.transform.position;
+        selectedButton = button;
     }
     
     private void ConfirmTagSelection()
@@ -141,9 +176,9 @@ public class TagSelectionUI : MonoBehaviour
             targetRoom.SetRoomTag(selectedTag);
             
             // Show a notification about the room tag change
-            Vector3 roomCenter = targetRoom.transform.position;
+            /*Vector3 roomCenter = targetRoom.transform.position;
             ComboPopUp.Create(FindObjectOfType<RoomFurnitures>().GetComponent<ComboPopUp>(), 
-                0, new Vector2(roomCenter.x, roomCenter.y), Vector2.up);
+                0, new Vector2(roomCenter.x, roomCenter.y), Vector2.up);*/
         }
         
         ClosePanel();
@@ -151,7 +186,20 @@ public class TagSelectionUI : MonoBehaviour
         // Call the callback
         onConfirmCallback?.Invoke();
     }
-    
+
+    private void Update()
+    {
+        if (playerInput.Movement.Interact.WasPressedThisFrame())
+        {
+            ConfirmTagSelection();
+        }
+
+        if (playerInput.Movement.Rotate.WasPressedThisFrame())
+        {
+            CancelTagSelection();
+        }
+    }
+
     private void CancelTagSelection()
     {
         ClosePanel();
@@ -159,7 +207,8 @@ public class TagSelectionUI : MonoBehaviour
     
     private void ClosePanel()
     {
-        tagSelectionPanel.SetActive(false);
+        gameObject.SetActive(false);
+        StateManager.StartGame();
         Time.timeScale = 1; // Resume game
     }
 }
