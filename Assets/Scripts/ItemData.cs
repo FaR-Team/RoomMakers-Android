@@ -6,6 +6,8 @@ using UnityEngine;
 public class ItemData : FurnitureOriginalData
 {
     public ItemType type;
+    public Sprite ShopSprite;
+    public int buyPrice;
 }
 
 public enum ItemType

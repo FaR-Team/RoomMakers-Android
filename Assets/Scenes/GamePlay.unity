@@ -1976,6 +1976,9 @@ MonoBehaviour:
   doorLayer:
     serializedVersion: 2
     m_Bits: 1024
+  shopLayer:
+    serializedVersion: 2
+    m_Bits: 8192
   text_name: {fileID: 248926907}
 --- !u!1 &470416140
 GameObject:
@@ -4014,8 +4017,12 @@ MonoBehaviour:
   houseParent: {fileID: 943811823}
   currentRoom: {fileID: 0}
   comboStarSprite: {fileID: 3817393959942364799, guid: f66ce8377de79f94081daa738e46cf17, type: 3}
+  shopRoomPrefabs:
+  - {fileID: 5748501361486919024, guid: 75928f108f2ba454f9077e9e0cb4c18f, type: 3}
+  shopSpawnProbability: 0.05
+  allowShopsInCorners: 0
   baseDoorPrice: 100
-  priceGrowthFactor: 1.5
+  priceGrowthFactor: 1.3
   priceAdditive: 200
   useExponentialGrowth: 1
   maxDoorPrice: 0
@@ -5419,6 +5426,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: deac0df5bdec1894e9c064db2a5ac544, type: 2}
   - {fileID: 11400000, guid: 1b98caba988c013498b7fa5375d546e7, type: 2}
   - {fileID: 11400000, guid: 765cdb246feb4434398feb9893907afc, type: 2}
+  - {fileID: 11400000, guid: eebac06c2dc802c429dd2ca2e1aebee5, type: 2}
   wife: {fileID: 11400000, guid: 5ef2e2c77af1e7d478780c49e1c6965f, type: 2}
   onePercent:
   - {fileID: 11400000, guid: c9a8abdc44c79de41a95d4026f078a8a, type: 2}
@@ -6081,57 +6089,6 @@ Canvas:
   m_SortingLayerID: 1622856267
   m_SortingOrder: 21
   m_TargetDisplay: 0
---- !u!1 &1587926626
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1587926627}
-  - component: {fileID: 1587926628}
-  m_Layer: 12
-  m_Name: TagSelectionUI
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1587926627
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1587926626}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1899736868}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1587926628
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1587926626}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d73969c7b0f91d4a9d546260ba84169, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectedImage: {fileID: 0}
-  tagButtons: []
 --- !u!1 &1614000207
 GameObject:
   m_ObjectHideFlags: 0
@@ -7391,7 +7348,6 @@ RectTransform:
   - {fileID: 207601627}
   - {fileID: 137018197}
   - {fileID: 2014130529}
-  - {fileID: 1587926627}
   m_Father: {fileID: 782540701}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7825,7 +7781,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1970789219}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.4, y: -4, z: 3}
+  m_LocalPosition: {x: -4.5, y: -4, z: 3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8281,7 +8237,7 @@ MonoBehaviour:
   moveSpeed: 5
   whatStopsMovement:
     serializedVersion: 2
-    m_Bits: 1800
+    m_Bits: 9992
   anim: {fileID: 1881136534}
   furniturePreviews:
   - {fileID: 1828525995}
@@ -8357,6 +8313,8 @@ MonoBehaviour:
   moneyText: {fileID: 720822055}
   packageUI: {fileID: 1970789219}
   text_name: {fileID: 248926907}
+  itemImage: {fileID: 1970789222}
+  PackageSprite: {fileID: 21300000, guid: 06b2c1d097903d649bc72a3029bd042f, type: 3}
 --- !u!1 &2060447013
 GameObject:
   m_ObjectHideFlags: 0
@@ -8854,7 +8812,7 @@ Camera:
   m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4031
+    m_Bits: 12223
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: a52d8679520b6cb429a4d78aa940daba, type: 2}
   m_TargetDisplay: 0

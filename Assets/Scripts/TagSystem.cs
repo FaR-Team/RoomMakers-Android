@@ -10,5 +10,6 @@ public enum RoomTag
     DiningRoom,
     Office,
     Lab,
-    Gym
+    Gym,
+    Shop
 }

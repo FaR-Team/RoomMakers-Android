@@ -7,6 +7,7 @@ public class Interactor : MonoBehaviour
 {
     [SerializeField] private bool spanish;
     [SerializeField] private LayerMask doorLayer;
+    [SerializeField] private LayerMask shopLayer;
     [SerializeField] private TextMeshProUGUI text_name;
     public void Interact(Inventory playerInventory)
     {
@@ -58,15 +59,32 @@ public class Interactor : MonoBehaviour
 
         var door = Physics2D.OverlapCircle(transform.position, 0.2f, doorLayer);
 
-        if (!door) return;
-        
-        // Desbloquear habitacion si hay guita
-        door.TryGetComponent(out DoorData doorData);
-
-        if (doorData)
+        if (door)
         {
-            doorData.BuyNextRoom();
-            PlayerController.instance.CheckInFront();
+            // Desbloquear habitacion si hay guita
+            door.TryGetComponent(out DoorData doorData);
+
+            if (doorData)
+            {
+                doorData.BuyNextRoom();
+                PlayerController.instance.CheckInFront();
+            }
+            return;
+        }
+
+        var item = Physics2D.OverlapCircle(transform.position, 0.2f, shopLayer);
+
+        if (item)
+        {
+            // Comprar si hay guita
+            item.TryGetComponent(out ShopItem shopItemData);
+            Debug.Log(shopItemData.name);
+
+            if (shopItemData)
+            {
+                shopItemData.TryPurchase();
+                PlayerController.instance.CheckInFront();
+            }
         }
     }
 }

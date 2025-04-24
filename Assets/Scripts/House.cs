@@ -26,11 +26,17 @@ public class House : MonoBehaviour
     public GameObject comboStarSprite;
 
     private int availableSpaces;
+
+    [Header("Shop Settings")]
+    public GameObject[] shopRoomPrefabs;
+    [Range(0f, 1f)]
+    [SerializeField] private float shopSpawnProbability = 0.15f;
+    [SerializeField] private bool allowShopsInCorners = false;
     
     [Header("Door Price Settings")]
-    [SerializeField] [Tooltip("Precio inicial")] private int baseDoorPrice = 100;
-    [SerializeField] [Tooltip("Controla qué tan rápido suben los precios")] private float priceGrowthFactor = 1.2f;
-    [SerializeField] [Tooltip("Cantidad a añadir para el crecimiento lineal")] private int priceAdditive = 200;
+    [Tooltip("Precio inicial")] public int baseDoorPrice = 100;
+    [Tooltip("Controla qué tan rápido suben los precios")] public float priceGrowthFactor = 1.2f;
+    [Tooltip("Cantidad a añadir para el crecimiento lineal")] public int priceAdditive = 200;
     [SerializeField] [Tooltip("Usar o no el precio exponencial")] private bool useExponentialGrowth = true;
     [SerializeField] [Tooltip("Cap opcional en los precios (0 significa ilimitado)")] private int maxDoorPrice = 0;
     
@@ -208,6 +214,20 @@ public class House : MonoBehaviour
 
     void RandomizeRoom(string type)
     {
+        bool shouldSpawnShop = false;
+
+
+        if (type == "center" && shopRoomPrefabs != null && shopRoomPrefabs.Length > 0)
+        {
+            shouldSpawnShop = Random.value < shopSpawnProbability;
+        }
+        
+        if (shouldSpawnShop)
+        {
+            int shopIndex = Random.Range(0, shopRoomPrefabs.Length);
+            selectedPrefab = shopRoomPrefabs[shopIndex];
+            return;
+        }
         if (type == "center")
         {
             int index = Random.Range(0, roomPrefabs.Length);

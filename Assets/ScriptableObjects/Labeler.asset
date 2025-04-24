@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fc80d8573194d1a48ac12859f61a9854, type: 3}
-  m_Name: Tagger
+  m_Name: Labeler
   m_EditorClassIdentifier: 
-  Name: Tagger
+  Name: Labeler
   es_Name: Etiquetador
-  price: 10
+  price: 0
   size: {x: 1, y: 1}
   prefab: {fileID: 0}
   typeOfSize: 0
@@ -29,3 +29,5 @@ MonoBehaviour:
   isLabeler: 1
   hasReceivedTagBonus: 0
   type: 0
+  ShopSprite: {fileID: -407197743, guid: 2fb9bc36333197b49b80dfccaecec38e, type: 3}
+  buyPrice: 500

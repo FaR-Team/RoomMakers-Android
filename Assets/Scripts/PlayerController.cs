@@ -139,13 +139,29 @@ public class PlayerController : MovementController
 
     public void CheckInFront()
     {
-        var hit = Physics2D.Raycast(transform.position, transform.up, 1f, 1 << 10);
+
+        var hit = Physics2D.Raycast(transform.position, transform.up, 1f, 1 << 10 | 1 << 13);
 
         if (hit.collider != null)
         {
-            costText.text = House.instance.DoorPrice.ToString();
-            costCanvas.SetActive(true);
-            costCanvas.transform.position = GetCostTextPosition();
+            // Check if it's a door
+            if (hit.collider.TryGetComponent(out DoorData doorData))
+            {
+                costText.text = House.instance.DoorPrice.ToString();
+                costCanvas.SetActive(true);
+                costCanvas.transform.position = GetCostTextPosition();
+            }
+            // Check if it's a shop item
+            else if (hit.collider.TryGetComponent(out ShopItem shopItem))
+            {
+                ItemData itemData = shopItem.GetItemData();
+                if (itemData != null)
+                {
+                    costText.text = shopItem.GetPrice().ToString();
+                    costCanvas.SetActive(true);
+                    costCanvas.transform.position = GetCostTextPosition();
+                }
+            }
         }
         else
         {
