@@ -72,8 +72,18 @@ public class FurniturePreview : MonoBehaviour
         position.x = cellPos.x;
         position.y = cellPos.y;
 
-        bool placeFurniture = House.instance.currentRoom.roomFurnitures.
-               PlaceFurniture(new Vector2(transform.position.x, transform.position.y), furnitureData);
+        bool placeFurniture = false;
+        
+        if (furnitureData.originalData is ItemData itemData)
+        {
+            placeFurniture = House.instance.currentRoom.roomFurnitures.PlaceItem(new Vector2(transform.position.x, transform.position.y),
+                itemData, furnitureData);
+        }
+        else
+        {
+            placeFurniture = House.instance.currentRoom.roomFurnitures.
+                PlaceFurniture(new Vector2(transform.position.x, transform.position.y), furnitureData);
+        }
 
         gameObject.SetActive(!placeFurniture);
 

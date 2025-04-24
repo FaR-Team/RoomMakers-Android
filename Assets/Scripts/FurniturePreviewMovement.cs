@@ -5,8 +5,13 @@ public class FurniturePreviewMovement : MovementController
 {
     private float moveCooldown = .2f;
     private float moveCooldownCounter;
+    private Camera mainCam;
+    private float moveRange = 5f;
 
-
+    private void Awake()
+    {
+        mainCam = Camera.main;    
+    }
     void Update()
     {
         if (StateManager.IsPaused()) return;
@@ -24,7 +29,9 @@ public class FurniturePreviewMovement : MovementController
 
             if (Mathf.Abs(Input.x) == 1f)
             {
-                if (Physics2D.OverlapCircle(transform.position + new Vector3(Input.x, 0f, 0f), .1f,
+                Vector3 nextPos = transform.position + new Vector3(Input.x, 0f, 0f);
+                if (Mathf.Abs(mainCam.transform.position.x - nextPos.x) > moveRange ||
+                    Physics2D.OverlapCircle(nextPos, .1f,
                         whatStopsMovement) || moveCooldownCounter > 0) return;
 
                 transform.position += new Vector3(Input.x, 0f, 0f);;
@@ -32,7 +39,9 @@ public class FurniturePreviewMovement : MovementController
             }
             else if (Mathf.Abs(Input.y) == 1f)
             {
-                if (Physics2D.OverlapCircle(transform.position + new Vector3(0f, Input.y, 0f), .1f,
+                Vector3 nextPos = transform.position + new Vector3(0f, Input.y, 0f);
+                if (Mathf.Abs(mainCam.transform.position.y - nextPos.y) > moveRange ||
+                    Physics2D.OverlapCircle(nextPos, .1f,
                         whatStopsMovement) || moveCooldownCounter > 0) return;
 
                 transform.position += new Vector3(0f, Input.y, 0f);

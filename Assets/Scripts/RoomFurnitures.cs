@@ -25,7 +25,8 @@ public class RoomFurnitures : MonoBehaviour
     public bool PlaceFurniture(Vector2 position, FurnitureData furnitureData)
     {
         var originalData = furnitureData.originalData;
-
+        
+        
         List<Vector2> positionToOccupy = CalculatePositions(position, furnitureData.size);
 
         bool canPlace =
@@ -95,6 +96,41 @@ public class RoomFurnitures : MonoBehaviour
         return true;
     }
 
+    public bool PlaceItem(Vector2 position, ItemData itemData, FurnitureData furnitureData)
+    {
+        bool placed;
+        Room currentRoom = GetComponent<Room>();
+        switch (itemData.type)
+        {
+            case ItemType.Tagger:
+                TagSelectionUI.instance.ShowTagSelection(currentRoom, () =>
+                {
+                    Debug.Log("Placed tagger");
+                });
+                placed = true;
+                break;
+            case ItemType.Sledgehammer:
+                var coll = Physics2D.OverlapCircle(position, 0.2f);
+                if (coll != null && coll.TryGetComponent<DoorData>(out DoorData door) && !door.isUnlocked)
+                {
+                    door.BuyNextRoom(true);
+                }
+                placed = true;
+                break;
+            case ItemType.OutletKit:
+                placed = PlaceFurniture(position, furnitureData);
+                break;
+            case ItemType.PipelineKit:
+                placed = PlaceFurniture(position, furnitureData);
+                break;
+            default:
+                placed = false;
+                break;
+        }
+        
+        return placed;
+    }
+
     private bool CheckWallsAndRotate(Vector2 position, FurnitureData data)
     {
         bool isWallUp = Physics2D.Raycast(position, Vector2.up, 1f, wallsLayerMask);
@@ -131,19 +167,7 @@ public class RoomFurnitures : MonoBehaviour
     {
         // Get the room component
         Room currentRoom = GetComponent<Room>();
-    
-        // Handle labeler item
-        if (data.originalData.isLabeler)
-        {
-            // Show tag selection UI
-            TagSelectionUI.instance.ShowTagSelection(currentRoom, () => {
-                // This callback will be called after tag selection
-                // Destroy the labeler item after use
-                Destroy(furnitureObject.gameObject);
-                RemoveDataInPositions(positionToOccupy);
-            });
-            return;
-        }
+        
     
         // Check if this furniture has a tag and the room doesn't have one yet
         RoomTag furnitureTag = data.originalData.furnitureTag;
