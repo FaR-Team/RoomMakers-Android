@@ -10,6 +10,7 @@ public class FurniturePreview : MonoBehaviour
 
     [SerializeField] private FurnitureData furnitureData;
     [SerializeField] private Inventory inventory;
+    [SerializeField] private FurniturePreviewMovement movement;
     
     [Header("Shake Effect")]
     [SerializeField] private float shakeDuration = 0.2f;
@@ -45,6 +46,15 @@ public class FurniturePreview : MonoBehaviour
         originalSize = newData.originalData.size;
         rotation = furnitureData.rotationStep;
         firstTimePlacingFurniture = firstTimePlacing; // To give points and score when placing furniture for the first time, and avoid adding this to every object's data
+
+        if (furnitureData.originalData is ItemData {type: ItemType.Sledgehammer})
+        {
+            movement.RemoveDoorLayerToMask();
+        }
+        else
+        {
+            movement.AddDoorLayerToMask();
+        }
     }
 
     private void OnEnable()
@@ -73,11 +83,14 @@ public class FurniturePreview : MonoBehaviour
         position.y = cellPos.y;
 
         bool placeFurniture = false;
+
+        
         
         if (furnitureData.originalData is ItemData itemData)
         {
             placeFurniture = House.instance.currentRoom.roomFurnitures.PlaceItem(new Vector2(transform.position.x, transform.position.y),
                 itemData, furnitureData);
+            
         }
         else
         {
@@ -89,6 +102,8 @@ public class FurniturePreview : MonoBehaviour
 
         if (placeFurniture)
         {
+            movement.AddDoorLayerToMask(); // Resetear layermask de movimiento de sledgehammer // TODO: Ver si es necesario aca o siempre va a funcionar con chequear en SetData arriba
+            
             if (firstTimePlacingFurniture)
             {
                 PlayerController.instance.Inventory.UpdateMoney(furnitureData.originalData.price);

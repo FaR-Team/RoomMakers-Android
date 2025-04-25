@@ -849,6 +849,7 @@ MonoBehaviour:
   whatStopsMovement:
     serializedVersion: 2
     m_Bits: 1160
+  doorLayer: 0
 --- !u!114 &194237384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -863,6 +864,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 0}
   inventory: {fileID: 2043652587}
+  movement: {fileID: 194237383}
   shakeDuration: 0.2
   shakeAmount: 0.04
   decreaseFactor: 1
@@ -2371,6 +2373,7 @@ MonoBehaviour:
   whatStopsMovement:
     serializedVersion: 2
     m_Bits: 1160
+  doorLayer: 0
 --- !u!114 &664401296
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2385,6 +2388,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 0}
   inventory: {fileID: 2043652587}
+  movement: {fileID: 664401295}
   shakeDuration: 0.2
   shakeAmount: 0.04
   decreaseFactor: 1
@@ -3684,6 +3688,7 @@ MonoBehaviour:
   whatStopsMovement:
     serializedVersion: 2
     m_Bits: 1160
+  doorLayer: 0
 --- !u!114 &871330504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3698,6 +3703,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 0}
   inventory: {fileID: 2043652587}
+  movement: {fileID: 871330503}
   shakeDuration: 0.2
   shakeAmount: 0.04
   decreaseFactor: 1
@@ -5801,6 +5807,7 @@ MonoBehaviour:
   whatStopsMovement:
     serializedVersion: 2
     m_Bits: 1160
+  doorLayer: 0
 --- !u!114 &1521791841
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5815,6 +5822,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 0}
   inventory: {fileID: 2043652587}
+  movement: {fileID: 1521791840}
   shakeDuration: 0.2
   shakeAmount: 0.04
   decreaseFactor: 1
@@ -6850,6 +6858,7 @@ MonoBehaviour:
   whatStopsMovement:
     serializedVersion: 2
     m_Bits: 1160
+  doorLayer: 0
 --- !u!114 &1828525995
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6864,6 +6873,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 0}
   inventory: {fileID: 2043652587}
+  movement: {fileID: 1828525994}
   shakeDuration: 0.2
   shakeAmount: 0.04
   decreaseFactor: 1

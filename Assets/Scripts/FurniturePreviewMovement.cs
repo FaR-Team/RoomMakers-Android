@@ -6,7 +6,8 @@ public class FurniturePreviewMovement : MovementController
     private float moveCooldown = .2f;
     private float moveCooldownCounter;
     private Camera mainCam;
-    private float moveRange = 5f;
+    private float moveRangeX = 5f;
+    private float moveRangeY = 4.5f;
 
     private void Awake()
     {
@@ -30,7 +31,7 @@ public class FurniturePreviewMovement : MovementController
             if (Mathf.Abs(Input.x) == 1f)
             {
                 Vector3 nextPos = transform.position + new Vector3(Input.x, 0f, 0f);
-                if (Mathf.Abs(mainCam.transform.position.x - nextPos.x) > moveRange ||
+                if (Mathf.Abs(mainCam.transform.position.x - nextPos.x) > moveRangeX ||
                     Physics2D.OverlapCircle(nextPos, .1f,
                         whatStopsMovement) || moveCooldownCounter > 0) return;
 
@@ -40,7 +41,7 @@ public class FurniturePreviewMovement : MovementController
             else if (Mathf.Abs(Input.y) == 1f)
             {
                 Vector3 nextPos = transform.position + new Vector3(0f, Input.y, 0f);
-                if (Mathf.Abs(mainCam.transform.position.y - nextPos.y) > moveRange ||
+                if (Mathf.Abs(mainCam.transform.position.y - nextPos.y) > moveRangeY ||
                     Physics2D.OverlapCircle(nextPos, .1f,
                         whatStopsMovement) || moveCooldownCounter > 0) return;
 
@@ -58,5 +59,15 @@ public class FurniturePreviewMovement : MovementController
         {
             GetComponent<FurniturePreview>().PutFurniture();
         }
+    }
+
+    public void AddDoorLayerToMask()
+    {
+        whatStopsMovement |= (1 << 10); // 10: LockedDoor layer 
+    }
+
+    public void RemoveDoorLayerToMask()
+    {
+        whatStopsMovement &= ~(1 << 10);
     }
 }

@@ -5,7 +5,7 @@ public class ShopRoom : MonoBehaviour
 {
     [Header("Shop Configuration")]
     [SerializeField] private Transform[] itemSpawnPoints;
-    [SerializeField] private GameObject[] shopItemPrefabs;
+    [SerializeField] private ShopItem[] shopItemPrefabs;
     
     [Header("Sledgehammer Pricing")]
     [SerializeField] private float sledgehammerPriceRatio = 0.5f; // Half the room price
@@ -41,7 +41,7 @@ public class ShopRoom : MonoBehaviour
         if (roomComponent != null)
         {
             // Subscribe to room initialization
-            roomComponent.OnRoomTagChanged += HandleRoomTagChanged;
+            //roomComponent.OnRoomTagChanged += HandleRoomTagChanged;
             
             // Set room tag to Shop if not already set
             if (roomComponent.roomTag == RoomTag.None)
@@ -64,14 +64,14 @@ public class ShopRoom : MonoBehaviour
         }
     }
     
-    private void HandleRoomTagChanged(RoomTag newTag)
+    /*private void HandleRoomTagChanged(RoomTag newTag)
     {
         // If room tag changes to something other than Shop, we might want to clean up
         if (newTag != RoomTag.Shop)
         {
             ClearShopItems();
         }
-    }
+    }*/
     
     public void InitializeShopItems()
     {
@@ -107,16 +107,16 @@ public class ShopRoom : MonoBehaviour
         }
     }
     
-    private void SpawnShopItem(Transform spawnPoint, GameObject itemPrefab)
+    private void SpawnShopItem(Transform spawnPoint, ShopItem itemPrefab)
     {
         // Instantiate the shop item
-        GameObject shopItemObj = Instantiate(itemPrefab, spawnPoint.position, Quaternion.identity, transform);
-        ShopItem shopItem = shopItemObj.GetComponent<ShopItem>();
+        ShopItem shopItemObj = Instantiate(itemPrefab, spawnPoint.position, Quaternion.identity, transform);
+        //ShopItem shopItem = shopItemObj.GetComponent<ShopItem>();
         
-        if (shopItem != null)
+        if (shopItemObj != null)
         {
             // Get the ItemData from the prefab
-            ItemData itemData = shopItem.GetItemData();
+            ItemData itemData = shopItemObj.GetItemData();
             
             if (itemData != null)
             {
@@ -124,8 +124,8 @@ public class ShopRoom : MonoBehaviour
                 int itemPrice = CalculateItemPrice(itemData);
                 
                 // Initialize the shop item with the selected item and price
-                shopItem.Initialize(itemData, itemPrice);
-                spawnedItems.Add(shopItem);
+                shopItemObj.Initialize(itemData, itemPrice);
+                spawnedItems.Add(shopItemObj);
             }
             else
             {
@@ -184,12 +184,12 @@ public class ShopRoom : MonoBehaviour
         }
     }
     
-    private void OnDestroy()
+    /*private void OnDestroy()
     {
         // Unsubscribe from events
         if (roomComponent != null)
         {
             roomComponent.OnRoomTagChanged -= HandleRoomTagChanged;
         }
-    }
+    }*/
 }

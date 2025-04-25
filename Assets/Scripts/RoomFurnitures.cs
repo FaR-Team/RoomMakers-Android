@@ -114,8 +114,10 @@ public class RoomFurnitures : MonoBehaviour
                 if (coll != null && coll.TryGetComponent<DoorData>(out DoorData door) && !door.isUnlocked)
                 {
                     door.BuyNextRoom(true);
+                    placed = true;
+                    break;
                 }
-                placed = true;
+                placed = false;
                 break;
             case ItemType.OutletKit:
                 placed = PlaceFurniture(position, furnitureData);

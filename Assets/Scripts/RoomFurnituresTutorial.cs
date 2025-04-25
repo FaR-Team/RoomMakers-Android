@@ -8,20 +8,7 @@ public class RoomFurnituresTutorial : RoomFurnitures
     {
         // Get the room component
         Room currentRoom = GetComponent<Room>();
-    
-        // Handle labeler item
-        if (data.originalData.isLabeler)
-        {
-            // Show tag selection UI
-            TagSelectionUI.instance.ShowTagSelection(currentRoom, () => {
-                // This callback will be called after tag selection
-                // Destroy the labeler item after use
-                Destroy(furnitureObject.gameObject);
-                RemoveDataInPositions(positionToOccupy);
-            });
-            return;
-        }
-    
+        
         // Check if this furniture has a tag and the room doesn't have one yet
         RoomTag furnitureTag = data.originalData.furnitureTag;
         if (furnitureTag != RoomTag.None && currentRoom != null)
