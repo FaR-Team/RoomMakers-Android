@@ -42,8 +42,11 @@ public class PackagesGenerator : MonoBehaviour
         
         foreach (var furniture in allFurnitures)
         {
-            float probability = spawnConfig.GetProbabilityForFurniture(furniture);
-            furnitureSpawnChances[furniture] = probability;
+            if (furniture != null)
+            {
+                float probability = spawnConfig.GetProbabilityForFurniture(furniture);
+                furnitureSpawnChances[furniture] = probability;
+            }
         }
     }
 
@@ -97,12 +100,6 @@ public class PackagesGenerator : MonoBehaviour
             SetPossibleFurnitures();
         }
 
-        if (possibleFurnitures.Count == 0)
-        {
-            deletedFurnitures.Clear();
-            SetPossibleFurnitures();
-        }
-
         if (useTagBasedProbabilities && spawnConfig != null)
         {
             return GetRandomFurnitureByProbability();
@@ -127,16 +124,31 @@ public class PackagesGenerator : MonoBehaviour
         
         foreach (var furniture in possibleFurnitures)
         {
+            if (furniture == null) continue;
+
             float weight = furnitureSpawnChances.ContainsKey(furniture) ? 
                 furnitureSpawnChances[furniture] : spawnConfig.defaultTagProbability;
             availableFurniture[furniture] = weight;
             totalWeight += weight;
         }
         
-        // No furniture available
-        if (totalWeight <= 0f)
+        if (totalWeight <= 0f || availableFurniture.Count == 0)
         {
-            return possibleFurnitures[0]; // Fallback
+            if (possibleFurnitures.Count > 0 && possibleFurnitures[0] != null)
+            {
+                int index = GetRandomValueIn(possibleFurnitures);
+                FurnitureOriginalData fallbackFurniture = possibleFurnitures[index];
+                possibleFurnitures.RemoveAt(index);
+                deletedFurnitures.Add(fallbackFurniture);
+                quantityOfObjectSpawned++;
+                return fallbackFurniture;
+            }
+            else
+            {
+                deletedFurnitures.Clear();
+                SetPossibleFurnitures();
+                return GetRandomFurniture();
+            }
         }
         
         // Select a random value within the total weight
@@ -159,12 +171,12 @@ public class PackagesGenerator : MonoBehaviour
         }
         
         // Fallback (should not reach here)
-        int index = GetRandomValueIn(possibleFurnitures);
-        FurnitureOriginalData fallbackFurniture = possibleFurnitures[index];
-        possibleFurnitures.RemoveAt(index);
-        deletedFurnitures.Add(fallbackFurniture);
+        int index2 = GetRandomValueIn(possibleFurnitures);
+        FurnitureOriginalData fallbackFurniture2 = possibleFurnitures[index2];
+        possibleFurnitures.RemoveAt(index2);
+        deletedFurnitures.Add(fallbackFurniture2);
         quantityOfObjectSpawned++;
-        return fallbackFurniture;
+        return fallbackFurniture2;
     }
 
     private int GetRandomValueIn(List<FurnitureOriginalData> list)
@@ -173,9 +185,17 @@ public class PackagesGenerator : MonoBehaviour
     }
     private void SetPossibleFurnitures()
     {
+        possibleFurnitures.Clear();
+
         foreach (var f in allFurnitures)
         {
+            if (f == null) return;
             possibleFurnitures.Add(f);
+        }
+
+        if (possibleFurnitures.Count == 0)
+        {
+            Debug.LogError("Fua loco");
         }
     }
 }
