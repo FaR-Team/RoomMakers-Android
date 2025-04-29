@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Utils;
 
 public class Interactor : MonoBehaviour
 {
@@ -78,7 +79,7 @@ public class Interactor : MonoBehaviour
         {
             // Comprar si hay guita
             item.TryGetComponent(out ShopItem shopItemData);
-            Debug.Log(shopItemData.name);
+            this.Log(shopItemData.name);
 
             if (shopItemData)
             {
