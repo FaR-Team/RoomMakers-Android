@@ -942,8 +942,8 @@ MonoBehaviour:
   - {fileID: 6448368162379084455}
   - {fileID: 3015303326298036967}
   shopItemPrefabs:
-  - {fileID: 7398373059874296781, guid: 19487fcce21f83343941b0e1ddc97232, type: 3}
-  - {fileID: 7398373059874296781, guid: 984c4b59ff539114a91489af20a25b74, type: 3}
+  - {fileID: 8866696486282269718, guid: 984c4b59ff539114a91489af20a25b74, type: 3}
+  - {fileID: 8866696486282269718, guid: 19487fcce21f83343941b0e1ddc97232, type: 3}
   sledgehammerPriceRatio: 0.5
   restockCooldown: 300
   autoRestock: 0
