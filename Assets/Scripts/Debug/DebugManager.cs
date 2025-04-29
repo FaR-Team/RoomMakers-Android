@@ -141,19 +141,16 @@ public class DebugManager : MonoBehaviour
         Image panelImage = debugPanel.AddComponent<Image>();
         panelImage.color = new Color(0.1f, 0.1f, 0.1f, 0.95f);
         
-        // Set panel size and position - make it fill most of the screen on mobile
         RectTransform panelRect = debugPanel.GetComponent<RectTransform>();
         panelRect.anchorMin = new Vector2(0.1f, 0.05f);
         panelRect.anchorMax = new Vector2(0.9f, 0.95f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
         panelRect.anchoredPosition = Vector2.zero;
-        panelRect.sizeDelta = Vector2.zero; // Size determined by anchors
+        panelRect.sizeDelta = Vector2.zero;
         
-        // Add a scroll view for content
         GameObject scrollViewObj = CreateScrollView(debugPanel.transform);
         Transform contentTransform = scrollViewObj.transform.Find("Viewport/Content");
         
-        // Add a vertical layout group to the content
         VerticalLayoutGroup layoutGroup = contentTransform.gameObject.AddComponent<VerticalLayoutGroup>();
         layoutGroup.padding = new RectOffset(
             Mathf.RoundToInt(panelPadding), 
@@ -168,32 +165,25 @@ public class DebugManager : MonoBehaviour
         layoutGroup.childForceExpandWidth = true;
         layoutGroup.childForceExpandHeight = false;
         
-        // Add content size fitter
         ContentSizeFitter sizeFitter = contentTransform.gameObject.AddComponent<ContentSizeFitter>();
         sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
         
-        // Create title
         CreateTitle(contentTransform, "DEBUG MENU");
         
-        // Create info section
         CreateInfoSection(contentTransform);
         
-        // Create growth factor controls
         CreateGrowthFactorControls(contentTransform);
         
-        // Create score controls
         CreateScoreControls(contentTransform);
         
-        // Create money controls
         CreateMoneyControls(contentTransform);
         
-        // Create door price controls
         CreateDoorPriceControls(contentTransform);
+    
+        CreateShopControls(contentTransform);
         
-        // Create room controls
         CreateRoomControls(contentTransform);
         
-        // Create close button
         CreateCloseButton(debugPanel.transform);
     }
     
@@ -737,6 +727,95 @@ public class DebugManager : MonoBehaviour
         // Set panel height based on content
         RectTransform panelRect = moneyPanel.GetComponent<RectTransform>();
         panelRect.sizeDelta = new Vector2(0, sliderHeight * 2.2f + buttonHeight + elementSpacing * 2 + panelPadding * 2);
+    }
+
+    private void CreateShopControls(Transform parent)
+    {
+        CreateSectionHeader(parent, "SHOP CONTROLS");
+        
+        GameObject shopPanel = CreatePanel(parent, "ShopPanel");
+        
+        VerticalLayoutGroup layoutGroup = shopPanel.AddComponent<VerticalLayoutGroup>();
+        layoutGroup.padding = new RectOffset(
+            Mathf.RoundToInt(panelPadding), 
+            Mathf.RoundToInt(panelPadding), 
+            Mathf.RoundToInt(panelPadding), 
+            Mathf.RoundToInt(panelPadding)
+        );
+        layoutGroup.spacing = elementSpacing;
+        layoutGroup.childAlignment = TextAnchor.UpperLeft;
+        layoutGroup.childControlWidth = true;
+        layoutGroup.childForceExpandWidth = true;
+        
+        Slider shopProbabilitySlider = CreateSlider(shopPanel.transform, "Shop Spawn Probability", 0f, 1f, 
+                                                GetShopSpawnProbability(), UpdateShopProbabilitySlider, out TextMeshProUGUI shopProbabilityText);
+        shopProbabilityText.text = $"Probability: {GetShopSpawnProbability():P0}";
+        
+        Toggle allowShopsInCornersToggle = CreateToggle(shopPanel.transform, "Allow Shops in Corners", 
+                                                    GetAllowShopsInCorners(), ToggleAllowShopsInCorners);
+        
+        RectTransform panelRect = shopPanel.GetComponent<RectTransform>();
+        panelRect.sizeDelta = new Vector2(0, sliderHeight * 2.2f + toggleHeight + elementSpacing * 2 + panelPadding * 2);
+    }
+
+    private float GetShopSpawnProbability()
+    {
+        if (House.instance == null) return 0.15f;
+        
+        var field = typeof(House).GetField("shopSpawnProbability", 
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        
+        if (field != null)
+            return (float)field.GetValue(House.instance);
+            
+        return 0.15f;
+    }
+
+    private void UpdateShopProbabilitySlider(float value)
+    {
+        if (House.instance == null) return;
+        
+        var field = typeof(House).GetField("shopSpawnProbability", 
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        
+        if (field != null)
+        {
+            field.SetValue(House.instance, value);
+            
+            var textComponents = GameObject.FindObjectsOfType<TextMeshProUGUI>();
+            foreach (var text in textComponents)
+            {
+                if (text.gameObject.name == "Value" && text.transform.parent.name.Contains("Shop"))
+                {
+                    text.text = $"Probability: {value:P0}";
+                    break;
+                }
+            }
+        }
+    }
+
+    private bool GetAllowShopsInCorners()
+    {
+        if (House.instance == null) return false;
+        
+        var field = typeof(House).GetField("allowShopsInCorners", 
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        
+        if (field != null)
+            return (bool)field.GetValue(House.instance);
+            
+        return false;
+    }
+
+    private void ToggleAllowShopsInCorners(bool isOn)
+    {
+        if (House.instance == null) return;
+        
+        var field = typeof(House).GetField("allowShopsInCorners", 
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        
+        if (field != null)
+            field.SetValue(House.instance, isOn);
     }
     
     private void CreateDoorPriceControls(Transform parent)

@@ -848,7 +848,7 @@ MonoBehaviour:
   moveSpeed: 5
   whatStopsMovement:
     serializedVersion: 2
-    m_Bits: 1160
+    m_Bits: 17544
 --- !u!114 &194237384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2371,7 +2371,7 @@ MonoBehaviour:
   moveSpeed: 5
   whatStopsMovement:
     serializedVersion: 2
-    m_Bits: 1160
+    m_Bits: 17544
 --- !u!114 &664401296
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3685,7 +3685,7 @@ MonoBehaviour:
   moveSpeed: 5
   whatStopsMovement:
     serializedVersion: 2
-    m_Bits: 1160
+    m_Bits: 17544
 --- !u!114 &871330504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5803,7 +5803,7 @@ MonoBehaviour:
   moveSpeed: 5
   whatStopsMovement:
     serializedVersion: 2
-    m_Bits: 1160
+    m_Bits: 17544
 --- !u!114 &1521791841
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6853,7 +6853,7 @@ MonoBehaviour:
   moveSpeed: 5
   whatStopsMovement:
     serializedVersion: 2
-    m_Bits: 1160
+    m_Bits: 17544
 --- !u!114 &1828525995
 MonoBehaviour:
   m_ObjectHideFlags: 0
