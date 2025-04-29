@@ -175,7 +175,12 @@ public class House : MonoBehaviour
 
         // CAMBIAR DESPUES, NO HARDCODEAR -12 SINO CAPAZ PASAR LA HABITACION POR PARAMETRO Y AHI SACAR LAS POSICIONES
         Vector3 roomPos = new Vector3(position.x, position.y, -12f);
-        currentRoom = Habitaciones[roomPos]; // Seteamos la habitacion actual al transicionar
+        currentRoom = Habitaciones[roomPos];
+
+        if (currentRoom.TryGetComponent<ShopRoom>(out ShopRoom shopRoom))
+        {
+            shopRoom.UpdatePrices();
+        }
         
         StopAllCoroutines();
         StartCoroutine(MoveCamNextRoom(position, color));
