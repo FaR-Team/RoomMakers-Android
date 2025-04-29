@@ -103,6 +103,7 @@ public class RoomFurnitures : MonoBehaviour
         switch (itemData.type)
         {
             case ItemType.Tagger:
+                if (currentRoom.roomTag is RoomTag.Shop){ placed = false; break;}
                 TagSelectionUI.instance.ShowTagSelection(currentRoom, () =>
                 {
                     Debug.Log("Placed tagger");
