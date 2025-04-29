@@ -51,7 +51,7 @@ public class TutorialHandler : MonoBehaviour
 
     public void CompletedStep()
     {
-        StateManager.currentGameState = GameState.Pause;
+        StateManager.PauseGame();
         tutorialStep++;
         tutorialObject.SetActive(true);
         anim.SetInteger("TutorialStep", tutorialStep);
@@ -64,7 +64,7 @@ public class TutorialHandler : MonoBehaviour
         {
             PlayerController.instance.ForceSwitchEditingMode();
         }
-        StateManager.currentGameState = GameState.Pause;
+        StateManager.PauseGame();
         tutorialObject.SetActive(true);
         anim.SetInteger("TutorialStep", 10);
         animPlaying = true;
@@ -79,7 +79,7 @@ public class TutorialHandler : MonoBehaviour
         tutorialObject.SetActive(false);
         if(tutorialStep != 3) onTutorial = false;
     
-        StateManager.currentGameState = GameState.Moving;
+        StateManager.StartGame();
 
         if (tutorialStep == 4)
         {
