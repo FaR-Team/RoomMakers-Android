@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6582f407bbc7b741a5cf2ee76b2b532, type: 3}
+  m_Name: RoundTable
+  m_EditorClassIdentifier: 
+  Name: RoundTable
+  es_Name: MesaRedonda
+  price: 40
+  size: {x: 2, y: 2}
+  prefab: {fileID: 6579267807509639123, guid: cac5cab2e2e0ffc46967e9e4f80d1d7b, type: 3}
+  typeOfSize: 1
+  compatibles: []
+  sprites:
+  - {fileID: 811110289, guid: 7ef63646b0dca124da5d4fa77e27a85c, type: 3}
+  - {fileID: -577573801, guid: 7ef63646b0dca124da5d4fa77e27a85c, type: 3}
+  - {fileID: -222765716, guid: 7ef63646b0dca124da5d4fa77e27a85c, type: 3}
+  - {fileID: -918359780, guid: 7ef63646b0dca124da5d4fa77e27a85c, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  wallObject: 0
+  furnitureTag: 5
+  tagMatchBonusPoints: 50
+  isLabeler: 0
+  hasReceivedTagBonus: 0

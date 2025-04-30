@@ -5428,13 +5428,28 @@ MonoBehaviour:
   - {fileID: 11400000, guid: deac0df5bdec1894e9c064db2a5ac544, type: 2}
   - {fileID: 11400000, guid: 1b98caba988c013498b7fa5375d546e7, type: 2}
   - {fileID: 11400000, guid: 765cdb246feb4434398feb9893907afc, type: 2}
-  - {fileID: 11400000, guid: eebac06c2dc802c429dd2ca2e1aebee5, type: 2}
+  - {fileID: 11400000, guid: 9289b648d3c6ded498441f749869e281, type: 2}
+  - {fileID: 11400000, guid: 411989892a45d2d49af868bdb5d329bc, type: 2}
+  - {fileID: 11400000, guid: 79198fbf36ea2d049a71a8b24fad34a2, type: 2}
+  - {fileID: 11400000, guid: 89ff0d0efbcccad41a92753e45b9c2d7, type: 2}
+  - {fileID: 11400000, guid: 51bc5d728a542604bb259dfb5e011dde, type: 2}
+  - {fileID: 11400000, guid: 1d0bbf3db48babb458668e200bb43cc9, type: 2}
+  - {fileID: 11400000, guid: 3b56c797d76d13349a544dd73cd4c42c, type: 2}
+  - {fileID: 11400000, guid: 5671064018bdd6143b85f8b3770c5d4e, type: 2}
+  - {fileID: 11400000, guid: d62206323bbe77449a00feb6532a0172, type: 2}
+  - {fileID: 11400000, guid: f253ed26df544c748b251dfc41f65464, type: 2}
+  - {fileID: 11400000, guid: 17e9769dd9c79a44194bbbc7356d3a9f, type: 2}
+  - {fileID: 11400000, guid: 5d78d91289e356a4da0b246fa9177e46, type: 2}
+  - {fileID: 11400000, guid: 733fd517e1f4d6b4681477fa636f927a, type: 2}
   wife: {fileID: 11400000, guid: 5ef2e2c77af1e7d478780c49e1c6965f, type: 2}
   onePercent:
   - {fileID: 11400000, guid: c9a8abdc44c79de41a95d4026f078a8a, type: 2}
   - {fileID: 11400000, guid: 03e12326fc5b8dd45aed3687ec969955, type: 2}
   - {fileID: 11400000, guid: e7664b1a2aee91c49b66e4cb9461b0c1, type: 2}
   - {fileID: 11400000, guid: 37c6be31b3b15e747b3582dbb7120ff6, type: 2}
+  - {fileID: 11400000, guid: 913e53f342b7b3b4a96ca13252f8602a, type: 2}
+  - {fileID: 11400000, guid: f355e63410dc16c4187cab2fc10f88f7, type: 2}
+  - {fileID: 11400000, guid: b72b4aaca36f9ab49b6fdc30b7629a0c, type: 2}
   packageGO: {fileID: 1448616550}
   mainDoor: {fileID: 1385969499}
   possibleFurnitures: []

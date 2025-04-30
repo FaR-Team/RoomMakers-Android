@@ -10,22 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6582f407bbc7b741a5cf2ee76b2b532, type: 3}
-  m_Name: Oven
+  m_Name: Camera
   m_EditorClassIdentifier: 
-  Name: Oven
-  es_Name: Horno
+  Name: Camera
+  es_Name: Camara
   price: 10
   size: {x: 1, y: 1}
-  prefab: {fileID: 5954944119824593527, guid: a2728f189d68dd9419fcab83ed824102, type: 3}
+  prefab: {fileID: 2660710038267410545, guid: 5989ab96dcb88ab4e8b3cbfa7f748728, type: 3}
   typeOfSize: 0
-  compatibles:
-  - {fileID: 11400000, guid: 1d0bbf3db48babb458668e200bb43cc9, type: 2}
+  compatibles: []
   sprites:
-  - {fileID: 1788588754, guid: 29b952655693cc84899d379450735635, type: 3}
+  - {fileID: 1592026088, guid: 6b68133a3a8f57d4ea539cbfcfd58cda, type: 3}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
-  wallObject: 0
-  furnitureTag: 1
-  tagMatchBonusPoints: 20
+  wallObject: 1
+  furnitureTag: 7
+  tagMatchBonusPoints: 50
   isLabeler: 0
   hasReceivedTagBonus: 0
