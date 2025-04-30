@@ -15,7 +15,7 @@ MonoBehaviour:
   Name: Island
   es_Name: Isla
   price: 20
-  size: {x: 1, y: 2}
+  size: {x: 2, y: 1}
   prefab: {fileID: 8231156831200184643, guid: 0a3666a7c85ff3240b276556b6cc42aa, type: 3}
   typeOfSize: 3
   compatibles: []

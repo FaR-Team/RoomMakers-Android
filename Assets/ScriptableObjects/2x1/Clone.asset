@@ -15,7 +15,7 @@ MonoBehaviour:
   Name: Clone
   es_Name: Clon
   price: 20
-  size: {x: 1, y: 2}
+  size: {x: 2, y: 1}
   prefab: {fileID: 3603689882909653840, guid: affce4c8803a45d4ab85cf9d6f334ae3, type: 3}
   typeOfSize: 3
   compatibles: []

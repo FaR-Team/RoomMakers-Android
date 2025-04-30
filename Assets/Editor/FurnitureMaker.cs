@@ -22,19 +22,19 @@ public class FurnitureMaker : EditorWindow
 
     // Template references
     private GameObject top_template_1x1;
-    private GameObject top_template_1x2;
+    private GameObject top_template_2x1;
     private GameObject top_template_2x2;
     private GameObject bottom_template_1x1;
-    private GameObject bottom_template_1x2;
+    private GameObject bottom_template_2x1;
     private GameObject bottom_template_2x2;
 
     
     // Template paths - update these to match your actual template locations
     private const string TOP_TEMPLATE_PATH_1x1 = "Assets/Prefabs/Furniture/Templates/Top_Template_1x1.prefab";
-    private const string TOP_TEMPLATE_PATH_1x2 = "Assets/Prefabs/Furniture/Templates/Top_Template_1x2.prefab";
+    private const string TOP_TEMPLATE_PATH_2x1 = "Assets/Prefabs/Furniture/Templates/Top_Template_2x1.prefab";
     private const string TOP_TEMPLATE_PATH_2x2 = "Assets/Prefabs/Furniture/Templates/Top_Template_2x2.prefab";
     private const string BOTTOM_TEMPLATE_PATH_1x1 = "Assets/Prefabs/Furniture/Templates/Bottom_Template_1x1.prefab";
-    private const string BOTTOM_TEMPLATE_PATH_1x2 = "Assets/Prefabs/Furniture/Templates/Bottom_Template_1x2.prefab";
+    private const string BOTTOM_TEMPLATE_PATH_2x1 = "Assets/Prefabs/Furniture/Templates/Bottom_Template_2x1.prefab";
     private const string BOTTOM_TEMPLATE_PATH_2x2 = "Assets/Prefabs/Furniture/Templates/Bottom_Template_2x2.prefab";
 
     [MenuItem("Tools/Furniture Maker")]
@@ -47,10 +47,10 @@ public class FurnitureMaker : EditorWindow
     {
         // Load template prefabs
         top_template_1x1 = AssetDatabase.LoadAssetAtPath<GameObject>(TOP_TEMPLATE_PATH_1x1);
-        top_template_1x2 = AssetDatabase.LoadAssetAtPath<GameObject>(TOP_TEMPLATE_PATH_1x2);
+        top_template_2x1 = AssetDatabase.LoadAssetAtPath<GameObject>(TOP_TEMPLATE_PATH_2x1);
         top_template_2x2 = AssetDatabase.LoadAssetAtPath<GameObject>(TOP_TEMPLATE_PATH_2x2);
         bottom_template_1x1 = AssetDatabase.LoadAssetAtPath<GameObject>(BOTTOM_TEMPLATE_PATH_1x1);
-        bottom_template_1x2 = AssetDatabase.LoadAssetAtPath<GameObject>(BOTTOM_TEMPLATE_PATH_1x2);
+        bottom_template_2x1 = AssetDatabase.LoadAssetAtPath<GameObject>(BOTTOM_TEMPLATE_PATH_2x1);
         bottom_template_2x2 = AssetDatabase.LoadAssetAtPath<GameObject>(BOTTOM_TEMPLATE_PATH_2x2);
     }
 
@@ -76,8 +76,8 @@ public class FurnitureMaker : EditorWindow
         }
         if (GUILayout.Button("1x2", EditorStyles.miniButtonMid))
         {
-            size = new Vector2Int(1, 2);
-            typeOfSize = TypeOfSize.two_one; // Assuming this is correct for 1x2
+            size = new Vector2Int(2, 1);
+            typeOfSize = TypeOfSize.two_one;
         }
         if (GUILayout.Button("2x2", EditorStyles.miniButtonMid))
         {
@@ -215,8 +215,8 @@ public class FurnitureMaker : EditorWindow
             else return bottom_template_1x1;
         }
         else if (size.x == 1 && size.y == 2)
-            if (isTopObject) return top_template_1x2;
-            else return bottom_template_1x2;
+            if (isTopObject) return top_template_2x1;
+            else return bottom_template_2x1;
         else if (size.x == 2 && size.y == 2)
             if (isTopObject) return top_template_2x2;
             else return bottom_template_2x2;

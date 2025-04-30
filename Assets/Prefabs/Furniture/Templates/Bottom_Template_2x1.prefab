@@ -178,9 +178,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5954944119824593529}
   - component: {fileID: 5954944119824593528}
-  - component: {fileID: 3900523264641913835}
+  - component: {fileID: 1126570466548282292}
   m_Layer: 8
-  m_Name: Top_Template_1x2
+  m_Name: Bottom_Template_2x1
   m_TagString: Untagged
   m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -229,7 +229,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2, y: 1}
   m_EdgeRadius: 0
---- !u!114 &3900523264641913835
+--- !u!114 &1126570466548282292
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -238,9 +238,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5954944119824593527}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1085cdcdcd327034fb590aa030770d48, type: 3}
+  m_Script: {fileID: 11500000, guid: fc2c07814d420624f927b3c233ee82ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   originalData: {fileID: 0}
   spriteRenderer: {fileID: 0}
-  comboStar: {fileID: 0}
+  comboValue: 20
+  comboStarContainer: {fileID: 0}
