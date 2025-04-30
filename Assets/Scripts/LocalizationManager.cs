@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Globalization;
 
 public class LocalizationManager : MonoBehaviour
 {
@@ -15,7 +14,6 @@ public class LocalizationManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
             DetectLanguage();
         }
         else
@@ -31,16 +29,15 @@ public class LocalizationManager : MonoBehaviour
 
     private void DetectLanguage()
     {
-        // Get the system language
         SystemLanguage deviceLanguage = Application.systemLanguage;
         
-        // Check if the language is Spanish or a Spanish variant
         IsSpanish = deviceLanguage == SystemLanguage.Spanish || 
                    deviceLanguage == SystemLanguage.Catalan || 
                    deviceLanguage == SystemLanguage.Spanish;
         
         Debug.Log($"Device language detected: {deviceLanguage}. Spanish mode: {IsSpanish}");
     }
+
     private void ActivateCorrectTutorial()
     {
         if (tutorialEN != null && tutorialES != null)
@@ -55,7 +52,6 @@ public class LocalizationManager : MonoBehaviour
         }
     }
 
-    // Public method to force language change (for testing or manual override)
     public void SetLanguage(bool spanish)
     {
         IsSpanish = spanish;
