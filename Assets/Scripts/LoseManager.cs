@@ -30,6 +30,8 @@ public class LoseManager : MonoBehaviour
         GameOverScreen.SetActive(true);
         hasLost = true;
         scoreText.text = House.instance.Score.ToString();
+        
+        AudioManager.instance.ResetMusicPitch();
         AudioManager.instance.ChangeMusic(loseMusic);
     }
 

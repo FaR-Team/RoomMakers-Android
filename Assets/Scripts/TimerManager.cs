@@ -11,6 +11,7 @@ public class TimerManager : MonoBehaviour
     [SerializeField] Sprite[] clockSprites;
 
     public static Action timerAction;
+    public static Action onTimerChanged;
 
     [SerializeField] private float flickerInterval = 0.5f;
     private float flickerTimer = 0f;
@@ -30,6 +31,7 @@ public class TimerManager : MonoBehaviour
     private void Update()
     {
         timerAction?.Invoke();
+        onTimerChanged?.Invoke();
 
         if (time > 120)
         {
@@ -77,6 +79,11 @@ public class TimerManager : MonoBehaviour
         time = maxTime;
         if(timerAction == null) timerAction += Timer;
         Instance.ResetClockVisibility();
+
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.ResetMusicPitch();
+        }
     }
     public static void StopTimer()
     {
@@ -89,5 +96,10 @@ public class TimerManager : MonoBehaviour
         clockColor.a = 1f;
         clock.color = clockColor;
         flickerTimer = 0f;
+    }
+
+    public static float GetRemainingTime()
+    {
+        return time;
     }
 }

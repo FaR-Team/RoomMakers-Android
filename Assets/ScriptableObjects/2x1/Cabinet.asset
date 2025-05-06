@@ -17,7 +17,7 @@ MonoBehaviour:
   price: 20
   size: {x: 2, y: 1}
   prefab: {fileID: 6110547217177922278, guid: 035c2aa3c45879f49969f9cdb8b279d5, type: 3}
-  typeOfSize: 3
+  typeOfSize: 2
   compatibles: []
   sprites:
   - {fileID: -1243047325, guid: 8b55f2dbfac02424186640b302dd4eb4, type: 3}
@@ -27,5 +27,3 @@ MonoBehaviour:
   wallObject: 0
   furnitureTag: 0
   tagMatchBonusPoints: 50
-  isLabeler: 0
-  hasReceivedTagBonus: 0

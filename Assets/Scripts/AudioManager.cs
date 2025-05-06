@@ -15,11 +15,20 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private int minLoopCount = 1;
     [SerializeField] private int maxLoopCount = 3;
     [SerializeField] private bool playRandomMusicOnStart = true;
+    
+    [Header("Timer Music Settings")]
+    [SerializeField] private float maxMusicPitch = 1.5f;
+    [SerializeField] private float normalMusicPitch = 1.0f;
+    [SerializeField] private float highTensionTimeThreshold = 15f;
+    [SerializeField] private float mediumTensionTimeThreshold = 30f;
+    [SerializeField] private float mediumTensionPitch = 1.1f;
 
     private Dictionary<GlobalSfx, AudioClip> _clipsDictionary = new Dictionary<GlobalSfx, AudioClip>();
     private int _currentTrackIndex = -1;
     private int _remainingLoops = 0;
     private bool _isRandomMusicPlaying = false;
+    private float _defaultMusicVolume;
+    private float _lastRemainingTime = 0f;
     
 
     public static AudioManager instance;
@@ -35,10 +44,19 @@ public class AudioManager : MonoBehaviour
         _clipsDictionary[GlobalSfx.Error] = errorClip;
         _clipsDictionary[GlobalSfx.Grab] = grabClip;
         
+        _defaultMusicVolume = musicAudioSource.volume;
+        
         if (playRandomMusicOnStart && musicTracks.Count > 0)
         {
             StartRandomMusicPlayer();
         }
+        
+        TimerManager.onTimerChanged += AdjustMusicPitchBasedOnTime;
+    }
+    
+    private void OnDestroy()
+    {
+        TimerManager.onTimerChanged -= AdjustMusicPitchBasedOnTime;
     }
     
     void Update()
@@ -47,6 +65,63 @@ public class AudioManager : MonoBehaviour
         {
             OnMusicTrackFinished();
         }
+    }
+    
+    private void AdjustMusicPitchBasedOnTime()
+    {
+        float remainingTime = TimerManager.GetRemainingTime();
+        
+        if (Mathf.Abs(_lastRemainingTime - remainingTime) < 0.1f)
+            return;
+            
+        _lastRemainingTime = remainingTime;
+        
+        if (remainingTime <= highTensionTimeThreshold)
+        {
+            float tensionFactor = 1 - (remainingTime / highTensionTimeThreshold);
+            float newPitch = Mathf.Lerp(mediumTensionPitch, maxMusicPitch, tensionFactor);
+            musicAudioSource.pitch = Mathf.Clamp(newPitch, mediumTensionPitch, maxMusicPitch + 0.1f);
+        }
+        else if (remainingTime <= mediumTensionTimeThreshold)
+        {
+            float tensionFactor = 1 - ((remainingTime - highTensionTimeThreshold) / (mediumTensionTimeThreshold - highTensionTimeThreshold));
+            float newPitch = Mathf.Lerp(normalMusicPitch, mediumTensionPitch, tensionFactor);
+            musicAudioSource.pitch = newPitch;
+        }
+        else
+        {
+            musicAudioSource.pitch = normalMusicPitch;
+        }
+    }
+    
+    private Coroutine _pitchResetCoroutine;
+    public void ResetMusicPitch()
+    {
+        if (_pitchResetCoroutine != null)
+            StopCoroutine(_pitchResetCoroutine);
+        
+        _pitchResetCoroutine = StartCoroutine(GraduallyResetPitch());
+    }
+
+
+    private IEnumerator GraduallyResetPitch()
+    {
+        float startPitch = musicAudioSource.pitch;
+        float duration = 1.5f;
+        float elapsedTime = 0f;
+        
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration;
+            
+            musicAudioSource.pitch = Mathf.Lerp(startPitch, normalMusicPitch, t);
+            
+            yield return null;
+        }
+        
+        musicAudioSource.pitch = normalMusicPitch;
+        _pitchResetCoroutine = null;
     }
     
     private Coroutine _musicCoroutine;
@@ -83,7 +158,6 @@ public class AudioManager : MonoBehaviour
         {
             PlayNextRandomTrack();
         
-            // Wait for the track to finish
             float trackDuration = musicAudioSource.clip.length;
         
             for (int i = 0; i < _remainingLoops; i++)
@@ -151,6 +225,7 @@ public class AudioManager : MonoBehaviour
     {
         _isRandomMusicPlaying = false;
         musicAudioSource.clip = clip;
+        musicAudioSource.pitch = normalMusicPitch;
         musicAudioSource.Play();
     }
 
