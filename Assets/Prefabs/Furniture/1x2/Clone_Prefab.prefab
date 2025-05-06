@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 2079010984111680898}
   - component: {fileID: 4412835405138887591}
   - component: {fileID: 8795017448698150843}
+  - component: {fileID: 2682109958329362907}
   m_Layer: 8
   m_Name: Clone_Prefab
   m_TagString: Untagged
@@ -161,6 +162,26 @@ MonoBehaviour:
   spriteRenderer: {fileID: 0}
   comboValue: 20
   comboStarContainer: {fileID: 0}
+--- !u!95 &2682109958329362907
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3603689882909653840}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6581318d6c99af5418038cf18e5bab43, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &6213933820045229497
 GameObject:
   m_ObjectHideFlags: 0

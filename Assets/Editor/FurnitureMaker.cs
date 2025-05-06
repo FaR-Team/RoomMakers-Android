@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.Animations;
 using System.IO;
 using System.Collections.Generic;
 
@@ -19,23 +20,32 @@ public class FurnitureMaker : EditorWindow
     private bool showCompatibles = false;
     private bool showSprites = false;
     private bool isTopObject = false;
+    private bool isAnimated = false;
+    private float animationSpeed = 0.5f;
+    private RoomTag furnitureTag = RoomTag.None;
+    private int tagMatchBonusPoints = 50;
+    private bool isLabeler = false;
 
     // Template references
     private GameObject top_template_1x1;
     private GameObject top_template_2x1;
     private GameObject top_template_2x2;
+    private GameObject top_template_3x1;
     private GameObject bottom_template_1x1;
     private GameObject bottom_template_2x1;
     private GameObject bottom_template_2x2;
+    private GameObject bottom_template_3x1;
 
     
     // Template paths - update these to match your actual template locations
     private const string TOP_TEMPLATE_PATH_1x1 = "Assets/Prefabs/Furniture/Templates/Top_Template_1x1.prefab";
     private const string TOP_TEMPLATE_PATH_2x1 = "Assets/Prefabs/Furniture/Templates/Top_Template_2x1.prefab";
     private const string TOP_TEMPLATE_PATH_2x2 = "Assets/Prefabs/Furniture/Templates/Top_Template_2x2.prefab";
+    private const string TOP_TEMPLATE_PATH_3x1 = "Assets/Prefabs/Furniture/Templates/Top_Template_3x1.prefab";
     private const string BOTTOM_TEMPLATE_PATH_1x1 = "Assets/Prefabs/Furniture/Templates/Bottom_Template_1x1.prefab";
     private const string BOTTOM_TEMPLATE_PATH_2x1 = "Assets/Prefabs/Furniture/Templates/Bottom_Template_2x1.prefab";
     private const string BOTTOM_TEMPLATE_PATH_2x2 = "Assets/Prefabs/Furniture/Templates/Bottom_Template_2x2.prefab";
+    private const string BOTTOM_TEMPLATE_PATH_3x1 = "Assets/Prefabs/Furniture/Templates/Bottom_Template_3x1.prefab";
 
     [MenuItem("Tools/Furniture Maker")]
     public static void ShowWindow()
@@ -49,9 +59,11 @@ public class FurnitureMaker : EditorWindow
         top_template_1x1 = AssetDatabase.LoadAssetAtPath<GameObject>(TOP_TEMPLATE_PATH_1x1);
         top_template_2x1 = AssetDatabase.LoadAssetAtPath<GameObject>(TOP_TEMPLATE_PATH_2x1);
         top_template_2x2 = AssetDatabase.LoadAssetAtPath<GameObject>(TOP_TEMPLATE_PATH_2x2);
+        top_template_3x1 = AssetDatabase.LoadAssetAtPath<GameObject>(TOP_TEMPLATE_PATH_3x1);
         bottom_template_1x1 = AssetDatabase.LoadAssetAtPath<GameObject>(BOTTOM_TEMPLATE_PATH_1x1);
         bottom_template_2x1 = AssetDatabase.LoadAssetAtPath<GameObject>(BOTTOM_TEMPLATE_PATH_2x1);
         bottom_template_2x2 = AssetDatabase.LoadAssetAtPath<GameObject>(BOTTOM_TEMPLATE_PATH_2x2);
+        bottom_template_3x1 = AssetDatabase.LoadAssetAtPath<GameObject>(BOTTOM_TEMPLATE_PATH_3x1);
     }
 
     private void OnGUI()
@@ -61,12 +73,10 @@ public class FurnitureMaker : EditorWindow
 
         scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
-        // Basic Properties
         furnitureName = EditorGUILayout.TextField("Name (English)", furnitureName);
         spanishName = EditorGUILayout.TextField("Name (Spanish)", spanishName);
         price = EditorGUILayout.IntField("Price", price);
         
-        // Size and Type Selection
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.PrefixLabel("Size");
         if (GUILayout.Button("1x1", EditorStyles.miniButtonLeft))
@@ -84,15 +94,35 @@ public class FurnitureMaker : EditorWindow
             size = new Vector2Int(2, 2);
             typeOfSize = TypeOfSize.two_two;
         }
+        if (GUILayout.Button("3x1", EditorStyles.miniButtonMid))
+        {
+            size = new Vector2Int(3, 1);
+            typeOfSize = TypeOfSize.three_one;
+        }
         EditorGUILayout.EndHorizontal();
         
-        // Display current size and type
         EditorGUILayout.LabelField("Current Size", $"{size.x}x{size.y} ({typeOfSize})");
         
-        // Top/Bottom Object Selection
         isTopObject = EditorGUILayout.Toggle("Is Top Object", isTopObject);
         
-        // Sprites
+        EditorGUILayout.Space();
+        
+        // Animation options
+        isAnimated = EditorGUILayout.Toggle("Is Animated", isAnimated);
+        if (isAnimated)
+        {
+            EditorGUI.indentLevel++;
+            animationSpeed = EditorGUILayout.Slider("Animation Speed", animationSpeed, 0.1f, 2.0f);
+            EditorGUI.indentLevel--;
+        }
+        
+        EditorGUILayout.Space();
+        
+        // Tagging system
+        furnitureTag = (RoomTag)EditorGUILayout.EnumPopup("Furniture Tag", furnitureTag);
+        tagMatchBonusPoints = EditorGUILayout.IntField("Tag Match Bonus Points", tagMatchBonusPoints);
+        isLabeler = EditorGUILayout.Toggle("Is Labeler", isLabeler);
+        
         EditorGUILayout.Space();
         showSprites = EditorGUILayout.Foldout(showSprites, "Sprites");
         if (showSprites)
@@ -119,7 +149,6 @@ public class FurnitureMaker : EditorWindow
             EditorGUI.indentLevel--;
         }
 
-        // Combo Sprite
         EditorGUILayout.Space();
         hasComboSprite = EditorGUILayout.Toggle("Has Combo Sprite", hasComboSprite);
         
@@ -130,7 +159,6 @@ public class FurnitureMaker : EditorWindow
             EditorGUI.indentLevel--;
         }
 
-        // Compatible Furniture
         EditorGUILayout.Space();
         showCompatibles = EditorGUILayout.Foldout(showCompatibles, "Compatible Furniture");
         if (showCompatibles)
@@ -157,7 +185,6 @@ public class FurnitureMaker : EditorWindow
             EditorGUI.indentLevel--;
         }
 
-        // Save Path
         EditorGUILayout.Space();
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.PrefixLabel("Save Path");
@@ -167,7 +194,6 @@ public class FurnitureMaker : EditorWindow
             string path = EditorUtility.SaveFolderPanel("Choose Save Location", savePath, "");
             if (!string.IsNullOrEmpty(path))
             {
-                // Convert to project relative path
                 if (path.StartsWith(Application.dataPath))
                 {
                     path = "Assets" + path.Substring(Application.dataPath.Length);
@@ -179,7 +205,6 @@ public class FurnitureMaker : EditorWindow
 
         EditorGUILayout.Space();
         
-        // Create Button
         EditorGUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
         GUI.enabled = !string.IsNullOrEmpty(furnitureName) && sprites.Count > 0;
@@ -193,7 +218,6 @@ public class FurnitureMaker : EditorWindow
 
         EditorGUILayout.Space();
         
-        // Reset Button
         EditorGUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
         if (GUILayout.Button("Reset Form", GUILayout.Width(150)))
@@ -208,7 +232,6 @@ public class FurnitureMaker : EditorWindow
 
     private GameObject GetTemplateForSize()
     {
-        // Select the appropriate template based on size and type
         if (size.x == 1 && size.y == 1)
         {
             if (isTopObject) return top_template_1x1;
@@ -220,6 +243,9 @@ public class FurnitureMaker : EditorWindow
         else if (size.x == 2 && size.y == 2)
             if (isTopObject) return top_template_2x2;
             else return bottom_template_2x2;
+        else if (size.x == 3 && size.y == 1)
+            if (isTopObject) return top_template_3x1;
+            else return bottom_template_3x1;
         
         // Default to 1x1 if no match
         return bottom_template_1x1;
@@ -240,13 +266,17 @@ public class FurnitureMaker : EditorWindow
             return;
         }
 
-        // Create directory if it doesn't exist
+        if (isAnimated && sprites.Count < 2)
+        {
+            EditorUtility.DisplayDialog("Error", "Animated furniture requires at least 2 sprites.", "OK");
+            return;
+        }
+
         if (!Directory.Exists(savePath))
         {
             Directory.CreateDirectory(savePath);
         }
 
-        // Create the furniture scriptable object
         FurnitureOriginalData furniture = ScriptableObject.CreateInstance<FurnitureOriginalData>();
         furniture.Name = furnitureName;
         furniture.es_Name = spanishName;
@@ -255,14 +285,12 @@ public class FurnitureMaker : EditorWindow
         furniture.typeOfSize = typeOfSize;
         furniture.hasComboSprite = hasComboSprite;
         furniture.comboTriggerFurniture = comboTriggerFurniture;
-        
-        // Set sprites
         furniture.sprites = sprites.ToArray();
-        
-        // Set compatibles
         furniture.compatibles = compatibles.ToArray();
+        furniture.furnitureTag = furnitureTag;
+        furniture.tagMatchBonusPoints = tagMatchBonusPoints;
+        furniture.isLabeler = isLabeler;
 
-        // Get the appropriate template based on size
         GameObject templatePrefab = GetTemplateForSize();
         
         if (templatePrefab != null)
@@ -271,29 +299,68 @@ public class FurnitureMaker : EditorWindow
             GameObject prefabInstance = Instantiate(templatePrefab);
             prefabInstance.name = $"{furnitureName}_Prefab";
             
-            // Set up the prefab with the correct properties
-            // You might want to add a component or tag to indicate if it's a top object
-            if (isTopObject)
-            {
-                // Add a tag or component to indicate it's a top object
-                // For example:
-                // prefabInstance.tag = "TopObject";
-                // Or add a custom component:
-                // prefabInstance.AddComponent<TopObjectMarker>();
-            }
-            
-            // Set the sprite in the prefab if it has a SpriteRenderer
             SpriteRenderer spriteRenderer = prefabInstance.GetComponentInChildren<SpriteRenderer>();
-            if (spriteRenderer != null && sprites.Count > 0)
+            if (spriteRenderer != null)
             {
                 spriteRenderer.sprite = sprites[0];
+                
+                if (isAnimated && sprites.Count >= 2)
+                {
+                    string animationFolder = $"{savePath}/Animations";
+                    if (!Directory.Exists(animationFolder))
+                    {
+                        Directory.CreateDirectory(animationFolder);
+                    }
+                    
+                    Animator animator = prefabInstance.GetComponentInChildren<Animator>();
+                    if (animator == null)
+                    {
+                        animator = spriteRenderer.gameObject.AddComponent<Animator>();
+                    }
+                    
+                    string controllerPath = $"{animationFolder}/{furnitureName}_Controller.controller";
+                    AnimatorController animController = AnimatorController.CreateAnimatorControllerAtPath(controllerPath);
+                    
+                    string clipPath = $"{animationFolder}/{furnitureName}_Animation.anim";
+                    AnimationClip animClip = new AnimationClip();
+                    animClip.name = $"{furnitureName}_Animation";
+                    
+                    animClip.frameRate = 12;
+                    animClip.wrapMode = WrapMode.Loop;
+                    
+                    EditorCurveBinding spriteBinding = new EditorCurveBinding();
+                    spriteBinding.type = typeof(SpriteRenderer);
+                    spriteBinding.path = spriteRenderer.gameObject.name == prefabInstance.name ? "" : spriteRenderer.gameObject.name;
+                    spriteBinding.propertyName = "m_Sprite";
+                    
+                    ObjectReferenceKeyframe[] spriteKeyFrames = new ObjectReferenceKeyframe[sprites.Count];
+                    float timePerFrame = 1.0f / (sprites.Count * animationSpeed);
+                    
+                    for (int i = 0; i < sprites.Count; i++)
+                    {
+                        spriteKeyFrames[i] = new ObjectReferenceKeyframe();
+                        spriteKeyFrames[i].time = i * timePerFrame;
+                        spriteKeyFrames[i].value = sprites[i];
+                    }
+                    
+                    AnimationUtility.SetObjectReferenceCurve(animClip, spriteBinding, spriteKeyFrames);
+                    
+                    AssetDatabase.CreateAsset(animClip, clipPath);
+                    
+                    AnimatorState state = animController.AddMotion(animClip);
+                    state.name = "Default";
+                    
+                    animator.runtimeAnimatorController = animController;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("No SpriteRenderer found in the template. Sprites will not be applied.");
             }
             
-            // Save the prefab
             GameObject createdPrefab = PrefabUtility.SaveAsPrefabAsset(prefabInstance, prefabPath);
             DestroyImmediate(prefabInstance);
             
-            // Assign the prefab to the furniture
             furniture.prefab = createdPrefab;
         }
         else
@@ -301,7 +368,6 @@ public class FurnitureMaker : EditorWindow
             EditorUtility.DisplayDialog("Warning", "No template found for the selected size. Creating furniture without a prefab.", "OK");
         }
 
-        // Save the furniture scriptable object
         string assetPath = $"{savePath}/{furnitureName}.asset";
         AssetDatabase.CreateAsset(furniture, assetPath);
         AssetDatabase.SaveAssets();
@@ -325,5 +391,10 @@ public class FurnitureMaker : EditorWindow
         hasComboSprite = false;
         comboTriggerFurniture = null;
         isTopObject = false;
+        isAnimated = false;
+        animationSpeed = 0.5f;
+        furnitureTag = RoomTag.None;
+        tagMatchBonusPoints = 50;
+        isLabeler = false;
     }
 }

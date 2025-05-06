@@ -20,11 +20,11 @@ public class FurnitureOriginalData : ScriptableObject
     
     [Header("Tagging System")]
     public RoomTag furnitureTag = RoomTag.None;
-    public int tagMatchBonusPoints = 50; // Points awarded when furniture tag matches room tag
-    public bool isLabeler = false; // Whether this furniture is a labeler item
+    public int tagMatchBonusPoints = 50;
+    public bool isLabeler = false;
     public bool hasReceivedTagBonus = false;
 }
 public enum TypeOfSize
 {
-    one_one, two_two, three_three, two_one, three_two
+    one_one, two_two, two_one, three_one
 }

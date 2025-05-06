@@ -179,6 +179,7 @@ GameObject:
   - component: {fileID: 8581441723746301790}
   - component: {fileID: 2543787349792440363}
   - component: {fileID: 3812246319551817681}
+  - component: {fileID: 7613616102831576005}
   m_Layer: 8
   m_Name: Alien_Prefab
   m_TagString: Untagged
@@ -245,3 +246,23 @@ MonoBehaviour:
   spriteRenderer: {fileID: 0}
   comboValue: 20
   comboStarContainer: {fileID: 0}
+--- !u!95 &7613616102831576005
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7924454945932060998}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 61d45d4fb0cda80489b048b05c1dbff8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
