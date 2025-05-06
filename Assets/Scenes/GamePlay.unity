@@ -9643,6 +9643,13 @@ MonoBehaviour:
   clickOkClip: {fileID: 8300000, guid: 113bfe07f3b1f184380fbaca3d2f3b80, type: 3}
   errorClip: {fileID: 8300000, guid: 09dbd978f5915b04d98f319b71ad075d, type: 3}
   grabClip: {fileID: 8300000, guid: 196605b6950721a41b93780fb013badf, type: 3}
+  musicTracks:
+  - {fileID: 8300000, guid: e0701f0d380744046a120b3e4c95a6eb, type: 3}
+  - {fileID: 8300000, guid: 60353a5393606d8429cb0239ced1d5f6, type: 3}
+  - {fileID: 8300000, guid: 5a789a369831e9146a54c3b0c7f53467, type: 3}
+  minLoopCount: 1
+  maxLoopCount: 3
+  playRandomMusicOnStart: 1
 --- !u!4 &4342737202309236774
 Transform:
   m_ObjectHideFlags: 0
@@ -9719,7 +9726,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 5df39732096cb6f46a438ba746d3f44c, type: 3}
+  m_audioClip: {fileID: 8300000, guid: e0701f0d380744046a120b3e4c95a6eb, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.3
   m_Pitch: 1
