@@ -49,6 +49,8 @@ public class AudioManager : MonoBehaviour
         }
     }
     
+    private Coroutine _musicCoroutine;
+
     public void StartRandomMusicPlayer()
     {
         if (musicTracks.Count == 0)
@@ -58,13 +60,46 @@ public class AudioManager : MonoBehaviour
         }
         
         _isRandomMusicPlaying = true;
-        PlayNextRandomTrack();
+        
+        if (_musicCoroutine != null)
+            StopCoroutine(_musicCoroutine);
+        
+        _musicCoroutine = StartCoroutine(PlayRandomMusicSequence());
     }
     
     public void StopRandomMusicPlayer()
     {
         _isRandomMusicPlaying = false;
+        
+        if (_musicCoroutine != null)
+            StopCoroutine(_musicCoroutine);
+        
         musicAudioSource.Stop();
+    }
+    
+    private IEnumerator PlayRandomMusicSequence()
+    {
+        while (_isRandomMusicPlaying)
+        {
+            PlayNextRandomTrack();
+        
+            // Wait for the track to finish
+            float trackDuration = musicAudioSource.clip.length;
+        
+            for (int i = 0; i < _remainingLoops; i++)
+            {
+                yield return new WaitForSeconds(trackDuration);
+            
+                if (!_isRandomMusicPlaying)
+                    yield break;
+                
+                if (i < _remainingLoops - 1)
+                {
+                    musicAudioSource.Play();
+                    Debug.Log($"Replaying music track: {musicAudioSource.clip.name}, loops remaining: {_remainingLoops - i - 1}");
+                }
+            }
+        }
     }
     
     private void PlayNextRandomTrack()
