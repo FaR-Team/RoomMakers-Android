@@ -21,8 +21,6 @@ public class FurnitureOriginalData : ScriptableObject
     [Header("Tagging System")]
     public RoomTag furnitureTag = RoomTag.None;
     public int tagMatchBonusPoints = 50;
-    public bool isLabeler = false;
-    public bool hasReceivedTagBonus = false;
 }
 public enum TypeOfSize
 {

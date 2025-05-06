@@ -24,7 +24,6 @@ public class FurnitureMaker : EditorWindow
     private float animationSpeed = 0.5f;
     private RoomTag furnitureTag = RoomTag.None;
     private int tagMatchBonusPoints = 50;
-    private bool isLabeler = false;
 
     // Template references
     private GameObject top_template_1x1;
@@ -121,7 +120,6 @@ public class FurnitureMaker : EditorWindow
         // Tagging system
         furnitureTag = (RoomTag)EditorGUILayout.EnumPopup("Furniture Tag", furnitureTag);
         tagMatchBonusPoints = EditorGUILayout.IntField("Tag Match Bonus Points", tagMatchBonusPoints);
-        isLabeler = EditorGUILayout.Toggle("Is Labeler", isLabeler);
         
         EditorGUILayout.Space();
         showSprites = EditorGUILayout.Foldout(showSprites, "Sprites");
@@ -289,7 +287,6 @@ public class FurnitureMaker : EditorWindow
         furniture.compatibles = compatibles.ToArray();
         furniture.furnitureTag = furnitureTag;
         furniture.tagMatchBonusPoints = tagMatchBonusPoints;
-        furniture.isLabeler = isLabeler;
 
         GameObject templatePrefab = GetTemplateForSize();
         
@@ -395,6 +392,5 @@ public class FurnitureMaker : EditorWindow
         animationSpeed = 0.5f;
         furnitureTag = RoomTag.None;
         tagMatchBonusPoints = 50;
-        isLabeler = false;
     }
 }
