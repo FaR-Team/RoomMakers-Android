@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
@@ -9,6 +10,11 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip clickOkClip;
     [SerializeField] private AudioClip errorClip;
     [SerializeField] private AudioClip grabClip;
+    
+    [Header("Audio Mixer")]
+    [SerializeField] private AudioMixer audioMixer;
+    [SerializeField] private float muffledLowPassCutoff = 100f;
+    [SerializeField] private float normalLowPassCutoff = 5000f;
     
     [Header("Music Settings")]
     [SerializeField] private List<AudioClip> musicTracks = new List<AudioClip>();
@@ -28,7 +34,9 @@ public class AudioManager : MonoBehaviour
     private int _remainingLoops = 0;
     private bool _isRandomMusicPlaying = false;
     private float _defaultMusicVolume;
+    private float _defaultSfxVolume;
     private float _lastRemainingTime = 0f;
+    private bool _isMuffled = false;
     
 
     public static AudioManager instance;
@@ -36,6 +44,8 @@ public class AudioManager : MonoBehaviour
     {
         if (!instance) instance = this;
         else Destroy(this);
+        
+        _isMuffled = PlayerPrefs.GetInt("SoundMuffled", 0) == 1;
     }
     
     void Start()
@@ -45,6 +55,12 @@ public class AudioManager : MonoBehaviour
         _clipsDictionary[GlobalSfx.Grab] = grabClip;
         
         _defaultMusicVolume = musicAudioSource.volume;
+        _defaultSfxVolume = sfxAudioSource.volume;
+        
+        if (_isMuffled)
+        {
+            ApplyMuffledVolume();
+        }
         
         if (playRandomMusicOnStart && musicTracks.Count > 0)
         {
@@ -65,6 +81,38 @@ public class AudioManager : MonoBehaviour
         {
             OnMusicTrackFinished();
         }
+    }
+    
+    public bool IsMuffled()
+    {
+        return _isMuffled;
+    }
+    
+    public void ToggleMuffledSound()
+    {
+        _isMuffled = !_isMuffled;
+        
+        if (_isMuffled)
+        {
+            ApplyMuffledVolume();
+        }
+        else
+        {
+            RestoreNormalVolume();
+        }
+        
+        PlayerPrefs.SetInt("SoundMuffled", _isMuffled ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+    
+    private void ApplyMuffledVolume()
+    {
+        audioMixer.SetFloat("Lowpass", muffledLowPassCutoff);
+    }
+    
+    private void RestoreNormalVolume()
+    {
+        audioMixer.SetFloat("Lowpass", normalLowPassCutoff);
     }
     
     private void AdjustMusicPitchBasedOnTime()
