@@ -41,7 +41,7 @@ AudioSource:
   m_GameObject: {fileID: 4342737202206940845}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -4738054662748886456, guid: 8ca7b6b4ab3c78f4e9ba735375e950eb, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.25
@@ -169,7 +169,7 @@ AudioSource:
   m_GameObject: {fileID: 4342737203103649939}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 1089709881432314556, guid: 8ca7b6b4ab3c78f4e9ba735375e950eb, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -307,3 +307,15 @@ MonoBehaviour:
   clickOkClip: {fileID: 8300000, guid: 113bfe07f3b1f184380fbaca3d2f3b80, type: 3}
   errorClip: {fileID: 8300000, guid: 09dbd978f5915b04d98f319b71ad075d, type: 3}
   grabClip: {fileID: 8300000, guid: 196605b6950721a41b93780fb013badf, type: 3}
+  audioMixer: {fileID: 24100000, guid: 8ca7b6b4ab3c78f4e9ba735375e950eb, type: 2}
+  muffledLowPassCutoff: 150
+  normalLowPassCutoff: 5000
+  musicTracks: []
+  minLoopCount: 1
+  maxLoopCount: 3
+  playRandomMusicOnStart: 1
+  maxMusicPitch: 1.5
+  normalMusicPitch: 1
+  highTensionTimeThreshold: 15
+  mediumTensionTimeThreshold: 30
+  mediumTensionPitch: 1.1

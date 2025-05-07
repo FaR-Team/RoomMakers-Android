@@ -46,6 +46,7 @@ public class AudioManager : MonoBehaviour
         else Destroy(this);
         
         _isMuffled = PlayerPrefs.GetInt("SoundMuffled", 0) == 1;
+
     }
     
     void Start()
