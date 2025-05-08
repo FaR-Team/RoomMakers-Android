@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc80d8573194d1a48ac12859f61a9854, type: 3}
+  m_Name: OutletKit
+  m_EditorClassIdentifier: 
+  Name: Outlet Kit
+  es_Name: Enchufe
+  price: 0
+  size: {x: 1, y: 1}
+  prefab: {fileID: 5954944119824593527, guid: 98b2ac79ee18c184da6459ef08ed3542, type: 3}
+  typeOfSize: 0
+  compatibles: []
+  requiredBase: {fileID: 0}
+  sprites:
+  - {fileID: 145304480, guid: 2fb9bc36333197b49b80dfccaecec38e, type: 3}
+  hasComboSprite: 0
+  comboTriggerFurniture: {fileID: 0}
+  wallObject: 0
+  furnitureTag: 0
+  tagMatchBonusPoints: 50
+  type: 2
+  ShopSprite: {fileID: 783685359, guid: 2fb9bc36333197b49b80dfccaecec38e, type: 3}
+  buyPrice: 50

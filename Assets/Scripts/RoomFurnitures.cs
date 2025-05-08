@@ -16,30 +16,70 @@ public class RoomFurnitures : MonoBehaviour
     [SerializeField] protected ComboPopUp matchPrefab;
 
     private LayerMask wallsLayerMask;
+    private LayerMask unplaceableLayerMask;
+    private LayerMask kitLayerMask;
 
     private void Start()
     {
         wallsLayerMask = LayerMask.GetMask("Walls", "InnerWalls");
+        unplaceableLayerMask = ~(1 << LayerMask.NameToLayer("Kit"));
+        kitLayerMask = LayerMask.NameToLayer("Kit");
     }
 
-    public bool PlaceFurniture(Vector2 position, FurnitureData furnitureData)
+    public bool PlaceFurniture(Vector2 position, FurnitureData furnitureData, bool isItem = false)
     {
         var originalData = furnitureData.originalData;
         
         
         List<Vector2> positionToOccupy = CalculatePositions(position, furnitureData.size);
 
+        bool requiresBase = furnitureData.originalData.requiredBase != null;
         bool canPlace =
-            (!positionToOccupy.Any(x => PlacementDatasInPosition.ContainsKey(x) || Physics2D.OverlapCircle(x, 0.2f))) &&
+            (!positionToOccupy.Any(x => PlacementDatasInPosition.ContainsKey(x) || Physics2D.OverlapCircle(x, 0.2f, isItem ? ~0 : unplaceableLayerMask))) && // If isItem, check for anything
             (!furnitureData.originalData.wallObject || CheckWallsAndRotate(position, furnitureData));
         bool placeOnTop = false;
 
-        if (canPlace)
+        if (canPlace) // If there's nothing underneath object
         {
-            PlacementData data = new PlacementData(positionToOccupy, furnitureData);
-            foreach (var pos in positionToOccupy)
+            if (!isItem) // Don't even create data for Kits
             {
-                PlacementDatasInPosition[pos] = data;
+                if (!requiresBase) // Place furniture normally
+                {
+
+                    PlacementData data = new PlacementData(positionToOccupy, furnitureData);
+                    foreach (var pos in positionToOccupy)
+                    {
+                        PlacementDatasInPosition[pos] = data;
+                    }
+
+                }
+                else
+                {
+                    canPlace = false;
+                    for (int i = 0; i < positionToOccupy.Count; i++)
+                    {
+                        var coll = Physics2D.OverlapCircle(positionToOccupy[i], 0.2f, kitLayerMask);
+                        if (coll != null && coll.TryGetComponent(out KitObject kit) &&
+                            furnitureData.originalData.requiredBase == kit.Data.originalData)
+                        {
+                            canPlace = true;
+                            break;
+                        }
+                    }
+
+                    if (canPlace)
+                    {
+                        PlacementData data = new PlacementData(positionToOccupy, furnitureData);
+                        foreach (var pos in positionToOccupy)
+                        {
+                            PlacementDatasInPosition[pos] = data;
+                        }
+                    }
+                    else
+                    {
+                        // TODO: PLACE BOX
+                    }
+                }
             }
         }
         else
@@ -47,7 +87,7 @@ public class RoomFurnitures : MonoBehaviour
             bool check = true;
             Vector2 validBottomPosition = Vector2.zero;
             bool foundValidPosition = false;
-            
+         
             // First check if all positions are contained in the dictionary
             foreach (var pos in positionToOccupy)
             {
@@ -68,11 +108,9 @@ public class RoomFurnitures : MonoBehaviour
             if (check && foundValidPosition)
             {
                 // Use the valid position we found for compatibility checks
-                canPlace = positionToOccupy.Intersect(PlacementDatasInPosition[validBottomPosition].occupiedPositions).Count() == 
-                           positionToOccupy.Count()
+                canPlace = positionToOccupy.Intersect(PlacementDatasInPosition[validBottomPosition].occupiedPositions).Count() == positionToOccupy.Count()
                            && PlacementDatasInPosition[validBottomPosition].IsCompatibleWith(originalData)
-                           && PlacementDatasInPosition[validBottomPosition].HasFreePositions(positionToOccupy);
-
+                           && PlacementDatasInPosition[validBottomPosition].HasFreePositions(positionToOccupy); 
                 placeOnTop = canPlace;
                 
                 // If we can place it, update the position to use for instantiation
@@ -91,7 +129,7 @@ public class RoomFurnitures : MonoBehaviour
         FurnitureObjectBase furniturePrefab = Instantiate(furnitureData.prefab, finalPos, Quaternion.Euler(furnitureData.VectorRotation)).GetComponent<FurnitureObjectBase>();
         furniturePrefab.CopyFurnitureData(furnitureData);
         
-        GivePoints(furnitureData, positionToOccupy, placeOnTop, finalPos, furniturePrefab);
+        if(!isItem) GivePoints(furnitureData, positionToOccupy, placeOnTop, finalPos, furniturePrefab);
 
         return true;
     }
@@ -121,10 +159,10 @@ public class RoomFurnitures : MonoBehaviour
                 placed = false;
                 break;
             case ItemType.OutletKit:
-                placed = PlaceFurniture(position, furnitureData);
+                placed = PlaceFurniture(position, furnitureData, true);
                 break;
             case ItemType.PipelineKit:
-                placed = PlaceFurniture(position, furnitureData);
+                placed = PlaceFurniture(position, furnitureData, true);
                 break;
             default:
                 placed = false;
@@ -207,14 +245,8 @@ public class RoomFurnitures : MonoBehaviour
                 MainRoom.instance.availableTiles -= data.originalData.size.x * data.originalData.size.y;
             }
 
-            PlacementDatasInPosition[finalPos].instantiatedFurniture = furnitureObject;
-            
-            // Add tag bonus points
-            if (tagBonus > 0)
-            {
-                PlayerController.instance.Inventory.UpdateMoney(tagBonus);
-                House.instance.UpdateScore(tagBonus);
-            }
+            if (furnitureObject.originalData is not ItemData) PlacementDatasInPosition[finalPos].instantiatedFurniture = furnitureObject;
+            //else PlacementDatasInPosition[finalPos].instantiatedBaseObject = furnitureObject;  // If just placed a kit
         }
         else
         {

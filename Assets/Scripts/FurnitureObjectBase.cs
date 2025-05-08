@@ -15,7 +15,7 @@ public class FurnitureObjectBase : MonoBehaviour
     public FurnitureData Data => furnitureData;
     public bool HasReceivedTagBonus => hasReceivedTagBonus;
     
-    public void MarkTagBonusReceived()
+    public void MarkTagBonusReceived() // TODO: Ver pa que está esto?
     {
         hasReceivedTagBonus = true;
     }
