@@ -13,6 +13,7 @@ public class AudioManager : MonoBehaviour
     
     [Header("Audio Mixer")]
     [SerializeField] private AudioMixer audioMixer;
+    [SerializeField] private string lowpassParameterName = "Lowpass";
     [SerializeField] private float muffledLowPassCutoff = 100f;
     [SerializeField] private float normalLowPassCutoff = 5000f;
     
@@ -62,6 +63,10 @@ public class AudioManager : MonoBehaviour
         {
             ApplyMuffledVolume();
         }
+        else
+        {
+            RestoreNormalVolume();
+        }
         
         if (playRandomMusicOnStart && musicTracks.Count > 0)
         {
@@ -104,16 +109,20 @@ public class AudioManager : MonoBehaviour
         
         PlayerPrefs.SetInt("SoundMuffled", _isMuffled ? 1 : 0);
         PlayerPrefs.Save();
+        
+        Debug.Log("Muffled sound toggled: " + _isMuffled);
     }
     
     private void ApplyMuffledVolume()
     {
-        audioMixer.SetFloat("Lowpass", muffledLowPassCutoff);
+        bool success = audioMixer.SetFloat(lowpassParameterName, muffledLowPassCutoff);
+        Debug.Log("Applied muffled volume. Success: " + success + ", Value: " + muffledLowPassCutoff);
     }
     
     private void RestoreNormalVolume()
     {
-        audioMixer.SetFloat("Lowpass", normalLowPassCutoff);
+        bool success = audioMixer.SetFloat(lowpassParameterName, normalLowPassCutoff);
+        Debug.Log("Restored normal volume. Success: " + success + ", Value: " + normalLowPassCutoff);
     }
     
     private void AdjustMusicPitchBasedOnTime()

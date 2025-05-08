@@ -8,19 +8,15 @@ public class DebugManager : MonoBehaviour
 {
     public static DebugManager instance;
 
-    // Reference to the debug panel prefab (can be minimal - just an empty panel)
     [SerializeField] private GameObject debugPanelPrefab;
     
-    // Main components
     private GameObject debugPanel;
     private GameObject debugButton;
 
-    // UI Scaling settings
     [Header("UI Scaling")]
     [SerializeField] [Range(0.5f, 2.0f)] private float uiScaleFactor = 1.0f;
     [SerializeField] private bool autoScaleWithScreen = true;
     
-    // UI scaling factors
     private float baseFontSize = 18f;
     private float buttonHeight = 80f;
     private float sliderHeight = 60f;
@@ -29,7 +25,6 @@ public class DebugManager : MonoBehaviour
     private float elementSpacing = 15f;
     private float panelPadding = 20f;
     
-    // UI References
     private TextMeshProUGUI scoreText;
     private TextMeshProUGUI doorPriceText;
     private TextMeshProUGUI roomsBuiltText;
@@ -54,10 +49,18 @@ public class DebugManager : MonoBehaviour
     private Button addRoomButton;
     private Button clearRoomButton;
     
-    // Values for sliders
     private int scoreToAdd = 100;
     private int moneyToAdd = 100;
     private int maxDoorPrice = 1000;
+
+    private Transform consoleContent;
+    private ScrollRect scrollRect;
+    private List<GameObject> logEntries = new List<GameObject>();
+    private Queue<LogEntry> logQueue = new Queue<LogEntry>();
+    private bool showLogs = true;
+    private bool showWarnings = true;
+    private bool showErrors = true;
+    private int maxLogEntries = 50;
     
     private bool isDebugEnabled = false;
 
@@ -74,36 +77,29 @@ public class DebugManager : MonoBehaviour
             return;
         }
         
-        // Adjust UI scaling based on screen resolution
         AdjustUIScaling();
     }
     
     private void Start()
     {
-        // Create the debug panel but keep it hidden
         CreateDebugPanel();
         debugPanel.SetActive(false);
     }
     
     private void AdjustUIScaling()
     {
-        float scaleFactor = uiScaleFactor; // Start with editor-defined scale
+        float scaleFactor = uiScaleFactor;
         
         if (autoScaleWithScreen)
         {
-            // Get screen dimensions
             float screenWidth = Screen.width;
             float screenHeight = Screen.height;
             
-            // Calculate scaling factor based on screen resolution
-            // Use the smaller dimension to ensure everything fits
-            float screenScaleFactor = Mathf.Min(screenWidth, screenHeight) / 1080f; // Base on 1080p reference
+            float screenScaleFactor = Mathf.Min(screenWidth, screenHeight) / 1080f;
             
-            // Combine editor scale with screen-based scale
             scaleFactor *= screenScaleFactor;
         }
         
-        // Apply scaling to UI elements (with minimum values to prevent too small UI)
         baseFontSize = Mathf.Max(18f * scaleFactor, 16f);
         buttonHeight = Mathf.Max(80f * scaleFactor, 60f);
         sliderHeight = Mathf.Max(60f * scaleFactor, 40f);
@@ -115,7 +111,6 @@ public class DebugManager : MonoBehaviour
     
     private void CreateDebugPanel()
     {
-        // Create canvas for the debug panel if needed
         Canvas canvas = FindObjectOfType<Canvas>();
         if (canvas == null)
         {
@@ -123,21 +118,18 @@ public class DebugManager : MonoBehaviour
             canvas = canvasObj.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             
-            // Add canvas scaler for proper scaling on different devices
             CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080, 1920); // Reference resolution for mobile
+            scaler.referenceResolution = new Vector2(1080, 1920); 
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-            scaler.matchWidthOrHeight = 0.5f; // Balance between width and height
+            scaler.matchWidthOrHeight = 0.5f;
             
             canvasObj.AddComponent<GraphicRaycaster>();
         }
         
-        // Create debug panel
         debugPanel = new GameObject("DebugPanel");
         debugPanel.transform.SetParent(canvas.transform, false);
         
-        // Add image component for background
         Image panelImage = debugPanel.AddComponent<Image>();
         panelImage.color = new Color(0.1f, 0.1f, 0.1f, 0.95f);
         
@@ -150,6 +142,8 @@ public class DebugManager : MonoBehaviour
         
         GameObject scrollViewObj = CreateScrollView(debugPanel.transform);
         Transform contentTransform = scrollViewObj.transform.Find("Viewport/Content");
+
+        scrollRect = scrollViewObj.GetComponent<ScrollRect>();
         
         VerticalLayoutGroup layoutGroup = contentTransform.gameObject.AddComponent<VerticalLayoutGroup>();
         layoutGroup.padding = new RectOffset(
@@ -183,33 +177,30 @@ public class DebugManager : MonoBehaviour
         CreateShopControls(contentTransform);
         
         CreateRoomControls(contentTransform);
+
+        CreateConsole(contentTransform);
         
         CreateCloseButton(debugPanel.transform);
     }
     
     private GameObject CreateScrollView(Transform parent)
     {
-        // Create scroll view
         GameObject scrollView = new GameObject("ScrollView", typeof(RectTransform));
         scrollView.transform.SetParent(parent, false);
         
         ScrollRect scrollRect = scrollView.AddComponent<ScrollRect>();
         
-        // Create viewport
         GameObject viewport = new GameObject("Viewport", typeof(RectTransform));
         viewport.transform.SetParent(scrollView.transform, false);
         
         Image viewportImage = viewport.AddComponent<Image>();
         viewportImage.color = new Color(0, 0, 0, 0.1f);
         
-        // Add mask
         viewport.AddComponent<Mask>().showMaskGraphic = false;
         
-        // Create content
         GameObject content = new GameObject("Content", typeof(RectTransform));
         content.transform.SetParent(viewport.transform, false);
         
-        // Setup scroll rect
         scrollRect.viewport = viewport.GetComponent<RectTransform>();
         scrollRect.content = content.GetComponent<RectTransform>();
         scrollRect.horizontal = false;
@@ -217,9 +208,8 @@ public class DebugManager : MonoBehaviour
         scrollRect.scrollSensitivity = 30;
         scrollRect.movementType = ScrollRect.MovementType.Clamped;
         scrollRect.inertia = true;
-        scrollRect.decelerationRate = 0.135f; // Slower deceleration for better control
+        scrollRect.decelerationRate = 0.135f;
         
-        // Setup RectTransforms
         RectTransform scrollRectTransform = scrollView.GetComponent<RectTransform>();
         scrollRectTransform.anchorMin = new Vector2(0, 0);
         scrollRectTransform.anchorMax = new Vector2(1, 1);
@@ -239,7 +229,7 @@ public class DebugManager : MonoBehaviour
         contentRectTransform.anchorMax = new Vector2(1, 1);
         contentRectTransform.pivot = new Vector2(0.5f, 1);
         contentRectTransform.anchoredPosition = Vector2.zero;
-        contentRectTransform.sizeDelta = new Vector2(0, 1500); // Initial height, will be adjusted by content size fitter
+        contentRectTransform.sizeDelta = new Vector2(0, 1500);
         
         return scrollView;
     }
@@ -284,13 +274,8 @@ public class DebugManager : MonoBehaviour
         Image image = panel.AddComponent<Image>();
         image.color = new Color(0.2f, 0.2f, 0.2f, 0.7f);
         
-        // Add rounded corners with a 9-slice sprite if available
-        // If you have a rounded rect sprite, you can assign it here
-        // image.sprite = yourRoundedRectSprite;
-        // image.type = Image.Type.Sliced;
-        
-                RectTransform rectTransform = panel.GetComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(0, 0); // Will be sized by content
+        RectTransform rectTransform = panel.GetComponent<RectTransform>();
+        rectTransform.sizeDelta = new Vector2(0, 0);
         
         return panel;
     }
@@ -330,7 +315,6 @@ public class DebugManager : MonoBehaviour
             Mathf.RoundToInt(panelPadding/2)
         );
         
-        // Create toggle
         GameObject toggleControl = new GameObject("ToggleControl", typeof(RectTransform));
         toggleControl.transform.SetParent(toggleObj.transform, false);
         
@@ -338,25 +322,21 @@ public class DebugManager : MonoBehaviour
         toggle.isOn = isOn;
         toggle.onValueChanged.AddListener(onValueChanged);
         
-        // Create background
         GameObject background = new GameObject("Background", typeof(RectTransform));
         background.transform.SetParent(toggleControl.transform, false);
         
         Image backgroundImage = background.AddComponent<Image>();
         backgroundImage.color = Color.white;
         
-        // Create checkmark
         GameObject checkmark = new GameObject("Checkmark", typeof(RectTransform));
         checkmark.transform.SetParent(background.transform, false);
         
         Image checkmarkImage = checkmark.AddComponent<Image>();
         checkmarkImage.color = Color.green;
         
-        // Setup toggle
         toggle.targetGraphic = backgroundImage;
         toggle.graphic = checkmarkImage;
         
-        // Create label
         GameObject labelObj = new GameObject("Label", typeof(RectTransform));
         labelObj.transform.SetParent(toggleObj.transform, false);
         
@@ -366,7 +346,6 @@ public class DebugManager : MonoBehaviour
         text.color = Color.white;
         text.alignment = TextAlignmentOptions.Left;
         
-        // Setup RectTransforms
         RectTransform toggleObjRect = toggleObj.GetComponent<RectTransform>();
         toggleObjRect.sizeDelta = new Vector2(0, toggleHeight);
         
@@ -397,7 +376,6 @@ public class DebugManager : MonoBehaviour
         GameObject sliderObj = new GameObject("Slider_" + label, typeof(RectTransform));
         sliderObj.transform.SetParent(parent, false);
         
-        // Create vertical layout
         VerticalLayoutGroup layoutGroup = sliderObj.AddComponent<VerticalLayoutGroup>();
         layoutGroup.childAlignment = TextAnchor.UpperLeft;
         layoutGroup.childControlWidth = true;
@@ -410,7 +388,6 @@ public class DebugManager : MonoBehaviour
             Mathf.RoundToInt(panelPadding/2)
         );
         
-        // Create label
         GameObject labelObj = new GameObject("Label", typeof(RectTransform));
         labelObj.transform.SetParent(sliderObj.transform, false);
         
@@ -420,7 +397,6 @@ public class DebugManager : MonoBehaviour
         labelText.color = Color.white;
         labelText.alignment = TextAlignmentOptions.Left;
         
-        // Create slider control
         GameObject sliderControl = new GameObject("SliderControl", typeof(RectTransform));
         sliderControl.transform.SetParent(sliderObj.transform, false);
         
@@ -430,36 +406,30 @@ public class DebugManager : MonoBehaviour
         slider.value = value;
         slider.onValueChanged.AddListener(onValueChanged);
         
-        // Create background
         GameObject background = new GameObject("Background", typeof(RectTransform));
         background.transform.SetParent(sliderControl.transform, false);
         
         Image backgroundImage = background.AddComponent<Image>();
         backgroundImage.color = new Color(0.2f, 0.2f, 0.2f, 1f);
         
-        // Create fill area
         GameObject fillArea = new GameObject("Fill Area", typeof(RectTransform));
         fillArea.transform.SetParent(sliderControl.transform, false);
         
-        // Create fill
         GameObject fill = new GameObject("Fill", typeof(RectTransform));
         fill.transform.SetParent(fillArea.transform, false);
         
         Image fillImage = fill.AddComponent<Image>();
         fillImage.color = new Color(0.2f, 0.7f, 0.2f, 1f);
         
-        // Create handle area
         GameObject handleArea = new GameObject("Handle Slide Area", typeof(RectTransform));
         handleArea.transform.SetParent(sliderControl.transform, false);
         
-        // Create handle
         GameObject handle = new GameObject("Handle", typeof(RectTransform));
         handle.transform.SetParent(handleArea.transform, false);
         
         Image handleImage = handle.AddComponent<Image>();
         handleImage.color = new Color(1f, 1f, 1f, 1f);
         
-        // Create value text
         GameObject valueTextObj = new GameObject("Value", typeof(RectTransform));
         valueTextObj.transform.SetParent(sliderObj.transform, false);
         
@@ -468,13 +438,11 @@ public class DebugManager : MonoBehaviour
         valueText.color = new Color(0.8f, 0.8f, 0.8f);
         valueText.alignment = TextAlignmentOptions.Right;
         
-        // Setup slider
         slider.fillRect = fill.GetComponent<RectTransform>();
         slider.handleRect = handle.GetComponent<RectTransform>();
         slider.targetGraphic = handleImage;
         slider.direction = Slider.Direction.LeftToRight;
         
-        // Setup RectTransforms
         RectTransform sliderObjRect = sliderObj.GetComponent<RectTransform>();
         sliderObjRect.sizeDelta = new Vector2(0, sliderHeight * 2.2f);
         
@@ -534,7 +502,6 @@ public class DebugManager : MonoBehaviour
         button.onClick.AddListener(onClick);
         button.targetGraphic = buttonImage;
         
-        // Create text
         GameObject textObj = new GameObject("Text", typeof(RectTransform));
         textObj.transform.SetParent(buttonObj.transform, false);
         
@@ -544,7 +511,6 @@ public class DebugManager : MonoBehaviour
         buttonText.color = Color.white;
         buttonText.alignment = TextAlignmentOptions.Center;
         
-        // Setup RectTransforms
         RectTransform buttonRect = buttonObj.GetComponent<RectTransform>();
         buttonRect.sizeDelta = new Vector2(0, buttonHeight);
         
@@ -553,7 +519,6 @@ public class DebugManager : MonoBehaviour
         textRect.anchorMax = Vector2.one;
         textRect.sizeDelta = Vector2.zero;
         
-        // Add color transition
         ColorBlock colors = button.colors;
         colors.normalColor = new Color(0.3f, 0.3f, 0.3f, 1f);
         colors.highlightedColor = new Color(0.4f, 0.4f, 0.4f, 1f);
@@ -577,7 +542,6 @@ public class DebugManager : MonoBehaviour
         button.onClick.AddListener(ToggleDebugPanel);
         button.targetGraphic = buttonImage;
         
-        // Create text
         GameObject textObj = new GameObject("Text", typeof(RectTransform));
         textObj.transform.SetParent(closeButton.transform, false);
         
@@ -588,7 +552,6 @@ public class DebugManager : MonoBehaviour
         buttonText.color = Color.white;
         buttonText.alignment = TextAlignmentOptions.Center;
         
-        // Setup RectTransforms
         RectTransform buttonRect = closeButton.GetComponent<RectTransform>();
         buttonRect.anchorMin = new Vector2(1, 1);
         buttonRect.anchorMax = new Vector2(1, 1);
@@ -608,7 +571,6 @@ public class DebugManager : MonoBehaviour
         
         GameObject infoPanel = CreatePanel(parent, "InfoPanel");
         
-        // Add vertical layout
         VerticalLayoutGroup layoutGroup = infoPanel.AddComponent<VerticalLayoutGroup>();
         layoutGroup.padding = new RectOffset(
             Mathf.RoundToInt(panelPadding), 
@@ -621,13 +583,11 @@ public class DebugManager : MonoBehaviour
         layoutGroup.childControlWidth = true;
         layoutGroup.childForceExpandWidth = true;
         
-        // Create info labels
         scoreText = CreateLabel(infoPanel.transform, "Score: 0", buttonHeight * 0.5f);
         doorPriceText = CreateLabel(infoPanel.transform, "Door Price: 0", buttonHeight * 0.5f);
         roomsBuiltText = CreateLabel(infoPanel.transform, "Rooms Built: 0", buttonHeight * 0.5f);
         availableTilesText = CreateLabel(infoPanel.transform, "Available Tiles: 0", buttonHeight * 0.5f);
         
-        // Set panel height based on content
         RectTransform panelRect = infoPanel.GetComponent<RectTransform>();
         panelRect.sizeDelta = new Vector2(0, buttonHeight * 2.5f);
     }
@@ -638,7 +598,6 @@ public class DebugManager : MonoBehaviour
         
         GameObject growthPanel = CreatePanel(parent, "GrowthPanel");
         
-        // Add vertical layout
         VerticalLayoutGroup layoutGroup = growthPanel.AddComponent<VerticalLayoutGroup>();
         layoutGroup.padding = new RectOffset(
             Mathf.RoundToInt(panelPadding), 
@@ -651,16 +610,13 @@ public class DebugManager : MonoBehaviour
         layoutGroup.childControlWidth = true;
         layoutGroup.childForceExpandWidth = true;
         
-        // Create exponential growth toggle
         exponentialGrowthToggle = CreateToggle(growthPanel.transform, "Use Exponential Growth", 
                                               GetExponentialGrowthSetting(), ToggleExponentialGrowth);
         
-        // Create growth factor slider
         growthFactorSlider = CreateSlider(growthPanel.transform, "Growth Factor", 1.0f, 2.0f, 
                                          GetGrowthFactor(), UpdateGrowthFactor, out growthFactorText);
         growthFactorText.text = $"Growth Factor: {GetGrowthFactor():F2}";
         
-        // Set panel height based on content
         RectTransform panelRect = growthPanel.GetComponent<RectTransform>();
         panelRect.sizeDelta = new Vector2(0, toggleHeight + sliderHeight * 2.2f + elementSpacing * 2 + panelPadding * 2);
     }
@@ -671,7 +627,6 @@ public class DebugManager : MonoBehaviour
         
         GameObject scorePanel = CreatePanel(parent, "ScorePanel");
         
-        // Add vertical layout
         VerticalLayoutGroup layoutGroup = scorePanel.AddComponent<VerticalLayoutGroup>();
         layoutGroup.padding = new RectOffset(
             Mathf.RoundToInt(panelPadding), 
@@ -684,15 +639,12 @@ public class DebugManager : MonoBehaviour
         layoutGroup.childControlWidth = true;
         layoutGroup.childForceExpandWidth = true;
         
-        // Create score slider
         scoreSlider = CreateSlider(scorePanel.transform, "Score to Add", 10, 1000, 
                                   scoreToAdd, UpdateScoreSlider, out scoreValueText);
         scoreValueText.text = $"Add Score: {scoreToAdd}";
         
-        // Create add score button
         addScoreButton = CreateButton(scorePanel.transform, "Add Score", AddScore);
         
-        // Set panel height based on content
         RectTransform panelRect = scorePanel.GetComponent<RectTransform>();
         panelRect.sizeDelta = new Vector2(0, sliderHeight * 2.2f + buttonHeight + elementSpacing * 2 + panelPadding * 2);
     }
@@ -703,7 +655,6 @@ public class DebugManager : MonoBehaviour
         
         GameObject moneyPanel = CreatePanel(parent, "MoneyPanel");
         
-        // Add vertical layout
         VerticalLayoutGroup layoutGroup = moneyPanel.AddComponent<VerticalLayoutGroup>();
         layoutGroup.padding = new RectOffset(
             Mathf.RoundToInt(panelPadding), 
@@ -716,15 +667,12 @@ public class DebugManager : MonoBehaviour
         layoutGroup.childControlWidth = true;
         layoutGroup.childForceExpandWidth = true;
         
-        // Create money slider
         moneySlider = CreateSlider(moneyPanel.transform, "Money to Add", 10, 10000, 
                                   moneyToAdd, UpdateMoneySlider, out moneyValueText);
         moneyValueText.text = $"Add Money: {moneyToAdd}";
         
-        // Create add money button
         addMoneyButton = CreateButton(moneyPanel.transform, "Add Money", AddMoney);
         
-        // Set panel height based on content
         RectTransform panelRect = moneyPanel.GetComponent<RectTransform>();
         panelRect.sizeDelta = new Vector2(0, sliderHeight * 2.2f + buttonHeight + elementSpacing * 2 + panelPadding * 2);
     }
@@ -824,7 +772,6 @@ public class DebugManager : MonoBehaviour
         
         GameObject doorPricePanel = CreatePanel(parent, "DoorPricePanel");
         
-        // Add vertical layout
         VerticalLayoutGroup layoutGroup = doorPricePanel.AddComponent<VerticalLayoutGroup>();
         layoutGroup.padding = new RectOffset(
             Mathf.RoundToInt(panelPadding), 
@@ -837,15 +784,12 @@ public class DebugManager : MonoBehaviour
         layoutGroup.childControlWidth = true;
         layoutGroup.childForceExpandWidth = true;
         
-        // Create max door price slider
         maxDoorPriceSlider = CreateSlider(doorPricePanel.transform, "Max Door Price", 0, 10000, 
                                          maxDoorPrice, UpdateMaxDoorPriceSlider, out maxDoorPriceValueText);
         maxDoorPriceValueText.text = $"Max Door Price: {maxDoorPrice} (0 = unlimited)";
         
-        // Create set max door price button
         setMaxDoorPriceButton = CreateButton(doorPricePanel.transform, "Set Max Door Price", SetMaxDoorPrice);
         
-        // Set panel height based on content
         RectTransform panelRect = doorPricePanel.GetComponent<RectTransform>();
         panelRect.sizeDelta = new Vector2(0, sliderHeight * 2.2f + buttonHeight + elementSpacing * 2 + panelPadding * 2);
     }
@@ -856,7 +800,6 @@ public class DebugManager : MonoBehaviour
         
         GameObject roomPanel = CreatePanel(parent, "RoomPanel");
         
-        // Add vertical layout
         VerticalLayoutGroup layoutGroup = roomPanel.AddComponent<VerticalLayoutGroup>();
         layoutGroup.padding = new RectOffset(
             Mathf.RoundToInt(panelPadding), 
@@ -869,15 +812,409 @@ public class DebugManager : MonoBehaviour
         layoutGroup.childControlWidth = true;
         layoutGroup.childForceExpandWidth = true;
         
-        // Create add room button
         addRoomButton = CreateButton(roomPanel.transform, "Add Free Room", AddFreeRoom);
         
-        // Create clear room button
         clearRoomButton = CreateButton(roomPanel.transform, "Clear Current Room", ClearCurrentRoom);
         
-        // Set panel height based on content
         RectTransform panelRect = roomPanel.GetComponent<RectTransform>();
         panelRect.sizeDelta = new Vector2(0, buttonHeight * 2 + elementSpacing + panelPadding * 2);
+    }
+
+private void CreateConsole(Transform parent)
+    {
+        CreateSectionHeader(parent, "CONSOLE");
+        
+        GameObject consolePanel = CreatePanel(parent, "ConsolePanel");
+        
+        VerticalLayoutGroup layoutGroup = consolePanel.AddComponent<VerticalLayoutGroup>();
+        layoutGroup.padding = new RectOffset(
+            Mathf.RoundToInt(panelPadding), 
+            Mathf.RoundToInt(panelPadding), 
+            Mathf.RoundToInt(panelPadding), 
+            Mathf.RoundToInt(panelPadding)
+        );
+        layoutGroup.spacing = elementSpacing;
+        layoutGroup.childAlignment = TextAnchor.UpperLeft;
+        layoutGroup.childControlWidth = true;
+        layoutGroup.childForceExpandWidth = true;
+        
+        GameObject controlsObj = new GameObject("ConsoleControls", typeof(RectTransform));
+        controlsObj.transform.SetParent(consolePanel.transform, false);
+        
+        HorizontalLayoutGroup controlsLayout = controlsObj.AddComponent<HorizontalLayoutGroup>();
+        controlsLayout.spacing = elementSpacing;
+        controlsLayout.childAlignment = TextAnchor.MiddleLeft;
+        controlsLayout.childControlWidth = false;
+        controlsLayout.childForceExpandWidth = false;
+        
+        RectTransform controlsRect = controlsObj.GetComponent<RectTransform>();
+        controlsRect.sizeDelta = new Vector2(0, buttonHeight * 0.8f);
+        
+        Toggle logsToggle = CreateConsoleToggle(controlsObj.transform, "Logs", true, Color.white, ToggleLogMessages);
+        Toggle warningsToggle = CreateConsoleToggle(controlsObj.transform, "Warnings", true, new Color(1f, 0.8f, 0.2f), ToggleWarningMessages);
+        Toggle errorsToggle = CreateConsoleToggle(controlsObj.transform, "Errors", true, new Color(1f, 0.3f, 0.3f), ToggleErrorMessages);
+        
+        GameObject spacerObj = new GameObject("Spacer", typeof(RectTransform));
+        spacerObj.transform.SetParent(controlsObj.transform, false);
+        LayoutElement spacer = spacerObj.AddComponent<LayoutElement>();
+        spacer.flexibleWidth = 1;
+        
+        GameObject clearButtonObj = new GameObject("ClearButton", typeof(RectTransform));
+        clearButtonObj.transform.SetParent(controlsObj.transform, false);
+        
+        Image clearButtonImage = clearButtonObj.AddComponent<Image>();
+        clearButtonImage.color = new Color(0.3f, 0.3f, 0.3f, 1f);
+        
+        Button clearButton = clearButtonObj.AddComponent<Button>();
+        clearButton.onClick.AddListener(ClearConsole);
+        clearButton.targetGraphic = clearButtonImage;
+        
+        ColorBlock clearColors = clearButton.colors;
+        clearColors.normalColor = new Color(0.4f, 0.2f, 0.2f, 1f);
+        clearColors.highlightedColor = new Color(0.5f, 0.3f, 0.3f, 1f);
+        clearColors.pressedColor = new Color(0.3f, 0.1f, 0.1f, 1f);
+        clearButton.colors = clearColors;
+        
+        GameObject clearTextObj = new GameObject("Text", typeof(RectTransform));
+        clearTextObj.transform.SetParent(clearButtonObj.transform, false);
+        
+        TextMeshProUGUI clearButtonText = clearTextObj.AddComponent<TextMeshProUGUI>();
+        clearButtonText.text = "Clear";
+        clearButtonText.fontSize = baseFontSize * 0.9f;
+        clearButtonText.color = Color.white;
+        clearButtonText.alignment = TextAlignmentOptions.Center;
+        
+        RectTransform clearButtonRect = clearButtonObj.GetComponent<RectTransform>();
+        clearButtonRect.sizeDelta = new Vector2(buttonHeight * 1.5f, buttonHeight * 0.8f);
+        
+        RectTransform clearTextRect = clearTextObj.GetComponent<RectTransform>();
+        clearTextRect.anchorMin = Vector2.zero;
+        clearTextRect.anchorMax = Vector2.one;
+        clearTextRect.sizeDelta = Vector2.zero;
+        
+        GameObject consoleOutputObj = new GameObject("ConsoleOutput", typeof(RectTransform));
+        consoleOutputObj.transform.SetParent(consolePanel.transform, false);
+        
+        Image outputBgImage = consoleOutputObj.AddComponent<Image>();
+        outputBgImage.color = new Color(0.08f, 0.08f, 0.08f, 1f);
+        
+        GameObject scrollViewObj = CreateScrollView(consoleOutputObj.transform);
+        Transform contentTransform = scrollViewObj.transform.Find("Viewport/Content");
+        
+        VerticalLayoutGroup contentLayout = contentTransform.gameObject.AddComponent<VerticalLayoutGroup>();
+        contentLayout.padding = new RectOffset(
+            Mathf.RoundToInt(panelPadding/2), 
+            Mathf.RoundToInt(panelPadding/2), 
+            Mathf.RoundToInt(panelPadding/2), 
+            Mathf.RoundToInt(panelPadding/2)
+        );
+        contentLayout.spacing = elementSpacing/2;
+        contentLayout.childAlignment = TextAnchor.UpperLeft;
+        contentLayout.childControlWidth = true;
+        contentLayout.childForceExpandWidth = true;
+        contentLayout.childControlHeight = false;
+        contentLayout.childForceExpandHeight = false;
+        
+        ContentSizeFitter contentSizeFitter = contentTransform.gameObject.AddComponent<ContentSizeFitter>();
+        contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        
+        consoleContent = contentTransform;
+        scrollRect = scrollViewObj.GetComponent<ScrollRect>();
+        
+        RectTransform outputRect = consoleOutputObj.GetComponent<RectTransform>();
+        outputRect.sizeDelta = new Vector2(0, buttonHeight * 5);
+        
+        RectTransform panelRect = consolePanel.GetComponent<RectTransform>();
+        panelRect.sizeDelta = new Vector2(0, buttonHeight * 6 + elementSpacing * 2 + panelPadding * 2);
+        
+        Application.logMessageReceived += HandleLog;
+    }
+    
+    private Toggle CreateConsoleToggle(Transform parent, string label, bool isOn, Color textColor, UnityEngine.Events.UnityAction<bool> onValueChanged)
+    {
+        GameObject toggleObj = new GameObject("Toggle_" + label, typeof(RectTransform));
+        toggleObj.transform.SetParent(parent, false);
+        
+        HorizontalLayoutGroup layoutGroup = toggleObj.AddComponent<HorizontalLayoutGroup>();
+        layoutGroup.childAlignment = TextAnchor.MiddleLeft;
+        layoutGroup.childControlWidth = false;
+        layoutGroup.childForceExpandWidth = false;
+        layoutGroup.spacing = elementSpacing/2;
+        
+        GameObject toggleControl = new GameObject("ToggleControl", typeof(RectTransform));
+        toggleControl.transform.SetParent(toggleObj.transform, false);
+        
+        Toggle toggle = toggleControl.AddComponent<Toggle>();
+        toggle.isOn = isOn;
+        toggle.onValueChanged.AddListener(onValueChanged);
+        
+        GameObject background = new GameObject("Background", typeof(RectTransform));
+        background.transform.SetParent(toggleControl.transform, false);
+        
+        Image backgroundImage = background.AddComponent<Image>();
+        backgroundImage.color = new Color(0.15f, 0.15f, 0.15f, 1f);
+        
+        GameObject checkmark = new GameObject("Checkmark", typeof(RectTransform));
+        checkmark.transform.SetParent(background.transform, false);
+        
+        Image checkmarkImage = checkmark.AddComponent<Image>();
+        checkmarkImage.color = textColor;
+        
+        toggle.targetGraphic = backgroundImage;
+        toggle.graphic = checkmarkImage;
+        
+        ColorBlock colors = toggle.colors;
+        colors.normalColor = new Color(0.15f, 0.15f, 0.15f, 1f);
+        colors.highlightedColor = new Color(0.25f, 0.25f, 0.25f, 1f);
+        colors.pressedColor = new Color(0.1f, 0.1f, 0.1f, 1f);
+        toggle.colors = colors;
+        
+        GameObject labelObj = new GameObject("Label", typeof(RectTransform));
+        labelObj.transform.SetParent(toggleObj.transform, false);
+        
+        TextMeshProUGUI text = labelObj.AddComponent<TextMeshProUGUI>();
+        text.text = label;
+        text.fontSize = baseFontSize * 0.9f;
+        text.color = textColor;
+        text.alignment = TextAlignmentOptions.Left;
+        text.fontStyle = FontStyles.Bold;
+        
+        RectTransform toggleObjRect = toggleObj.GetComponent<RectTransform>();
+        toggleObjRect.sizeDelta = new Vector2(buttonHeight * 2f, buttonHeight * 0.8f);
+        
+        RectTransform toggleControlRect = toggleControl.GetComponent<RectTransform>();
+        toggleControlRect.sizeDelta = new Vector2(buttonHeight * 0.5f, buttonHeight * 0.5f);
+        
+        RectTransform backgroundRect = background.GetComponent<RectTransform>();
+        backgroundRect.anchorMin = new Vector2(0.5f, 0.5f);
+        backgroundRect.anchorMax = new Vector2(0.5f, 0.5f);
+        backgroundRect.pivot = new Vector2(0.5f, 0.5f);
+        backgroundRect.sizeDelta = new Vector2(buttonHeight * 0.4f, buttonHeight * 0.4f);
+        
+        RectTransform checkmarkRect = checkmark.GetComponent<RectTransform>();
+        checkmarkRect.anchorMin = new Vector2(0.5f, 0.5f);
+        checkmarkRect.anchorMax = new Vector2(0.5f, 0.5f);
+        checkmarkRect.pivot = new Vector2(0.5f, 0.5f);
+        checkmarkRect.sizeDelta = new Vector2(buttonHeight * 0.25f, buttonHeight * 0.25f);
+        
+        RectTransform labelRect = labelObj.GetComponent<RectTransform>();
+        labelRect.sizeDelta = new Vector2(buttonHeight * 1.5f, buttonHeight * 0.8f);
+        
+        return toggle;
+    }
+    
+        private void CreateLogEntry(string message, string stackTrace, LogType type)
+    {
+        if (consoleContent == null) return;
+        
+        if ((type == LogType.Log && !showLogs) ||
+            (type == LogType.Warning && !showWarnings) ||
+            (type == LogType.Error && !showErrors && type != LogType.Exception) ||
+            (type == LogType.Exception && !showErrors))
+        {
+            return;
+        }
+        
+        GameObject logEntryObj = new GameObject("LogEntry", typeof(RectTransform));
+        logEntryObj.transform.SetParent(consoleContent, false);
+        
+        Image bgImage = logEntryObj.AddComponent<Image>();
+        
+        Color bgColor;
+        Color textColor;
+        
+        switch (type)
+        {
+            case LogType.Error:
+            case LogType.Exception:
+            case LogType.Assert:
+                bgColor = new Color(0.25f, 0.08f, 0.08f, 0.9f);
+                textColor = new Color(1f, 0.4f, 0.4f);
+                break;
+            case LogType.Warning:
+                bgColor = new Color(0.25f, 0.22f, 0.08f, 0.9f);
+                textColor = new Color(1f, 0.9f, 0.4f);
+                break;
+            default:
+                bgColor = new Color(0.15f, 0.15f, 0.15f, 0.9f);
+                textColor = new Color(0.9f, 0.9f, 0.9f);
+                break;
+        }
+        
+        bgImage.color = bgColor;
+        
+        VerticalLayoutGroup layoutGroup = logEntryObj.AddComponent<VerticalLayoutGroup>();
+        layoutGroup.padding = new RectOffset(8, 8, 6, 6);
+        layoutGroup.spacing = 4;
+        layoutGroup.childAlignment = TextAnchor.UpperLeft;
+        layoutGroup.childControlWidth = true;
+        layoutGroup.childForceExpandWidth = true;
+        
+        GameObject messageObj = new GameObject("Message", typeof(RectTransform));
+        messageObj.transform.SetParent(logEntryObj.transform, false);
+        
+        TextMeshProUGUI messageText = messageObj.AddComponent<TextMeshProUGUI>();
+        messageText.text = message;
+        messageText.fontSize = baseFontSize * 0.85f;
+        messageText.color = textColor;
+        messageText.alignment = TextAlignmentOptions.Left;
+        
+        if (type == LogType.Error || type == LogType.Exception || type == LogType.Assert)
+        {
+            messageText.fontStyle = FontStyles.Bold;
+        }
+        
+        RectTransform messageRect = messageObj.GetComponent<RectTransform>();
+        messageRect.sizeDelta = new Vector2(0, baseFontSize * 1.2f);
+        
+        if ((type == LogType.Error || type == LogType.Exception || type == LogType.Assert) && !string.IsNullOrEmpty(stackTrace))
+        {
+            GameObject stackTraceObj = new GameObject("StackTrace", typeof(RectTransform));
+            stackTraceObj.transform.SetParent(logEntryObj.transform, false);
+            
+            TextMeshProUGUI stackTraceText = stackTraceObj.AddComponent<TextMeshProUGUI>();
+            
+            string truncatedStackTrace = stackTrace;
+            if (stackTrace.Length > 300)
+            {
+                truncatedStackTrace = stackTrace.Substring(0, 300) + "...";
+            }
+            
+            stackTraceText.text = truncatedStackTrace;
+            stackTraceText.fontSize = baseFontSize * 0.7f;
+            stackTraceText.color = new Color(0.7f, 0.7f, 0.7f);
+            stackTraceText.alignment = TextAlignmentOptions.Left;
+            
+            RectTransform stackTraceRect = stackTraceObj.GetComponent<RectTransform>();
+            stackTraceRect.sizeDelta = new Vector2(0, baseFontSize * 0.7f * 3);
+        }
+        
+        float entryHeight = baseFontSize * 1.5f;
+        if ((type == LogType.Error || type == LogType.Exception || type == LogType.Assert) && !string.IsNullOrEmpty(stackTrace))
+        {
+            entryHeight += baseFontSize * 2.5f;
+        }
+        
+        RectTransform logEntryRect = logEntryObj.GetComponent<RectTransform>();
+        logEntryRect.sizeDelta = new Vector2(0, entryHeight);
+        
+        logEntries.Add(logEntryObj);
+        
+        if (logEntries.Count > maxLogEntries)
+        {
+            GameObject oldestEntry = logEntries[0];
+            logEntries.RemoveAt(0);
+            Destroy(oldestEntry);
+        }
+        
+        Canvas.ForceUpdateCanvases();
+        if (scrollRect != null)
+        {
+            scrollRect.verticalNormalizedPosition = 0f;
+        }
+    }
+
+    private void HandleLog(string logString, string stackTrace, LogType type)
+    {
+        logQueue.Enqueue(new LogEntry { message = logString, stackTrace = stackTrace, type = type });
+    }
+
+    private void Update()
+    {
+        if (isDebugEnabled)
+        {
+            UpdateDebugInfo();
+            
+            while (logQueue.Count > 0)
+            {
+                LogEntry entry = logQueue.Dequeue();
+                CreateLogEntry(entry.message, entry.stackTrace, entry.type);
+            }
+        }
+    }
+
+    private void ToggleLogMessages(bool show)
+    {
+        showLogs = show;
+        RefreshConsole();
+    }
+    
+    private void ToggleWarningMessages(bool show)
+    {
+        showWarnings = show;
+        RefreshConsole();
+    }
+    
+    private void ToggleErrorMessages(bool show)
+    {
+        showErrors = show;
+        RefreshConsole();
+    }
+    
+    private void ClearConsole()
+    {
+        foreach (GameObject entry in logEntries)
+        {
+            Destroy(entry);
+        }
+        logEntries.Clear();
+    }
+
+    private void RefreshConsole()
+    {
+        List<LogEntry> currentLogs = new List<LogEntry>();
+        foreach (GameObject entry in logEntries)
+        {
+            string message = "";
+            string stackTrace = "";
+            LogType type = LogType.Log;
+            
+            Transform messageTransform = entry.transform.Find("Message");
+            if (messageTransform != null)
+            {
+                TextMeshProUGUI messageText = messageTransform.GetComponent<TextMeshProUGUI>();
+                if (messageText != null)
+                {
+                    message = messageText.text;
+                }
+            }
+            
+            Transform stackTraceTransform = entry.transform.Find("StackTrace");
+            if (stackTraceTransform != null)
+            {
+                TextMeshProUGUI stackTraceText = stackTraceTransform.GetComponent<TextMeshProUGUI>();
+                if (stackTraceText != null)
+                {
+                    stackTrace = stackTraceText.text;
+                }
+            }
+            
+            Image bgImage = entry.GetComponent<Image>();
+            if (bgImage != null)
+            {
+                if (bgImage.color.r > bgImage.color.g)
+                {
+                    type = LogType.Error;
+                }
+                else if (Mathf.Approximately(bgImage.color.r, bgImage.color.g) && bgImage.color.r > bgImage.color.b)
+                {
+                    type = LogType.Warning;
+                }
+                else
+                {
+                    type = LogType.Log;
+                }
+            }
+            
+            currentLogs.Add(new LogEntry { message = message, stackTrace = stackTrace, type = type });
+        }
+        
+        ClearConsole();
+        
+        foreach (LogEntry entry in currentLogs)
+        {
+            CreateLogEntry(entry.message, entry.stackTrace, entry.type);
+        }
     }
     
     private void UpdateScoreSlider(float value)
@@ -926,13 +1263,11 @@ public class DebugManager : MonoBehaviour
         doorPriceText.text = $"Door Price: {House.instance.DoorPrice}";
         roomsBuiltText.text = $"Rooms Built: {GetRoomsBuilt()}";
         
-        // Update growth factor text
         if (growthFactorText != null)
         {
             growthFactorText.text = $"Growth Factor: {GetGrowthFactor():F2}";
         }
         
-        // Update available tiles text if MainRoom exists
         if (availableTilesText != null && MainRoom.instance != null)
         {
             availableTilesText.text = $"Available Tiles: {MainRoom.instance.availableTiles}";
@@ -967,18 +1302,15 @@ public class DebugManager : MonoBehaviour
     {
         if (House.instance == null || PlayerController.instance == null) return;
         
-        // Get the current room
         Room currentRoom = House.instance.currentRoom;
         if (currentRoom == null) return;
         
-        // Find an available door in the current room
         DoorData[] doors = currentRoom.GetComponentsInChildren<DoorData>();
         foreach (DoorData door in doors)
         {
             if (!door.isUnlocked)
             {
-                // Simulate opening the door without cost
-                door.BuyNextRoom(true); // Pass true to indicate it's a free door
+                door.BuyNextRoom(true);
                 break;
             }
         }
@@ -995,10 +1327,8 @@ public class DebugManager : MonoBehaviour
         
         if (roomFurnitures == null) return;
         
-        // Get all furniture objects in the room
         List<FurnitureObjectBase> furnitureToRemove = new List<FurnitureObjectBase>();
         
-        // Collect all furniture objects
         foreach (var placementData in roomFurnitures.PlacementDatasInPosition.Values)
         {
             if (placementData.instantiatedFurniture != null && !furnitureToRemove.Contains(placementData.instantiatedFurniture))
@@ -1016,20 +1346,17 @@ public class DebugManager : MonoBehaviour
             
         }
         
-        // Destroy all furniture objects
         foreach (var furniture in furnitureToRemove)
         {
             Destroy(furniture.gameObject);
         }
         
-        // Clear the placement data dictionary
         roomFurnitures.PlacementDatasInPosition.Clear();
         
-        // Reset available tiles if it's the main room
         if (currentRoom is MainRoom)
         {
             MainRoom mainRoom = currentRoom as MainRoom;
-            mainRoom.availableTiles = 54; // Reset to default value
+            mainRoom.availableTiles = 54;
         }
         
         UpdateDebugInfo();
@@ -1050,7 +1377,6 @@ public class DebugManager : MonoBehaviour
         }
     }
     
-    // Methods to interact with House settings via reflection (since they're private)
     private bool GetExponentialGrowthSetting()
     {
         if (House.instance == null) return true;
@@ -1122,7 +1448,16 @@ public class DebugManager : MonoBehaviour
         if (field != null)
             field.SetValue(House.instance, value);
     }
+
+    private void OnDestroy()
+    {
+        Application.logMessageReceived -= HandleLog;
+    }
+
+    private struct LogEntry
+    {
+        public string message;
+        public string stackTrace;
+        public LogType type;
+    }
 }
-
-
-
