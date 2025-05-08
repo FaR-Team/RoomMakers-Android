@@ -163,12 +163,17 @@ public class PlayerController : MovementController
 
         if (hit.collider != null)
         {
+            Vector3 costPosition = GetCostTextPosition();
+            costCanvas.transform.position = costPosition;
+
+            Color backgroundColor = SampleBackgroundColorAt(costPosition);
+            costText.color = GetInvertedColor(backgroundColor);
+
             // Check if it's a door
             if (hit.collider.TryGetComponent(out DoorData doorData))
             {
                 costText.text = House.instance.DoorPrice.ToString();
                 costCanvas.SetActive(true);
-                costCanvas.transform.position = GetCostTextPosition();
             }
             // Check if it's a shop item
             else if (hit.collider.TryGetComponent(out ShopItem shopItem))
@@ -178,14 +183,12 @@ public class PlayerController : MovementController
                 {
                     costText.text = shopItem.GetPrice().ToString();
                     costCanvas.SetActive(true);
-                    costCanvas.transform.position = GetCostTextPosition();
                 }
             }
             else if (hit.collider.TryGetComponent(out RestockMachine machine))
             {
                 costText.text = House.instance.RestockPrice.ToString();
                 costCanvas.SetActive(true);
-                costCanvas.transform.position = GetCostTextPosition();
             }
         }
         else
@@ -208,6 +211,48 @@ public class PlayerController : MovementController
             offset = new Vector3(-1, 1, 0);
 
         return transform.position + offset;
+    }
+
+    private Color GetInvertedColor(Color backgroundColor)
+    {
+        return new Color(1 - backgroundColor.r, 1 - backgroundColor.g, 1 - backgroundColor.b);
+    }
+
+    private Color SampleBackgroundColorAt(Vector3 position)
+    {
+        RenderTexture tempRT = RenderTexture.GetTemporary(1, 1, 0);
+        Camera mainCamera = Camera.main;
+        
+        RenderTexture prevRT = mainCamera.targetTexture;
+        
+        mainCamera.targetTexture = tempRT;
+        
+        int prevCullingMask = mainCamera.cullingMask;
+        
+        mainCamera.cullingMask = prevCullingMask & ~(1 << LayerMask.NameToLayer("UI"));
+        
+        mainCamera.Render();
+        
+        Texture2D texture = new Texture2D(1, 1, TextureFormat.RGB24, false);
+        
+        RenderTexture prevActive = RenderTexture.active;
+        
+        RenderTexture.active = tempRT;
+        
+        texture.ReadPixels(new Rect(0, 0, 1, 1), 0, 0);
+        texture.Apply();
+        
+        Color backgroundColor = texture.GetPixel(0, 0);
+        
+        RenderTexture.active = prevActive;
+        mainCamera.targetTexture = prevRT;
+        mainCamera.cullingMask = prevCullingMask;
+        
+        RenderTexture.ReleaseTemporary(tempRT);
+    
+        Destroy(texture);
+        
+        return backgroundColor;
     }
 
     private void Animate()

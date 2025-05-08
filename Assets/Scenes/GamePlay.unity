@@ -1927,7 +1927,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 05fe6aeec5328744f9bb12630d7616b5, type: 2}
   - {fileID: 11400000, guid: 14e9fa37e6d4a634ca9a6e610a5b2ce4, type: 2}
   - {fileID: 11400000, guid: 2ca8ce4ca5653344a897d6c8efd682fc, type: 2}
-  - {fileID: 11400000, guid: 59cc3e701c6731b41893a7fc3addc0fa, type: 2}
   - {fileID: 11400000, guid: d7d6c3005bb9b0c459d1628092a718da, type: 2}
   - {fileID: 11400000, guid: f36bb9439050ed844af977da8c80e7ed, type: 2}
   - {fileID: 11400000, guid: 7f4d32a164a66b64a8d06ca7538fefce, type: 2}
@@ -2064,9 +2063,6 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 107520
-  shopLayer:
-    serializedVersion: 2
-    m_Bits: 8192
   text_name: {fileID: 248926907}
 --- !u!1 &470416140
 GameObject:
@@ -3718,7 +3714,7 @@ MonoBehaviour:
   - {fileID: 66243693}
   - {fileID: 996624852}
   cameraVector: {x: 0, y: 0, z: 0}
-  paletteNum: 0
+  paletteNum: 31
   roomFurnitures: {fileID: 0}
   roomTag: 0
   hasTagBeenSet: 0
@@ -4270,7 +4266,6 @@ MonoBehaviour:
   roomTransitionTime: 0.3
   uiContainer: {fileID: 1487510578}
   baseRestockPrice: 500
-  restockPriceIncrease: 25
   maxRestockPrice: 0
 --- !u!1 &996624849
 GameObject:
