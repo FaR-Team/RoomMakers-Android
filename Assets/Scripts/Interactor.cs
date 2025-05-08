@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Utils;
 
 public class Interactor : MonoBehaviour
 {
-    [SerializeField] private LayerMask doorLayer;
+    [FormerlySerializedAs("doorLayer")] [SerializeField] private LayerMask interactableLayer;
     [SerializeField] private LayerMask shopLayer;
     [SerializeField] private TextMeshProUGUI text_name;
 
@@ -19,7 +20,7 @@ public class Interactor : MonoBehaviour
         if (House.instance.currentRoom.roomFurnitures.PlacementDatasInPosition.TryGetValue(gridPosition, out PlacementData placementData))
         {
             //Debug.Log("hay placement data en: " + (Vector2)gridPosition);
-            if (playerInventory.furnitureInventory != null || playerInventory.furnitureInventoryWithData != null) return;
+            if (playerInventory.HasItem()) return;
  
             FurnitureData topFurnitureData = placementData.GetTopFurnitureData(gridPosition);
             
@@ -60,34 +61,29 @@ public class Interactor : MonoBehaviour
             return;
         }
 
-        var door = Physics2D.OverlapCircle(transform.position, 0.2f, doorLayer);
+        var interactable = Physics2D.OverlapCircle(transform.position, 0.2f, interactableLayer);
 
-        if (door)
-        {
+        if (!interactable) return;
+        
+        if(interactable.TryGetComponent(out DoorData doorData)){
             // Desbloquear habitacion si hay guita
-            door.TryGetComponent(out DoorData doorData);
-
-            if (doorData)
-            {
-                doorData.BuyNextRoom();
-                PlayerController.instance.CheckInFront();
-            }
-            return;
+            doorData.BuyNextRoom();
+            PlayerController.instance.CheckInFront();
         }
-
-        var item = Physics2D.OverlapCircle(transform.position, 0.2f, shopLayer);
-
-        if (item)
+        else if(interactable.TryGetComponent(out ShopItem shopItemData))
         {
             // Comprar si hay guita
-            item.TryGetComponent(out ShopItem shopItemData);
             this.Log(shopItemData.name);
-
-            if (shopItemData)
-            {
-                shopItemData.TryPurchase();
-                PlayerController.instance.CheckInFront();
-            }
+            shopItemData.TryPurchase();
+            PlayerController.instance.CheckInFront();
+        }
+        else if (interactable.TryGetComponent(out KitObject kit) && !playerInventory.HasItem())
+        {
+            // GRAB KIT
+            if (!IsSpanish) text_name.text = kit.originalData.Name;
+            else text_name.text = kit.originalData.es_Name;
+            playerInventory.furnitureInventoryWithData = kit.Data;
+            playerInventory.EnablePackageUI(true);
         }
     }
 }
