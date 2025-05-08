@@ -101,7 +101,7 @@ public static class ColorPaletteUtility
         palette.Light = HexToColor(data.lightHex);
         palette.Lightest = HexToColor(data.lightestHex);
 
-        string assetPath = $"Assets/ColorPalettes/{data.name}.asset";
+        string assetPath = $"Assets/palettes/{data.name}.asset";
         
         Directory.CreateDirectory(Path.GetDirectoryName(assetPath));
         

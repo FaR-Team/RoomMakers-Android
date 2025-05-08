@@ -7,14 +7,15 @@ public class PlacementData
     public List<Vector2> occupiedPositions;
 
     public FurnitureData furnitureData;
+    //public FurnitureOriginalData baseObjectData;
     public FurnitureObjectBase instantiatedFurniture;
+    //public FurnitureObjectBase instantiatedBaseObject;
     
     public List<TopPlacementData> topPlacementDatas = new List<TopPlacementData>();
     
     public PlacementData(List<Vector2> occupiedPositions, FurnitureData furniture)
     {
         this.occupiedPositions = occupiedPositions;
-
         furnitureData = furniture;
     }
 

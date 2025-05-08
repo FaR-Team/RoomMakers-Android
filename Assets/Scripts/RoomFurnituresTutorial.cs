@@ -47,7 +47,9 @@ public class RoomFurnituresTutorial : RoomFurnitures
                 MainRoom.instance.availableTiles -= data.originalData.size.x * data.originalData.size.y;
             }
             
-            PlacementDatasInPosition[finalPos].instantiatedFurniture = furnitureObject; // Testing if this is enough to update all positions
+            if (furnitureObject.originalData is not ItemData) PlacementDatasInPosition[finalPos].instantiatedFurniture = furnitureObject;
+            //else PlacementDatasInPosition[finalPos].instantiatedBaseObject = furnitureObject;  // If just placed a kit
+            
             //positionToOccupy.ForEach(pos => PlacementDatasInPosition[pos].instantiatedFurniture = furnitureObject);
         }
         else

@@ -11,6 +11,7 @@ public class FurnitureOriginalData : ScriptableObject
     public GameObject prefab;
     public TypeOfSize typeOfSize;
     public FurnitureOriginalData[] compatibles;
+    public FurnitureOriginalData requiredBase;
     public Sprite[] sprites;
     public bool hasComboSprite = false; 
     [Tooltip("If hasComboSprite is true, this furniture will change its sprite when combined with this specific furniture")]
