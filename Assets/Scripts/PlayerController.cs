@@ -159,7 +159,7 @@ public class PlayerController : MovementController
     public void CheckInFront()
     {
 
-        var hit = Physics2D.Raycast(transform.position, transform.up, 1f, 1 << 10 | 1 << 13);
+        var hit = Physics2D.Raycast(transform.position, transform.up, 1f, 1 << 10 | 1 << 13 | 1 << 16);
 
         if (hit.collider != null)
         {
@@ -180,6 +180,12 @@ public class PlayerController : MovementController
                     costCanvas.SetActive(true);
                     costCanvas.transform.position = GetCostTextPosition();
                 }
+            }
+            else if (hit.collider.TryGetComponent(out RestockMachine machine))
+            {
+                costText.text = House.instance.RestockPrice.ToString();
+                costCanvas.SetActive(true);
+                costCanvas.transform.position = GetCostTextPosition();
             }
         }
         else

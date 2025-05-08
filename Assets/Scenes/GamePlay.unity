@@ -2061,9 +2061,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 914e7c098387b864397691a93f10d0ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  doorLayer:
+  interactableLayer:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 107520
   shopLayer:
     serializedVersion: 2
     m_Bits: 8192
@@ -4269,6 +4269,9 @@ MonoBehaviour:
   roomWidth: 10
   roomTransitionTime: 0.3
   uiContainer: {fileID: 1487510578}
+  baseRestockPrice: 500
+  restockPriceIncrease: 25
+  maxRestockPrice: 0
 --- !u!1 &996624849
 GameObject:
   m_ObjectHideFlags: 0
@@ -8783,7 +8786,7 @@ MonoBehaviour:
   moveSpeed: 5
   whatStopsMovement:
     serializedVersion: 2
-    m_Bits: 9992
+    m_Bits: 75528
   anim: {fileID: 1881136534}
   furniturePreviews:
   - {fileID: 1828525995}
@@ -9361,7 +9364,7 @@ Camera:
   m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 12223
+    m_Bits: 110527
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: a52d8679520b6cb429a4d78aa940daba, type: 2}
   m_TargetDisplay: 0
@@ -9794,6 +9797,7 @@ MonoBehaviour:
   errorClip: {fileID: 8300000, guid: 09dbd978f5915b04d98f319b71ad075d, type: 3}
   grabClip: {fileID: 8300000, guid: 196605b6950721a41b93780fb013badf, type: 3}
   audioMixer: {fileID: 24100000, guid: 8ca7b6b4ab3c78f4e9ba735375e950eb, type: 2}
+  lowpassParameterName: Lowpass
   muffledLowPassCutoff: 150
   normalLowPassCutoff: 5000
   musicTracks:

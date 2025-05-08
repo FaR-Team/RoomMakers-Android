@@ -8,7 +8,6 @@ using Utils;
 public class Interactor : MonoBehaviour
 {
     [FormerlySerializedAs("doorLayer")] [SerializeField] private LayerMask interactableLayer;
-    [SerializeField] private LayerMask shopLayer;
     [SerializeField] private TextMeshProUGUI text_name;
 
     private bool IsSpanish => LocalizationManager.Instance != null ? LocalizationManager.Instance.IsSpanish : false;
@@ -84,6 +83,11 @@ public class Interactor : MonoBehaviour
             else text_name.text = kit.originalData.es_Name;
             playerInventory.furnitureInventoryWithData = kit.Data;
             playerInventory.EnablePackageUI(true);
+        }
+        else if (interactable.TryGetComponent(out RestockMachine machine))
+        {
+            machine.TryRestock();
+            PlayerController.instance.CheckInFront();
         }
     }
 }

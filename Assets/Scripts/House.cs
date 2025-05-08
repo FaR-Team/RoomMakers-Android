@@ -54,6 +54,14 @@ public class House : MonoBehaviour
 
     [SerializeField] private GameObject uiContainer;
 
+    [Header("Restock Settings")]
+    [Tooltip("Base price for restocking shops")] public int baseRestockPrice = 500;
+    [SerializeField] [Tooltip("Cap optional for restock prices (0 means unlimited)")] private int maxRestockPrice = 0;
+    private int restockPrice;
+    private int timesRestocked = 0;
+    public int RestockPrice => restockPrice;
+
+
     void Awake()
     {
         if (instance == null || instance != this)
@@ -65,6 +73,8 @@ public class House : MonoBehaviour
         doorPrice = baseDoorPrice;
         score = 0;
         roomsBuilt = 0;
+        restockPrice = baseRestockPrice;
+        timesRestocked = 0;
     }
     public Room SpawnRoom(Vector3 position)
     {
@@ -90,23 +100,18 @@ public class House : MonoBehaviour
     {
         if (useExponentialGrowth)
         {
-            // Fórmula de crecimiento exponencial: baseDoorPrice * (growthFactor ^ roomsBuilt)
             doorPrice = Mathf.RoundToInt(baseDoorPrice * Mathf.Pow(priceGrowthFactor, roomsBuilt));
         }
         else
         {
-            // Crecimiento lineal
             doorPrice = baseDoorPrice + (priceAdditive * roomsBuilt);
         }
 
-        // Round to nearest 5
         doorPrice = Mathf.RoundToInt(doorPrice / 5f) * 5;
 
-        // Aplicar cap al precio si hay
         if (maxDoorPrice > 0 && doorPrice > maxDoorPrice)
         {
             doorPrice = maxDoorPrice;
-            // Ensure the cap also ends in 0 or 5
             doorPrice = Mathf.RoundToInt(doorPrice / 5f) * 5;
         }
     }
@@ -277,6 +282,20 @@ public class House : MonoBehaviour
         {
             int index = Random.Range(0, roomBottomRightCornerPrefabs.Length);
             selectedPrefab = roomBottomRightCornerPrefabs[index];
+        }
+    }
+
+    public void IncreaseRestockPrice()
+    {
+        timesRestocked++;
+        restockPrice += Mathf.RoundToInt(baseRestockPrice * Mathf.Pow(priceGrowthFactor, timesRestocked));
+        
+        restockPrice = Mathf.RoundToInt(restockPrice / 5f) * 5;
+        
+        if (maxRestockPrice > 0 && restockPrice > maxRestockPrice)
+        {
+            restockPrice = maxRestockPrice;
+            restockPrice = Mathf.RoundToInt(restockPrice / 5f) * 5;
         }
     }
 }
