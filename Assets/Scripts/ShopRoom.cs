@@ -14,6 +14,9 @@ public class ShopRoom : MonoBehaviour
     [SerializeField] private float restockCooldown = 300f;
     [SerializeField] private bool autoRestock = false;
     private float lastRestockTime;
+
+    [Header("Restock Machine")]
+    [SerializeField] private GameObject restockMachinePrefab;
     
     private Room roomComponent;
     private List<ShopItem> spawnedItems = new List<ShopItem>();
@@ -43,6 +46,11 @@ public class ShopRoom : MonoBehaviour
             if (roomComponent.roomTag == RoomTag.None)
             {
                 roomComponent.SetRoomTag(RoomTag.Shop);
+            }
+
+            if (restockMachinePrefab == null)
+            {
+                Debug.LogError("Restock Machine prefab is not assigned in the inspector");
             }
             
             InitializeShopItems();
@@ -144,11 +152,27 @@ public class ShopRoom : MonoBehaviour
         spawnedItems.Clear();
     }
     
-    public void RestockShop()
+    public bool RestockShop()
     {
-        InitializeShopItems();
-        lastRestockTime = Time.time;
-        Debug.Log("Shop has been restocked!");
+        if (IsShopEmpty())
+        {
+            InitializeShopItems();
+            lastRestockTime = Time.time;
+            Debug.Log("Shop has been restocked!");
+            return true;
+        }
+        else
+        {
+            Debug.LogWarning("Shop is not empty. Cannot restock.");
+            return false;
+        }
+    }
+
+    public bool IsShopEmpty()
+    {
+        spawnedItems.RemoveAll(item => item == null);
+        
+        return spawnedItems.Count == 0;
     }
     
     private void ShuffleList<T>(List<T> list)

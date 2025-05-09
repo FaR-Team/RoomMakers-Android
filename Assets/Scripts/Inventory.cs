@@ -27,7 +27,7 @@ public class Inventory : MonoBehaviour
     {
         if (!collision.CompareTag("Package")) return;
 
-        if (furnitureInventory != null || furnitureInventoryWithData != null) return;
+        if (HasItem()) return;
         
         if(TutorialHandler.instance) TutorialHandler.instance.CompletedStep();
         TimerManager.StopTimer();
@@ -77,5 +77,10 @@ public class Inventory : MonoBehaviour
                 itemImage.sprite = PackageSprite;
             }
         }
+    }
+
+    public bool HasItem()
+    {
+        return furnitureInventoryWithData != null || furnitureInventory != null;
     }
 }
