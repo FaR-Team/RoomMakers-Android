@@ -22,8 +22,8 @@ public class RoomFurnitures : MonoBehaviour
     private void Start()
     {
         wallsLayerMask = LayerMask.GetMask("Walls", "InnerWalls");
-        unplaceableLayerMask = ~(1 << LayerMask.NameToLayer("Kit"));
-        kitLayerMask = LayerMask.NameToLayer("Kit");
+        unplaceableLayerMask = ~(1 << 15); // Everything but kit 
+        kitLayerMask = (1 << 15);
     }
 
     public bool PlaceFurniture(Vector2 position, FurnitureData furnitureData, bool isItem = false)
@@ -38,46 +38,31 @@ public class RoomFurnitures : MonoBehaviour
             (!positionToOccupy.Any(x => PlacementDatasInPosition.ContainsKey(x) || Physics2D.OverlapCircle(x, 0.2f, isItem ? ~0 : unplaceableLayerMask))) && // If isItem, check for anything
             (!furnitureData.originalData.wallObject || CheckWallsAndRotate(position, furnitureData));
         bool placeOnTop = false;
+        bool unboxed = true;
 
         if (canPlace) // If there's nothing underneath object
         {
             if (!isItem) // Don't even create data for Kits
             {
-                if (!requiresBase) // Place furniture normally
+                PlacementData data = new PlacementData(positionToOccupy, furnitureData);
+                foreach (var pos in positionToOccupy)
                 {
-
-                    PlacementData data = new PlacementData(positionToOccupy, furnitureData);
-                    foreach (var pos in positionToOccupy)
-                    {
-                        PlacementDatasInPosition[pos] = data;
-                    }
-
+                    PlacementDatasInPosition[pos] = data;
                 }
-                else
+                
+                if (requiresBase)
                 {
-                    canPlace = false;
+                    unboxed = false; // Set to false so we check later if any kits are underneath
+                    
                     for (int i = 0; i < positionToOccupy.Count; i++)
                     {
                         var coll = Physics2D.OverlapCircle(positionToOccupy[i], 0.2f, kitLayerMask);
                         if (coll != null && coll.TryGetComponent(out KitObject kit) &&
                             furnitureData.originalData.requiredBase == kit.Data.originalData)
                         {
-                            canPlace = true;
+                            unboxed = true;
                             break;
                         }
-                    }
-
-                    if (canPlace)
-                    {
-                        PlacementData data = new PlacementData(positionToOccupy, furnitureData);
-                        foreach (var pos in positionToOccupy)
-                        {
-                            PlacementDatasInPosition[pos] = data;
-                        }
-                    }
-                    else
-                    {
-                        // TODO: PLACE BOX
                     }
                 }
             }
@@ -108,7 +93,8 @@ public class RoomFurnitures : MonoBehaviour
             if (check && foundValidPosition)
             {
                 // Use the valid position we found for compatibility checks
-                canPlace = positionToOccupy.Intersect(PlacementDatasInPosition[validBottomPosition].occupiedPositions).Count() == positionToOccupy.Count()
+                canPlace = PlacementDatasInPosition[validBottomPosition].instantiatedFurniture.IsUnpacked &&
+                           positionToOccupy.Intersect(PlacementDatasInPosition[validBottomPosition].occupiedPositions).Count() == positionToOccupy.Count()
                            && PlacementDatasInPosition[validBottomPosition].IsCompatibleWith(originalData)
                            && PlacementDatasInPosition[validBottomPosition].HasFreePositions(positionToOccupy); 
                 placeOnTop = canPlace;
@@ -128,12 +114,14 @@ public class RoomFurnitures : MonoBehaviour
         // Guardamos el objeto que instanciamos en en cada PlacementData
         FurnitureObjectBase furniturePrefab = Instantiate(furnitureData.prefab, finalPos, Quaternion.Euler(furnitureData.VectorRotation)).GetComponent<FurnitureObjectBase>();
         furniturePrefab.CopyFurnitureData(furnitureData);
+        furniturePrefab.SetUnpackedState(unboxed);
         
-        if(!isItem) GivePoints(furnitureData, positionToOccupy, placeOnTop, finalPos, furniturePrefab);
+        if(!isItem) GivePoints(furnitureData, positionToOccupy, placeOnTop, finalPos, furniturePrefab, unboxed);
 
         return true;
     }
 
+    #region Items
     public bool PlaceItem(Vector2 position, ItemData itemData, FurnitureData furnitureData)
     {
         bool placed;
@@ -171,7 +159,10 @@ public class RoomFurnitures : MonoBehaviour
         
         return placed;
     }
+    
+    #endregion
 
+    #region Wall Objects
     private bool CheckWallsAndRotate(Vector2 position, FurnitureData data)
     {
         bool isWallUp = Physics2D.Raycast(position, Vector2.up, 1f, wallsLayerMask);
@@ -203,41 +194,53 @@ public class RoomFurnitures : MonoBehaviour
             }
         }
     }
+    
+    #endregion
 
-    protected virtual void GivePoints(FurnitureData data, List<Vector2> positionToOccupy, bool placeOnTop, Vector2 finalPos, FurnitureObjectBase furnitureObject)
+    protected virtual void GivePoints(FurnitureData data, List<Vector2> positionToOccupy, bool placeOnTop, Vector2 finalPos, FurnitureObjectBase furnitureObject, bool unboxed)
     {
-        // Get the room component
-        Room currentRoom = GetComponent<Room>();
-        
-    
-        // Check if this furniture has a tag and the room doesn't have one yet
-        RoomTag furnitureTag = data.originalData.furnitureTag;
-        if (furnitureTag != RoomTag.None && currentRoom != null)
+        if (!data.firstTimePlaced && unboxed) // First time we place data, check if placed unboxed to give points
         {
-            // Try to set the room tag from furniture
-            currentRoom.TrySetRoomTagFromFurniture(furnitureTag);
+            PlayerController.instance.Inventory.UpdateMoney(data.originalData.price);
+            House.instance.UpdateScore(data.originalData.price);
+            data.firstTimePlaced = true;
         }
-    
-        // Calculate bonus points for tag matching - only if not already received
+        
         int tagBonus = 0;
-        if (currentRoom != null && 
-            furnitureTag != RoomTag.None && 
-            furnitureTag == currentRoom.roomTag && 
-            !data.hasReceivedTagBonus) // Check using the data field
+        if (unboxed) // Only do tag stuff if unboxed
         {
-            tagBonus = data.originalData.tagMatchBonusPoints;
-            data.hasReceivedTagBonus = true; // Mark as received in the data
-            
-            // Show bonus points popup only if we're actually awarding points and not placing on top
-            // (if placing on top, we'll handle it differently below)
-            if (tagBonus > 0 && !placeOnTop)
+            // Get the room component
+            Room currentRoom = GetComponent<Room>();
+
+
+            // Check if this furniture has a tag and the room doesn't have one yet
+            RoomTag furnitureTag = data.originalData.furnitureTag;
+            if (furnitureTag != RoomTag.None && currentRoom != null)
             {
-                PlayerController.instance.Inventory.UpdateMoney(tagBonus);
-                House.instance.UpdateScore(tagBonus);
-                ComboPopUp.Create(matchPrefab, tagBonus, finalPos, new Vector2(0f, 1.5f));
+                // Try to set the room tag from furniture
+                currentRoom.TrySetRoomTagFromFurniture(furnitureTag);
+            }
+
+            // Calculate bonus points for tag matching - only if not already received
+            if (currentRoom != null &&
+                furnitureTag != RoomTag.None &&
+                furnitureTag == currentRoom.roomTag &&
+                !data.hasReceivedTagBonus) // Check using the data field
+            {
+                tagBonus = data.originalData.tagMatchBonusPoints;
+                data.hasReceivedTagBonus = true; // Mark as received in the data
+
+                // Show bonus points popup only if we're actually awarding points and not placing on top
+                // (if placing on top, we'll handle it differently below)
+                if (tagBonus > 0 && !placeOnTop)
+                {
+                    PlayerController.instance.Inventory.UpdateMoney(tagBonus);
+                    House.instance.UpdateScore(tagBonus);
+                    ComboPopUp.Create(matchPrefab, tagBonus, finalPos, new Vector2(0f, 1.5f));
+                }
             }
         }
-    
+
         if (!placeOnTop)
         {
             if (TryGetComponent(out MainRoom room))

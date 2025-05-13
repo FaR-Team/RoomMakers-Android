@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using Random = UnityEngine.Random;
 
 public class House : MonoBehaviour
 {
@@ -24,6 +26,11 @@ public class House : MonoBehaviour
     public Room currentRoom;
 
     public GameObject comboStarSprite;
+    [Header("Box Sprites")] 
+    public Sprite[] one_one_sprites;
+    public Sprite[] two_two_sprites;
+    public Sprite[] two_one_sprites;
+    public Sprite[] three_one_sprites;
 
     private int availableSpaces;
 
@@ -297,5 +304,17 @@ public class House : MonoBehaviour
             restockPrice = maxRestockPrice;
             restockPrice = Mathf.RoundToInt(restockPrice / 5f) * 5;
         }
+    }
+
+    public Sprite[] GetSpritesBySize(TypeOfSize size)
+    {
+        return size switch
+        {
+            TypeOfSize.one_one => one_one_sprites,
+            TypeOfSize.two_two => two_two_sprites,
+            TypeOfSize.two_one => two_one_sprites,
+            TypeOfSize.three_one => three_one_sprites,
+            _ => null
+        };
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,12 +8,13 @@ public class FurnitureObjectBase : MonoBehaviour
 {
     public FurnitureOriginalData originalData;
     [SerializeField] protected FurnitureData furnitureData;
-    [SerializeField] protected SpriteRenderer spriteRenderer;
-    
+    protected SpriteRenderer[] spriteRenderers;
+    protected bool unpacked;
     protected int currentSpriteIndex = 0;
     protected bool hasReceivedTagBonus = false;
 
     public FurnitureData Data => furnitureData;
+    public bool IsUnpacked => unpacked;
     public bool HasReceivedTagBonus => hasReceivedTagBonus;
     
     public void MarkTagBonusReceived() // TODO: Ver pa que está esto?
@@ -20,13 +22,22 @@ public class FurnitureObjectBase : MonoBehaviour
         hasReceivedTagBonus = true;
     }
     
-    private void Awake()
+    protected virtual void Awake()
     {
         furnitureData = new FurnitureData();
-        if (spriteRenderer == null)
-            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        if (spriteRenderers == null)
+            spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
     }
 
+    public void SetUnpackedState(bool unpacked)
+    {
+        this.unpacked = unpacked;
+        if (!this.unpacked)
+        {
+            if(TryGetComponent(out Animator anim)) anim.enabled = false;
+            UpdateSprites(House.instance.GetSpritesBySize(Data.originalData.typeOfSize)); // Update with box sprites
+        }
+    }
     public virtual void CopyFurnitureData(FurnitureData newData)
     {
         // Ensure furnitureData is initialized
@@ -43,23 +54,15 @@ public class FurnitureObjectBase : MonoBehaviour
         furnitureData.hasReceivedTagBonus = newData.hasReceivedTagBonus;
         
         // Set initial sprite if needed
-        if (spriteRenderer == null)
-            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        if (spriteRenderers == null)
+            spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
     }
     
-    public virtual void UpdateSprite(int spriteIndex)
+    public virtual void UpdateSprites(Sprite[] sprites)
     {
-        if (spriteRenderer == null || furnitureData.originalData == null)
-            return;
-            
-        // Only update sprite if this furniture has combo sprites enabled
-        if (furnitureData.originalData.hasComboSprite && 
-            furnitureData.originalData.sprites != null && 
-            spriteIndex >= 0 && 
-            spriteIndex < furnitureData.originalData.sprites.Length)
+        for (int i = 0; i < spriteRenderers.Length; i++)
         {
-            spriteRenderer.sprite = furnitureData.originalData.sprites[spriteIndex];
-            currentSpriteIndex = spriteIndex;
+            spriteRenderers[i].sprite = sprites[i]; // No agregué null checks porque hay que asegurarnos que nunca sea null alguno
         }
     }
     

@@ -39,13 +39,13 @@ public class FurniturePreview : MonoBehaviour
         furnitureData.originalData = data;
     }
 
-    public void SetCurrentFurnitureData(FurnitureData newData, bool firstTimePlacing)
+    public void SetCurrentFurnitureData(FurnitureData newData)
     {
         furnitureData = newData; 
         data = furnitureData.originalData;
         originalSize = newData.originalData.size;
         rotation = furnitureData.rotationStep;
-        firstTimePlacingFurniture = firstTimePlacing; // To give points and score when placing furniture for the first time, and avoid adding this to every object's data
+        firstTimePlacingFurniture = newData.firstTimePlaced; // To give points and score when placing furniture for the first time, and avoid adding this to every object's data
 
         if (furnitureData.originalData is ItemData {type: ItemType.Sledgehammer})
         {
@@ -103,13 +103,6 @@ public class FurniturePreview : MonoBehaviour
         if (placeFurniture)
         {
             movement.AddDoorLayerToMask(); // Resetear layermask de movimiento de sledgehammer // TODO: Ver si es necesario aca o siempre va a funcionar con chequear en SetData arriba
-            
-            if (firstTimePlacingFurniture)
-            {
-                PlayerController.instance.Inventory.UpdateMoney(furnitureData.originalData.price);
-                House.instance.UpdateScore(furnitureData.originalData.price);
-                firstTimePlacingFurniture = false;
-            }
             
             AudioManager.instance.PlaySfx(GlobalSfx.Click);
             inventory.furnitureInventory = null;
@@ -196,6 +189,7 @@ public class FurnitureData
     public bool comboDone;
     public HashSet<Vector2Int> localTileCombos;
     public bool hasReceivedTagBonus = false;
+    public bool firstTimePlaced;
 
     public void SetRotationByStep(int step)
     {

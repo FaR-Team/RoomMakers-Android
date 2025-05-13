@@ -83,6 +83,7 @@ public class Interactor : MonoBehaviour
             else text_name.text = kit.originalData.es_Name;
             playerInventory.furnitureInventoryWithData = kit.Data;
             playerInventory.EnablePackageUI(true);
+            Destroy(kit.gameObject);
         }
         else if (interactable.TryGetComponent(out RestockMachine machine))
         {

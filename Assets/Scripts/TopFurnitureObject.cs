@@ -10,8 +10,9 @@ public class TopFurnitureObject : FurnitureObjectBase
 
     public bool ComboDone => comboDone;
     
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
     

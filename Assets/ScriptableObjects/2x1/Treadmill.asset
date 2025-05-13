@@ -19,6 +19,7 @@ MonoBehaviour:
   prefab: {fileID: 6084753773558195295, guid: 82dc0e77278143043a06a8b223c71d5f, type: 3}
   typeOfSize: 2
   compatibles: []
+  requiredBase: {fileID: 11400000, guid: dadec6abf8f8e914e806e483f6c61e0a, type: 2}
   sprites:
   - {fileID: -1989195346, guid: ed915e1b6eee89a4985aef5aa392e171, type: 3}
   - {fileID: -1250495333, guid: ed915e1b6eee89a4985aef5aa392e171, type: 3}
