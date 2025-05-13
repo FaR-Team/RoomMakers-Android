@@ -98,7 +98,7 @@ public class PlayerController : MovementController
         {
             if (furniturePreview == furniturePreviews[(int)furnitureData.originalData.typeOfSize])
             {
-                furniturePreview.SetCurrentFurnitureData(furnitureData, firstTimePlacing);
+                furniturePreview.SetCurrentFurnitureData(furnitureData);
                 furniturePreview.gameObject.SetActive(!furniturePreview.gameObject.activeInHierarchy);
             }
             else
@@ -139,7 +139,7 @@ public class PlayerController : MovementController
         {
             if (furniturePreview == furniturePreviews[(int)furnitureData.originalData.typeOfSize])
             {
-                furniturePreview.SetCurrentFurnitureData(furnitureData, firstTimePlacing);
+                furniturePreview.SetCurrentFurnitureData(furnitureData);
                 furniturePreview.gameObject.SetActive(!furniturePreview.gameObject.activeInHierarchy);
             }
             else

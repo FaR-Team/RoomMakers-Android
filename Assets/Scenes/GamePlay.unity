@@ -4252,6 +4252,20 @@ MonoBehaviour:
   houseParent: {fileID: 943811823}
   currentRoom: {fileID: 0}
   comboStarSprite: {fileID: 3817393959942364799, guid: f66ce8377de79f94081daa738e46cf17, type: 3}
+  one_one_sprites:
+  - {fileID: 21300000, guid: ead2423a179b272498b3497d90e99faa, type: 3}
+  two_two_sprites:
+  - {fileID: 976519800, guid: 2a409659e3bd47d4492e50e9c8aeccb1, type: 3}
+  - {fileID: -1459985630, guid: 2a409659e3bd47d4492e50e9c8aeccb1, type: 3}
+  - {fileID: -372101818, guid: 2a409659e3bd47d4492e50e9c8aeccb1, type: 3}
+  - {fileID: 96403712, guid: 2a409659e3bd47d4492e50e9c8aeccb1, type: 3}
+  two_one_sprites:
+  - {fileID: -1181315865, guid: 149e697f612760b4492edff97c8feb0c, type: 3}
+  - {fileID: 938907805, guid: 149e697f612760b4492edff97c8feb0c, type: 3}
+  three_one_sprites:
+  - {fileID: 2043279408, guid: fc366a84b6ed2184796b8412791a1b1a, type: 3}
+  - {fileID: -1871375598, guid: fc366a84b6ed2184796b8412791a1b1a, type: 3}
+  - {fileID: 1246508500, guid: fc366a84b6ed2184796b8412791a1b1a, type: 3}
   shopRoomPrefabs:
   - {fileID: 5748501361486919024, guid: 75928f108f2ba454f9077e9e0cb4c18f, type: 3}
   shopSpawnProbability: 0.05
