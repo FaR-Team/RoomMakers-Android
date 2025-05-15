@@ -31,7 +31,35 @@ public class TopFurnitureObject : FurnitureObjectBase
         base.CopyFurnitureData(newData);
         furnitureData.comboDone = newData.comboDone;
         comboDone = furnitureData.comboDone;
-        comboStar.transform.eulerAngles = Vector3.zero;
+        
+        furnitureData.rotationStep = newData.rotationStep;
+        furnitureData.VectorRotation = newData.VectorRotation;
+        
+        gameObject.transform.rotation = Quaternion.Euler(furnitureData.VectorRotation);
+        
+        if (comboStar != null)
+            comboStar.transform.eulerAngles = Vector3.zero;
+        
+        furnitureData.currentStackLevel = newData.currentStackLevel;
+        
+        if (furnitureData.originalData.isStackable && 
+            furnitureData.currentStackLevel > 0 &&
+            furnitureData.originalData.stackLevelSprites != null &&
+            furnitureData.originalData.stackLevelSprites.Length >= furnitureData.currentStackLevel)
+        {
+            if (spriteRenderer == null)
+                spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sprite = furnitureData.originalData.stackLevelSprites[furnitureData.currentStackLevel - 1];
+                
+                if (spriteRenderer.transform != transform)
+                {
+                    spriteRenderer.transform.rotation = transform.rotation;
+                }
+            }
+        }
         
         if (spriteRenderer == null)
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -41,7 +69,6 @@ public class TopFurnitureObject : FurnitureObjectBase
     {
         comboDone = true;
         
-        // Ensure furnitureData is initialized
         if (furnitureData == null)
         {
             furnitureData = new FurnitureData();
@@ -52,25 +79,20 @@ public class TopFurnitureObject : FurnitureObjectBase
 
     public void CheckAndUpdateSprite(BottomFurnitureObject bottomFurniture)
     {        
-        // Check if this is a specific combo that should trigger sprite change
         if (furnitureData.originalData.hasComboSprite && 
             furnitureData.originalData.comboTriggerFurniture == bottomFurniture.originalData)
         {
-            // Change to combo sprite
             ChangeToComboSprite();
-            // Update rotation according to bottom object's rotation
             CopyRotation(bottomFurniture);
         }
         else
         {
-            // Change back to default sprite
             ResetToDefaultSprite();
         }
     }
 
     private void ChangeToComboSprite()
     {
-        //Debug.Log("Changing to combo sprite");
         if (furnitureData == null || furnitureData.originalData == null)
         {
             Debug.LogWarning("FurnitureData or OriginalData is null in TopFurnitureObject.ChangeToComboSprite");
@@ -91,19 +113,18 @@ public class TopFurnitureObject : FurnitureObjectBase
                 }
             }
             
-            spriteRenderer.sprite = furnitureData.originalData.sprites[1]; // Use the combo sprite (index 1)
+            spriteRenderer.sprite = furnitureData.originalData.sprites[1];
         }
         
     }
 
     private void ResetToDefaultSprite()
     {
-        //Debug.Log("Setting default sprite");
         if (furnitureData.originalData.sprites != null && 
             furnitureData.originalData.sprites.Length > 0 &&
             spriteRenderer != null)
         {
-            spriteRenderer.sprite = furnitureData.originalData.sprites[0]; // Use the default sprite (index 0)
+            spriteRenderer.sprite = furnitureData.originalData.sprites[0];
         }
     }
 

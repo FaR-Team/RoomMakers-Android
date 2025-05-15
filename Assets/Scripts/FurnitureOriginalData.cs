@@ -18,6 +18,13 @@ public class FurnitureOriginalData : ScriptableObject
     [Tooltip("If hasComboSprite is true, this furniture will change its sprite when combined with this specific furniture")]
     public FurnitureOriginalData comboTriggerFurniture;
 
+    [Header("Stacking Properties")]
+    public bool isStackReceiver = false; 
+    public bool isStackable = false;
+    public int maxStackLevel = 4;
+    [Tooltip("Sprites for each stack level (index 0 for level 1, index 1 for level 2, etc.)")]
+    public Sprite[] stackLevelSprites; 
+
     public bool wallObject;
     
     [Header("Tagging System")]

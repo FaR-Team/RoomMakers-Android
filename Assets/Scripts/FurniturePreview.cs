@@ -174,6 +174,7 @@ public class FurnitureData
         comboDone = false;
         localTileCombos = new();
         hasReceivedTagBonus = false;
+        currentStackLevel = 0;
     }
 
     public FurnitureData()
@@ -190,15 +191,19 @@ public class FurnitureData
     public HashSet<Vector2Int> localTileCombos;
     public bool hasReceivedTagBonus = false;
     public bool firstTimePlaced;
+    
+    public int currentStackLevel = 0;
+
+    public int instanceID;
 
     public void SetRotationByStep(int step)
     {
         rotationStep = Mathf.Clamp(step, 0, 3);
-        if(step == 0) VectorRotation = new Vector3Int(0, 0, 0);
-        else if(step == 1) VectorRotation = new Vector3Int(0, 0, 90);
-        else if(step == 2) VectorRotation = new Vector3Int(0, 0, 180);
+        if (step == 0) VectorRotation = new Vector3Int(0, 0, 0);
+        else if (step == 1) VectorRotation = new Vector3Int(0, 0, 90);
+        else if (step == 2) VectorRotation = new Vector3Int(0, 0, 180);
         else VectorRotation = new Vector3Int(0, 0, 270);
-        
+
         switch (step)
         {
             case 0:

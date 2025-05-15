@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Experimental.Playables;
 
 public class RoomFurnitures : MonoBehaviour
 {
@@ -28,8 +24,14 @@ public class RoomFurnitures : MonoBehaviour
 
     public bool PlaceFurniture(Vector2 position, FurnitureData furnitureData, bool isItem = false)
     {
+        if (furnitureData.instanceID == 0)
+        {
+            furnitureData.instanceID = System.DateTime.Now.GetHashCode() ^ furnitureData.GetHashCode();
+        }
+        
         var originalData = furnitureData.originalData;
         
+        Debug.Log($"Placing furniture: {originalData.Name}, isStackable: {originalData.isStackable}");
         
         List<Vector2> positionToOccupy = CalculatePositions(position, furnitureData.size);
 
@@ -39,8 +41,38 @@ public class RoomFurnitures : MonoBehaviour
             (!furnitureData.originalData.wallObject || CheckWallsAndRotate(position, furnitureData));
         bool placeOnTop = false;
         bool unboxed = true;
+        
+        bool isStacking = false;
+        BottomFurnitureObject stackReceiver = null;
+        
+        if (originalData.isStackable)
+        {
+            foreach (var pos in positionToOccupy)
+            {
+                if (PlacementDatasInPosition.ContainsKey(pos))
+                {
+                    var existingData = PlacementDatasInPosition[pos];
+                    if (existingData.instantiatedFurniture is BottomFurnitureObject bottomObj && 
+                        bottomObj.Data.originalData.isStackReceiver)
+                    {
+                        bool isSameObject = furnitureData.instanceID != 0 && 
+                                           existingData.stackedItems != null && 
+                                           existingData.stackedItems.Any(item => item.Data.instanceID == furnitureData.instanceID);
+                        
+                        if (bottomObj.Data.currentStackLevel < bottomObj.Data.originalData.maxStackLevel || isSameObject)
+                        {
+                            stackReceiver = bottomObj;
+                            isStacking = true;
+                            position = pos;
+                            canPlace = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
-        if (canPlace) // If there's nothing underneath object
+        if (canPlace && !isStacking)
         {
             if (!isItem) // Don't even create data for Kits
             {
@@ -67,7 +99,7 @@ public class RoomFurnitures : MonoBehaviour
                 }
             }
         }
-        else
+        else if (!isStacking)
         {
             bool check = true;
             Vector2 validBottomPosition = Vector2.zero;
@@ -107,11 +139,142 @@ public class RoomFurnitures : MonoBehaviour
             }
         }
 
-        if (!canPlace) return false;
+        if (!canPlace && !isStacking) return false;
 
         var finalPos = GridManager.PositionToCellCenter(position);
 
-        // Guardamos el objeto que instanciamos en en cada PlacementData
+        if (isStacking && stackReceiver != null)
+        {
+            bool isSameObject = false;
+            int existingStackIndex = -1;
+            
+            if (furnitureData.instanceID != 0 && 
+                PlacementDatasInPosition[position].stackedItems != null)
+            {
+                for (int i = 0; i < PlacementDatasInPosition[position].stackedItems.Count; i++)
+                {
+                    if (PlacementDatasInPosition[position].stackedItems[i].Data.instanceID == furnitureData.instanceID)
+                    {
+                        isSameObject = true;
+                        existingStackIndex = i;
+                        break;
+                    }
+                }
+            }
+            
+            if (!isSameObject)
+            {
+                if (stackReceiver.Data.currentStackLevel >= stackReceiver.Data.originalData.maxStackLevel)
+                {
+                    return false;
+                }
+                
+                stackReceiver.Data.currentStackLevel++;
+            }
+            
+            FurnitureObjectBase stackedItem = Instantiate(furnitureData.prefab, finalPos, stackReceiver.transform.rotation).GetComponent<FurnitureObjectBase>();
+            
+            if (isSameObject && existingStackIndex >= 0)
+            {
+                furnitureData.currentStackLevel = PlacementDatasInPosition[position].stackedItems[existingStackIndex].Data.currentStackLevel;
+            }
+            else
+            {
+                furnitureData.currentStackLevel = stackReceiver.Data.currentStackLevel;
+            }
+            
+            furnitureData.rotationStep = stackReceiver.Data.rotationStep;
+            furnitureData.VectorRotation = stackReceiver.Data.VectorRotation;
+            
+            stackedItem.CopyFurnitureData(furnitureData);
+            stackedItem.SetUnpackedState(true);
+            
+            if (stackedItem is TopFurnitureObject topObj && 
+                furnitureData.originalData.stackLevelSprites != null && 
+                furnitureData.originalData.stackLevelSprites.Length > stackReceiver.Data.currentStackLevel - 1)
+            {
+                SpriteRenderer spriteRenderer = topObj.GetComponentInChildren<SpriteRenderer>();
+                if (spriteRenderer != null)
+                {
+                    spriteRenderer.sprite = furnitureData.originalData.stackLevelSprites[stackReceiver.Data.currentStackLevel - 1];
+                    
+                    if (spriteRenderer.transform != stackedItem.transform)
+                    {
+                        spriteRenderer.transform.rotation = stackReceiver.transform.rotation;
+                    }
+                }
+            }
+            
+            int tagBonus = 0;
+            Room currentRoom = GetComponent<Room>();
+
+            RoomTag furnitureTag = furnitureData.originalData.furnitureTag;
+            if (furnitureTag != RoomTag.None && currentRoom != null)
+            {
+                currentRoom.TrySetRoomTagFromFurniture(furnitureTag);
+            }
+
+            if (currentRoom != null &&
+                furnitureTag != RoomTag.None &&
+                furnitureTag == currentRoom.roomTag &&
+                !furnitureData.hasReceivedTagBonus)
+            {
+                tagBonus = furnitureData.originalData.tagMatchBonusPoints;
+                furnitureData.hasReceivedTagBonus = true;
+
+                PlayerController.instance.Inventory.UpdateMoney(tagBonus);
+                House.instance.UpdateScore(tagBonus);
+                ComboPopUp.Create(matchPrefab, tagBonus, finalPos, new Vector2(0f, 1.5f));
+            }
+            
+            int comboPoints = 0;
+            
+            if (stackReceiver is BottomFurnitureObject bottomObj)
+            {
+                List<Vector2> positionsForCombo = CalculatePositions(position, furnitureData.size);
+                
+                comboPoints = bottomObj.MakeCombo(positionsForCombo.ToArray());
+                
+                if (comboPoints > 0 && stackedItem is TopFurnitureObject topObject)
+                {
+                    topObject.MakeCombo();
+                    
+                    PlayerController.instance.Inventory.UpdateMoney(comboPoints);
+                    House.instance.UpdateScore(comboPoints);
+                    
+                    ComboPopUp.Create(popUpPrefab, comboPoints, finalPos, new Vector2(0f, 1.2f));
+                    
+                    if (tagBonus > 0)
+                    {
+                        StartCoroutine(ShowMatchPopupDelayed(tagBonus, finalPos));
+                    }
+                }
+            }
+            
+            if (!furnitureData.firstTimePlaced)
+            {
+                PlayerController.instance.Inventory.UpdateMoney(furnitureData.originalData.price);
+                House.instance.UpdateScore(furnitureData.originalData.price);
+                furnitureData.firstTimePlaced = true;
+            }
+            
+            AudioManager.instance.PlaySfx(GlobalSfx.Click);
+            
+            PlacementData data = PlacementDatasInPosition[position];
+            data.stackedItems = data.stackedItems ?? new List<FurnitureObjectBase>();
+            
+            if (isSameObject && existingStackIndex >= 0)
+            {
+                data.stackedItems[existingStackIndex] = stackedItem;
+            }
+            else
+            {
+                data.stackedItems.Add(stackedItem);
+            }
+            
+            return true;
+        }
+
         FurnitureObjectBase furniturePrefab = Instantiate(furnitureData.prefab, finalPos, Quaternion.Euler(furnitureData.VectorRotation)).GetComponent<FurnitureObjectBase>();
         furniturePrefab.CopyFurnitureData(furnitureData);
         furniturePrefab.SetUnpackedState(unboxed);

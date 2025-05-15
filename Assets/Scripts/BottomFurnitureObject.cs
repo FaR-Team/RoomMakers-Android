@@ -11,9 +11,9 @@ public class BottomFurnitureObject : FurnitureObjectBase
     [SerializeField] private Transform comboStarContainer;
     private HashSet<Vector2Int> localTilesCombos = new();
     
-    // Track the current top furniture to know when to change sprites
     private FurnitureOriginalData currentTopFurniture;
     private SpriteRenderer spriteRenderer;
+
 
     private void OnEnable()
     {
@@ -32,7 +32,6 @@ public class BottomFurnitureObject : FurnitureObjectBase
         comboStarContainer.SetParent(transform);
         comboStarContainer.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         
-        // Get sprite renderer
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
@@ -51,33 +50,25 @@ public class BottomFurnitureObject : FurnitureObjectBase
             }
         }
         
-        // Always check for sprite change, regardless of whether points were awarded
-        //CheckAndUpdateSprite(topFurnitureData);
-        
         // TODO: Improve, fast fix because it'll stay active after making combo
         comboStarContainer.gameObject.SetActive(false);
 
         furnitureData.localTileCombos = localTilesCombos;
         
-        // Return total combo
         return totalCombo;
     }
     
     private void CheckAndUpdateSprite(FurnitureOriginalData topFurnitureData)
     {
-        // Always update the current top furniture
         currentTopFurniture = topFurnitureData;
         
-        // Check if this is a specific combo that should trigger sprite change
         if (furnitureData.originalData.hasComboSprite && 
             furnitureData.originalData.comboTriggerFurniture == topFurnitureData)
         {
-            // Change to combo sprite
             ChangeToComboSprite();
         }
         else
         {
-            // Change back to default sprite
             ResetToDefaultSprite();
         }
     }
@@ -105,7 +96,6 @@ public class BottomFurnitureObject : FurnitureObjectBase
 
     public Vector2Int ConvertWorldToLocalTile(Vector2 worldPosition)
     {
-        // Get local position according to world position
         Vector2 localPosition = worldPosition - (Vector2)transform.position;
 
         Vector2 aux = localPosition;
@@ -131,6 +121,33 @@ public class BottomFurnitureObject : FurnitureObjectBase
         return Vector2Int.RoundToInt(localPosition);
     }
 
+    public bool TryAddStackItem(FurnitureOriginalData stackItem)
+    {
+        if (!furnitureData.originalData.isStackReceiver || !stackItem.isStackable)
+            return false;
+            
+        if (furnitureData.currentStackLevel >= furnitureData.originalData.maxStackLevel)
+            return false;
+            
+        furnitureData.currentStackLevel++;
+        
+        UpdateStackVisual();
+        
+        return true;
+    }
+    
+    private void UpdateStackVisual()
+    {
+        if (!furnitureData.originalData.isStackReceiver || spriteRenderer == null)
+            return;
+            
+        if (furnitureData.originalData.stackLevelSprites != null && 
+            furnitureData.originalData.stackLevelSprites.Length > furnitureData.currentStackLevel)
+        {
+            spriteRenderer.sprite = furnitureData.originalData.stackLevelSprites[furnitureData.currentStackLevel];
+        }
+    }
+    
     public override void CopyFurnitureData(FurnitureData newData)
     {
         base.CopyFurnitureData(newData);
@@ -138,9 +155,18 @@ public class BottomFurnitureObject : FurnitureObjectBase
         furnitureData.localTileCombos = newData.localTileCombos;
         localTilesCombos = furnitureData.localTileCombos;
         
-        // Initialize sprite renderer if not already done
+        furnitureData.currentStackLevel = newData.currentStackLevel;
+        
         if (spriteRenderer == null)
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        
+        if (furnitureData.originalData.isStackReceiver && 
+            furnitureData.currentStackLevel > 0 &&
+            furnitureData.originalData.stackLevelSprites != null &&
+            furnitureData.originalData.stackLevelSprites.Length > furnitureData.currentStackLevel)
+        {
+            spriteRenderer.sprite = furnitureData.originalData.stackLevelSprites[furnitureData.currentStackLevel];
+        }
         
         foreach (var tile in localTilesCombos)
         {

@@ -4272,7 +4272,7 @@ MonoBehaviour:
   - {fileID: 1246508500, guid: fc366a84b6ed2184796b8412791a1b1a, type: 3}
   shopRoomPrefabs:
   - {fileID: 5748501361486919024, guid: 75928f108f2ba454f9077e9e0cb4c18f, type: 3}
-  shopSpawnProbability: 0.05
+  shopSpawnProbability: 0.1
   allowShopsInCorners: 0
   baseDoorPrice: 100
   priceGrowthFactor: 1.3

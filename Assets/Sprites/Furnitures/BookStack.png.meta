@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f104e5b2d84fd8f44bea3bbffccffab0
+guid: 0dea9bca19b3ffc458c192f242073148
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -141,7 +141,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PizzaBox_0
+      name: BookStack_0
       rect:
         serializedVersion: 2
         x: 0
@@ -155,14 +155,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4b9ffa5c3a802994591c9529b060adf9
-      internalID: 1364092285
+      spriteID: 09633d68493fd2c4c84c5ce89903125a
+      internalID: 1863284609
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PizzaBox_1
+      name: BookStack_1
       rect:
         serializedVersion: 2
         x: 16
@@ -176,14 +176,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 59fdfd623e1c7f940b8b1f585962c8c1
-      internalID: -1096245465
+      spriteID: 85c76e0428bd5774f8fde022a334f5d4
+      internalID: -1038917469
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PizzaBox_2
+      name: BookStack_2
       rect:
         serializedVersion: 2
         x: 0
@@ -197,8 +197,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 889a8e043b8405244bc17634bc5cfcfa
-      internalID: -1091125020
+      spriteID: 794fc6dfe29780144a294d6a6aebecdc
+      internalID: -128392697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BookStack_3
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba950cc187f9f6d4e847acecbada53c5
+      internalID: -702354934
       vertices: []
       indices: 
       edges: []
@@ -214,9 +235,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      PizzaBox_1: -1096245465
-      PizzaBox_0: 1364092285
-      PizzaBox_2: -1091125020
+      BookStack_2: -128392697
+      BookStack_0: 1863284609
+      BookStack_1: -1038917469
+      BookStack_3: -702354934
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

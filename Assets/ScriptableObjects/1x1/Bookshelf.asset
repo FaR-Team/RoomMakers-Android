@@ -26,6 +26,10 @@ MonoBehaviour:
   indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
+  isStackReceiver: 1
+  isStackable: 0
+  maxStackLevel: 4
+  stackLevelSprites: []
   wallObject: 1
   furnitureTag: 6
   tagMatchBonusPoints: 50

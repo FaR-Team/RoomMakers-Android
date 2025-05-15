@@ -18,9 +18,29 @@ public class Interactor : MonoBehaviour
         // Si existe un PlacementData en el punto de interaccion, 
         if (House.instance.currentRoom.roomFurnitures.PlacementDatasInPosition.TryGetValue(gridPosition, out PlacementData placementData))
         {
-            //Debug.Log("hay placement data en: " + (Vector2)gridPosition);
             if (playerInventory.HasItem()) return;
  
+            if (placementData.stackedItems != null && placementData.stackedItems.Count > 0)
+            {
+                FurnitureObjectBase topStackedItem = placementData.PickUpTopStackedItem();
+            
+                if (topStackedItem != null)
+                {
+                    if (!IsSpanish) text_name.text = topStackedItem.Data.originalData.Name;
+                    else text_name.text = topStackedItem.Data.originalData.es_Name;
+                
+                    topStackedItem.Data.currentStackLevel = 0;
+                
+                    playerInventory.furnitureInventoryWithData = topStackedItem.Data;
+                    playerInventory.EnablePackageUI(true);
+                
+                    Destroy(topStackedItem.gameObject);
+                
+                    AudioManager.instance.PlaySfx(GlobalSfx.Grab);
+                    return;
+                }
+            }
+
             FurnitureData topFurnitureData = placementData.GetTopFurnitureData(gridPosition);
             
             if (topFurnitureData == null && placementData.furnitureData != null)
