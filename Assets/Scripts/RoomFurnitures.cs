@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -15,6 +16,10 @@ public class RoomFurnitures : MonoBehaviour
     private LayerMask wallsLayerMask;
     private LayerMask unplaceableLayerMask;
     //private LayerMask kitLayerMask;
+    public static event Action<FurnitureOriginalData> OnPlaceFurniture;
+    public static event Action<FurnitureOriginalData> OnPlaceOnTop;
+    public static event Action<int> OnComboDone;
+    public static event Action<ItemType> OnItemUse;
 
     private void Start()
     {
@@ -298,7 +303,10 @@ public class RoomFurnitures : MonoBehaviour
         FurnitureObjectBase furniturePrefab = Instantiate(furnitureData.prefab, finalPos, Quaternion.Euler(furnitureData.VectorRotation)).GetComponent<FurnitureObjectBase>();
         furniturePrefab.CopyFurnitureData(furnitureData);
         furniturePrefab.SetUnpackedState(unboxed);
-
+        
+        OnPlaceFurniture?.Invoke(furnitureData.originalData);
+        if(placeOnTop) OnPlaceOnTop?.Invoke(furnitureData.originalData);
+        
         if (!isItem) GivePoints(furnitureData, positionToOccupy, placeOnTop, finalPos, furniturePrefab, unboxed);
         else KitsInPosition[finalPos] = furniturePrefab as KitObject;
 
@@ -314,10 +322,7 @@ public class RoomFurnitures : MonoBehaviour
         {
             case ItemType.Tagger:
                 if (currentRoom.roomTag is RoomTag.Shop) { placed = false; break; }
-                TagSelectionUI.instance.ShowTagSelection(currentRoom, () =>
-                {
-                    Debug.Log("Placed tagger");
-                });
+                TagSelectionUI.instance.ShowTagSelection(currentRoom, ChangedTagCallback);
                 placed = true;
                 break;
             case ItemType.Sledgehammer:
@@ -325,6 +330,7 @@ public class RoomFurnitures : MonoBehaviour
                 if (coll != null && coll.TryGetComponent<DoorData>(out DoorData door) && !door.isUnlocked)
                 {
                     door.BuyNextRoom(true);
+                    OnItemUse?.Invoke(ItemType.Sledgehammer);
                     placed = true;
                     break;
                 }
@@ -340,7 +346,6 @@ public class RoomFurnitures : MonoBehaviour
                 placed = false;
                 break;
         }
-
         return placed;
     }
 
@@ -472,6 +477,8 @@ public class RoomFurnitures : MonoBehaviour
 
                         // Show combo popup immediately
                         ComboPopUp.Create(popUpPrefab, comboPoints, finalPos, new Vector2(0f, 1.2f));
+                        
+                        OnComboDone?.Invoke(totalCombo);
 
                         // If there's also a tag bonus, show it after a delay
                         if (tagBonus > 0)
@@ -529,6 +536,12 @@ public class RoomFurnitures : MonoBehaviour
             //PlacementDatasInPosition[pos].furnitureOnTopData = null;
             //PlacementDatasInPosition[pos].instantiatedFurnitureOnTop = null;
         }
+    }
+
+    public void ChangedTagCallback()
+    {
+        OnItemUse?.Invoke(ItemType.Tagger);
+        Debug.Log("Changed tag");
     }
 
     public void RemoveTopObjectInPosition(Vector2 pos)
