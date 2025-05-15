@@ -4283,7 +4283,7 @@ MonoBehaviour:
   roomWidth: 10
   roomTransitionTime: 0.3
   uiContainer: {fileID: 1487510578}
-  baseRestockPrice: 500
+  baseRestockPrice: 100
   maxRestockPrice: 0
   requiredBaseIndicatorPrefab: {fileID: 7359638280929937491, guid: d40907a54629b5f4a8021d63dd342f8b, type: 3}
 --- !u!1 &996624849

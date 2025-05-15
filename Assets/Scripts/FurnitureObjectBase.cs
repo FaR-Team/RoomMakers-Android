@@ -60,6 +60,7 @@ public class FurnitureObjectBase : MonoBehaviour
         if (furnitureData.originalData.requiredBase == null) return;
         
         indicatorInstance = Instantiate(House.instance.requiredBaseIndicatorPrefab, transform);
+        indicatorInstance.transform.rotation = Quaternion.identity;
         
         Vector3 indicatorPosition = CalculateIndicatorPosition();
         indicatorInstance.transform.localPosition = new Vector3(indicatorPosition.x, indicatorPosition.y, 0.1f);

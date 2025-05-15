@@ -62,7 +62,7 @@ public class House : MonoBehaviour
     [SerializeField] private GameObject uiContainer;
 
     [Header("Restock Settings")]
-    [Tooltip("Base price for restocking shops")] public int baseRestockPrice = 500;
+    [Tooltip("Base price for restocking shops")] public int baseRestockPrice = 100;
     [SerializeField] [Tooltip("Cap optional for restock prices (0 means unlimited)")] private int maxRestockPrice = 0;
     private int restockPrice;
     private int timesRestocked = 0;
