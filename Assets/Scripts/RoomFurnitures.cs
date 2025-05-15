@@ -6,6 +6,7 @@ using UnityEngine;
 public class RoomFurnitures : MonoBehaviour
 {
     public Dictionary<Vector2, PlacementData> PlacementDatasInPosition = new();
+    public Dictionary<Vector2, KitObject> KitsInPosition = new();
     
     // TODO: que no se tenga que asignar aca la referencia al prefab
     [SerializeField] protected ComboPopUp popUpPrefab;
@@ -13,13 +14,13 @@ public class RoomFurnitures : MonoBehaviour
 
     private LayerMask wallsLayerMask;
     private LayerMask unplaceableLayerMask;
-    private LayerMask kitLayerMask;
+    //private LayerMask kitLayerMask;
 
     private void Start()
     {
         wallsLayerMask = LayerMask.GetMask("Walls", "InnerWalls");
         unplaceableLayerMask = ~(1 << 15); // Everything but kit 
-        kitLayerMask = (1 << 15);
+        //kitLayerMask = (1 << 15);
     }
 
     public bool PlaceFurniture(Vector2 position, FurnitureData furnitureData, bool isItem = false)
@@ -88,8 +89,7 @@ public class RoomFurnitures : MonoBehaviour
                     
                     for (int i = 0; i < positionToOccupy.Count; i++)
                     {
-                        var coll = Physics2D.OverlapCircle(positionToOccupy[i], 0.2f, kitLayerMask);
-                        if (coll != null && coll.TryGetComponent(out KitObject kit) &&
+                        if (KitsInPosition.TryGetValue(positionToOccupy[i], out KitObject kit) &&
                             furnitureData.originalData.requiredBase == kit.Data.originalData)
                         {
                             unboxed = true;
@@ -97,6 +97,10 @@ public class RoomFurnitures : MonoBehaviour
                         }
                     }
                 }
+            }
+            else // If placing a kit
+            {
+                //if (KitsInPosition.ContainsKey(position)) canPlace = false;
             }
         }
         else if (!isStacking)
@@ -135,6 +139,22 @@ public class RoomFurnitures : MonoBehaviour
                 if (canPlace)
                 {
                     position = validBottomPosition;
+                }
+
+                if (requiresBase)
+                {
+                    unboxed = false;
+
+                    // Check if bottom object is on top of necessary kit
+                    foreach (var pos in PlacementDatasInPosition[validBottomPosition].occupiedPositions)
+                    {
+                        if (KitsInPosition.TryGetValue(pos, out KitObject kit) &&
+                            furnitureData.originalData.requiredBase == kit.Data.originalData)
+                        {
+                            unboxed = true;
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -280,6 +300,7 @@ public class RoomFurnitures : MonoBehaviour
         furniturePrefab.SetUnpackedState(unboxed);
         
         if(!isItem) GivePoints(furnitureData, positionToOccupy, placeOnTop, finalPos, furniturePrefab, unboxed);
+        else KitsInPosition[finalPos] = furniturePrefab as KitObject;
 
         return true;
     }
@@ -416,56 +437,59 @@ public class RoomFurnitures : MonoBehaviour
         }
         else
         {
-            // Si el objeto va encima de otro, lo guardamos en el PlacementData y damos doble score por combo
-            int totalCombo = 0;
-        
-            TopFurnitureObject topObject = (TopFurnitureObject) furnitureObject;
-            BottomFurnitureObject bottomObject = (BottomFurnitureObject) PlacementDatasInPosition[finalPos]
-                .instantiatedFurniture;
-        
-            // Check for sprite changes regardless of combo status
-            topObject.CheckAndUpdateSprite(bottomObject);
-        
-            // Only calculate and award points if combo hasn't been done yet
-            if(!topObject.ComboDone)
+            TopFurnitureObject topObject = (TopFurnitureObject)furnitureObject;
+            if (unboxed)
             {
-                // Calculamos y sumamos los puntos por cada tile en el que se hace combo
-                totalCombo += bottomObject.MakeCombo(positionToOccupy.ToArray());
+                // Si el objeto va encima de otro, lo guardamos en el PlacementData y damos doble score por combo
+                int totalCombo = 0;
 
-                // Si hubo al menos un tile en el que se hizo combo, gastamos el combo tambien en el objeto de arriba
-                if (totalCombo > 0)
+                BottomFurnitureObject bottomObject = (BottomFurnitureObject)PlacementDatasInPosition[finalPos]
+                    .instantiatedFurniture;
+
+                // Check for sprite changes regardless of combo status
+                topObject.CheckAndUpdateSprite(bottomObject);
+
+                // Only calculate and award points if combo hasn't been done yet
+                if (!topObject.ComboDone)
                 {
-                    topObject.MakeCombo();
-                    
-                    // Add tag bonus to combo points
-                    int comboPoints = totalCombo;
-                    if (tagBonus > 0)
+                    // Calculamos y sumamos los puntos por cada tile en el que se hace combo
+                    totalCombo += bottomObject.MakeCombo(positionToOccupy.ToArray());
+
+                    // Si hubo al menos un tile en el que se hizo combo, gastamos el combo tambien en el objeto de arriba
+                    if (totalCombo > 0)
                     {
-                        comboPoints += tagBonus;
+                        topObject.MakeCombo();
+
+                        // Add tag bonus to combo points
+                        int comboPoints = totalCombo;
+                        if (tagBonus > 0)
+                        {
+                            comboPoints += tagBonus;
+                        }
+
+                        PlayerController.instance.Inventory.UpdateMoney(comboPoints);
+                        House.instance.UpdateScore(comboPoints);
+
+                        // Show combo popup immediately
+                        ComboPopUp.Create(popUpPrefab, comboPoints, finalPos, new Vector2(0f, 1.2f));
+
+                        // If there's also a tag bonus, show it after a delay
+                        if (tagBonus > 0)
+                        {
+                            StartCoroutine(ShowMatchPopupDelayed(tagBonus, finalPos));
+                        }
                     }
-                    
-                    PlayerController.instance.Inventory.UpdateMoney(comboPoints);
-                    House.instance.UpdateScore(comboPoints);
-                    
-                    // Show combo popup immediately
-                    ComboPopUp.Create(popUpPrefab, comboPoints, finalPos, new Vector2(0f, 1.2f));
-                    
-                    // If there's also a tag bonus, show it after a delay
-                    if (tagBonus > 0)
+                    else if (tagBonus > 0)
                     {
-                        StartCoroutine(ShowMatchPopupDelayed(tagBonus, finalPos));
+                        // If there's no combo but there is a tag bonus, add it separately
+                        PlayerController.instance.Inventory.UpdateMoney(tagBonus);
+                        House.instance.UpdateScore(tagBonus);
+
+                        ComboPopUp.Create(matchPrefab, tagBonus, finalPos, new Vector2(0f, 1.2f));
                     }
-                }
-                else if (tagBonus > 0)
-                {
-                    // If there's no combo but there is a tag bonus, add it separately
-                    PlayerController.instance.Inventory.UpdateMoney(tagBonus);
-                    House.instance.UpdateScore(tagBonus);
-                
-                    ComboPopUp.Create(matchPrefab, tagBonus, finalPos, new Vector2(0f, 1.2f));
                 }
             }
-        
+
             // Updateamos la placement data con el objeto que pusimos encima
             PlacementDatasInPosition[finalPos].PlaceObjectOnTop(positionToOccupy, topObject);
         }
@@ -510,6 +534,13 @@ public class RoomFurnitures : MonoBehaviour
     public void RemoveTopObjectInPosition(Vector2 pos)
     {
         PlacementDatasInPosition[pos].ClearTopObject(pos);
+    }
+
+    public void RemoveKitInPosition(Vector2 pos)
+    {
+        if (!KitsInPosition.TryGetValue(pos, out KitObject kit)) return;
+        Destroy(kit.gameObject);
+        KitsInPosition.Remove(pos);
     }
 
     private List<Vector2> CalculatePositions(Vector2 position, Vector2Int size)

@@ -53,7 +53,7 @@ public class TutorialHandler : MonoBehaviour
     {
         StateManager.PauseGame();
         tutorialStep++;
-        tutorialObject.SetActive(true);
+        if(tutorialObject != null) tutorialObject.SetActive(true);
         anim.SetInteger("TutorialStep", tutorialStep);
         animPlaying = true;
     }

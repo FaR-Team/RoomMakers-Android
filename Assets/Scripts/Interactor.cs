@@ -79,6 +79,18 @@ public class Interactor : MonoBehaviour
 
             return;
         }
+        
+        if (House.instance.currentRoom.roomFurnitures.KitsInPosition.TryGetValue(gridPosition,
+                     out KitObject kit))
+        {
+            if (!IsSpanish) text_name.text = kit.originalData.Name;
+            else text_name.text = kit.originalData.es_Name;
+            playerInventory.furnitureInventoryWithData = kit.Data;
+            playerInventory.EnablePackageUI(true);
+            House.instance.currentRoom.roomFurnitures.RemoveKitInPosition(gridPosition);
+            
+            return;
+        }
 
         var interactable = Physics2D.OverlapCircle(transform.position, 0.2f, interactableLayer);
 
@@ -95,15 +107,6 @@ public class Interactor : MonoBehaviour
             this.Log(shopItemData.name);
             shopItemData.TryPurchase();
             PlayerController.instance.CheckInFront();
-        }
-        else if (interactable.TryGetComponent(out KitObject kit) && !playerInventory.HasItem())
-        {
-            // GRAB KIT
-            if (!IsSpanish) text_name.text = kit.originalData.Name;
-            else text_name.text = kit.originalData.es_Name;
-            playerInventory.furnitureInventoryWithData = kit.Data;
-            playerInventory.EnablePackageUI(true);
-            Destroy(kit.gameObject);
         }
         else if (interactable.TryGetComponent(out RestockMachine machine))
         {
