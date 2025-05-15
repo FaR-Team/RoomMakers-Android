@@ -65,10 +65,7 @@ public class FurnitureDataExcelWindow : EditorWindow
         
         EditorGUILayout.Space(10);
         EditorGUILayout.HelpBox(
-            "CSV Format:\n" +
-            "- Removed 'isLabeler' field\n" +
-            "- Added 'wallObject' field\n" +
-            "- Added 'compatibles' field (semicolon-separated list of asset paths)", 
+            "idk man",
             MessageType.Info);
             
         EditorGUILayout.EndScrollView();

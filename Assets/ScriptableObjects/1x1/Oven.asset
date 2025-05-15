@@ -20,12 +20,12 @@ MonoBehaviour:
   typeOfSize: 0
   compatibles:
   - {fileID: 11400000, guid: 1d0bbf3db48babb458668e200bb43cc9, type: 2}
+  requiredBase: {fileID: 0}
   sprites:
   - {fileID: 1788588754, guid: 29b952655693cc84899d379450735635, type: 3}
+  indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
   wallObject: 0
   furnitureTag: 1
   tagMatchBonusPoints: 20
-  isLabeler: 0
-  hasReceivedTagBonus: 0

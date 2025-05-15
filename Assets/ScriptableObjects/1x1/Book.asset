@@ -23,6 +23,7 @@ MonoBehaviour:
   sprites:
   - {fileID: 21300000, guid: a928d1a7e7f313c4c85699c919540426, type: 3}
   - {fileID: 21300000, guid: 228fc567c534e914ab31bbb966bd1400, type: 3}
+  indicatorSprite: {fileID: 0}
   hasComboSprite: 1
   comboTriggerFurniture: {fileID: 11400000, guid: 5a451b65358f0484bbe90e6f153e1db2, type: 2}
   wallObject: 0

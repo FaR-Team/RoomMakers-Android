@@ -19,9 +19,11 @@ MonoBehaviour:
   prefab: {fileID: 5954944119824593527, guid: bac6742669297f44fbb660acc504e2f1, type: 3}
   typeOfSize: 2
   compatibles: []
+  requiredBase: {fileID: 11400000, guid: dadec6abf8f8e914e806e483f6c61e0a, type: 2}
   sprites:
   - {fileID: -518771065, guid: f1a74a1031b0384408f660f8759efa4c, type: 3}
   - {fileID: 629548532, guid: f1a74a1031b0384408f660f8759efa4c, type: 3}
+  indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
   wallObject: 0
