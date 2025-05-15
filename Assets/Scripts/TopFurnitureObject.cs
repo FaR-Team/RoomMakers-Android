@@ -111,7 +111,18 @@ public class TopFurnitureObject : FurnitureObjectBase
     {
         furnitureData.rotationStep = furnitureToCopy.Data.rotationStep;
         furnitureData.VectorRotation = furnitureToCopy.Data.VectorRotation;
+        
         gameObject.transform.rotation = furnitureToCopy.gameObject.transform.rotation;
+        
+        if (spriteRenderer != null && spriteRenderer.transform != transform)
+        {
+            spriteRenderer.transform.rotation = furnitureToCopy.gameObject.transform.rotation;
+        }
+        
+        if (comboStar != null)
+        {
+            comboStar.transform.eulerAngles = Vector3.zero;
+        }
     }
     
     public void EnableStar(GameState newState)
