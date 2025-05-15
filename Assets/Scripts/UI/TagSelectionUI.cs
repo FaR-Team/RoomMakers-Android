@@ -66,7 +66,7 @@ public class TagSelectionUI : MonoBehaviour
         gameObject.SetActive(true);
         targetRoom = room;
         onConfirmCallback = callback;
-        StateManager.currentGameState = GameState.Pause; // TODO: Mejorar
+        StateManager.Instance.ChangeGameState(GameState.Pause); // TODO: Mejorar
 
         if (room.roomTag == RoomTag.None)
         {

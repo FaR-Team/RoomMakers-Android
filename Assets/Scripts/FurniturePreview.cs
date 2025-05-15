@@ -108,7 +108,7 @@ public class FurniturePreview : MonoBehaviour
             inventory.furnitureInventory = null;
             inventory.furnitureInventoryWithData = null;
             inventory.packageUI.SetActive(false);
-            if(StateManager.currentGameState != GameState.Pause) StateManager.SwitchEditMode();
+            if(StateManager.CurrentGameState != GameState.Pause) StateManager.SwitchEditMode();
         }
         else
         {

@@ -157,5 +157,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originalData: {fileID: 11400000, guid: dadec6abf8f8e914e806e483f6c61e0a, type: 2}
-  requiredBaseIndicatorPrefab: {fileID: 7359638280929937491, guid: 591ed2a1a147eb947a5e4d8d1228f0b3, type: 3}
-  indicatorPrefab: {fileID: 0}
+  spriteRenderers:
+  - {fileID: 5954944119104468497}
