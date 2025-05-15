@@ -13,6 +13,7 @@ public class FurnitureOriginalData : ScriptableObject
     public FurnitureOriginalData[] compatibles;
     public FurnitureOriginalData requiredBase;
     public Sprite[] sprites;
+    public Sprite indicatorSprite;
     public bool hasComboSprite = false; 
     [Tooltip("If hasComboSprite is true, this furniture will change its sprite when combined with this specific furniture")]
     public FurnitureOriginalData comboTriggerFurniture;

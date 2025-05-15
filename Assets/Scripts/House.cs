@@ -68,6 +68,9 @@ public class House : MonoBehaviour
     private int timesRestocked = 0;
     public int RestockPrice => restockPrice;
 
+    [Header("Furniture Indicators")]
+    public GameObject requiredBaseIndicatorPrefab;
+
 
     void Awake()
     {
