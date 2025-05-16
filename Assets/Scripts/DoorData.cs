@@ -141,7 +141,7 @@ public class DoorData : MonoBehaviour
         GetComponent<Collider2D>().isTrigger = true;
         GetComponent<SpriteRenderer>().sprite = openDoor;
         gameObject.layer = 7;
-        UpdateTutorialLockVisual(); // Hide tutorial lock indicator as door is now unlocked
+        UpdateTutorialLockVisual();
     }
 
     private IEnumerator ShakeDoorCoroutine()
