@@ -10,6 +10,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip clickOkClip;
     [SerializeField] private AudioClip errorClip;
     [SerializeField] private AudioClip grabClip;
+    [SerializeField] private AudioClip restockClip;
     
     [Header("Audio Mixer")]
     [SerializeField] private AudioMixer audioMixer;
@@ -55,6 +56,7 @@ public class AudioManager : MonoBehaviour
         _clipsDictionary[GlobalSfx.Click] = clickOkClip;
         _clipsDictionary[GlobalSfx.Error] = errorClip;
         _clipsDictionary[GlobalSfx.Grab] = grabClip;
+        _clipsDictionary[GlobalSfx.Restock] = restockClip;
         
         _defaultMusicVolume = musicAudioSource.volume;
         _defaultSfxVolume = sfxAudioSource.volume;
@@ -322,5 +324,6 @@ public enum GlobalSfx
 {
     Click,
     Error,
-    Grab
+    Grab,
+    Restock
 }

@@ -23,6 +23,13 @@ public class DoorData : MonoBehaviour
     private Vector3 roomCameraPosition;
 
     [SerializeField] private Sprite openDoor;
+    
+    [Header("Shake Settings")]
+    [SerializeField] private float shakeDuration = 0.2f;
+    [SerializeField] private float shakeMagnitude = 0.03f;
+
+    [Header("Tutorial Settings")]
+    [SerializeField] private GameObject lockedTutorialIndicator;
 
     void Start()
     {
@@ -30,6 +37,18 @@ public class DoorData : MonoBehaviour
         thisRoom = transform.parent.GetComponent<Room>();
 
         SetSpawnPoint();
+        UpdateTutorialLockVisual(); 
+    }
+
+    private void OnEnable()
+    {
+        TutorialHandler.OnTutorialLockStateUpdated += UpdateTutorialLockVisual;
+        UpdateTutorialLockVisual();
+    }
+
+    private void OnDisable()
+    {
+        TutorialHandler.OnTutorialLockStateUpdated -= UpdateTutorialLockVisual;
     }
 
     void SetSpawnPoint()
@@ -92,6 +111,13 @@ public class DoorData : MonoBehaviour
     // Modified to support free doors from debug menu
     public void BuyNextRoom(bool isFree = false)
     {
+        if (TutorialHandler.AreDoorsTutorialLocked() && !isFree)
+        {
+            AudioManager.instance.PlaySfx(GlobalSfx.Error);
+            StartCoroutine(ShakeDoorCoroutine());
+            return;
+        }
+
         if (!isUnlocked && (isFree || PlayerController.instance.Inventory.money >= House.instance.DoorPrice))
         {
             // Only deduct money if it's not a free door
@@ -99,7 +125,7 @@ public class DoorData : MonoBehaviour
             {
                 PlayerController.instance.Inventory.UpdateMoney(-House.instance.DoorPrice);
             }
-            
+
             NextRoom = House.instance.SpawnRoom(spawnPoint);
             AudioManager.instance.PlaySfx(GlobalSfx.Grab);
             UnlockDoor();
@@ -115,8 +141,26 @@ public class DoorData : MonoBehaviour
         GetComponent<Collider2D>().isTrigger = true;
         GetComponent<SpriteRenderer>().sprite = openDoor;
         gameObject.layer = 7;
+        UpdateTutorialLockVisual();
     }
 
+    private IEnumerator ShakeDoorCoroutine()
+    {
+        Vector3 originalPosition = transform.localPosition;
+
+        float elapsed = 0f;
+
+        while (elapsed < shakeDuration)
+        {
+            float xOffset = Mathf.Sin(elapsed * (Mathf.PI / shakeDuration) * 10f) * shakeMagnitude;
+            transform.localPosition = originalPosition + new Vector3(xOffset, 0f, 0f);
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localPosition = originalPosition;
+    }
     public void CheckNextDoor()
     {
         if (isUnlocked) return;
@@ -153,6 +197,15 @@ public class DoorData : MonoBehaviour
                 UnlockDoor();
                 doorData.UnlockDoor();
             }
+        }
+    }
+
+    private void UpdateTutorialLockVisual()
+    {
+        if (lockedTutorialIndicator != null)
+        {
+            bool shouldShowLock = TutorialHandler.AreDoorsTutorialLocked() && !isUnlocked;
+            lockedTutorialIndicator.SetActive(shouldShowLock);
         }
     }
 }

@@ -19,18 +19,24 @@ MonoBehaviour:
   prefab: {fileID: 5954944119824593527, guid: 8e0250bdc5f9fbc4cab36fb3ee024408, type: 3}
   typeOfSize: 0
   compatibles:
-  - {fileID: 11400000, guid: 5540817b85aa1cd40aa62cdcd2dc2ddf, type: 2}
+  - {fileID: 11400000, guid: 845ccd4d90144b341be38d94a33c57e6, type: 2}
+  - {fileID: 11400000, guid: 411989892a45d2d49af868bdb5d329bc, type: 2}
+  - {fileID: 11400000, guid: 37c6be31b3b15e747b3582dbb7120ff6, type: 2}
   - {fileID: 11400000, guid: 3abd00303a3b14c45a858e84b99533da, type: 2}
-  - {fileID: 11400000, guid: 288af28ddbf120849a152d00a5d8f6c7, type: 2}
   - {fileID: 11400000, guid: 89ff0d0efbcccad41a92753e45b9c2d7, type: 2}
   - {fileID: 11400000, guid: 51bc5d728a542604bb259dfb5e011dde, type: 2}
   - {fileID: 11400000, guid: 1d0bbf3db48babb458668e200bb43cc9, type: 2}
+  - {fileID: 11400000, guid: 288af28ddbf120849a152d00a5d8f6c7, type: 2}
+  - {fileID: 11400000, guid: 913e53f342b7b3b4a96ca13252f8602a, type: 2}
+  - {fileID: 11400000, guid: 5671064018bdd6143b85f8b3770c5d4e, type: 2}
+  - {fileID: 11400000, guid: d62206323bbe77449a00feb6532a0172, type: 2}
+  - {fileID: 11400000, guid: 5540817b85aa1cd40aa62cdcd2dc2ddf, type: 2}
+  requiredBase: {fileID: 0}
   sprites:
   - {fileID: 21300000, guid: 179e9086a88553d4f9c8b84f5183b811, type: 3}
+  indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
   wallObject: 0
   furnitureTag: 1
   tagMatchBonusPoints: 20
-  isLabeler: 0
-  hasReceivedTagBonus: 0

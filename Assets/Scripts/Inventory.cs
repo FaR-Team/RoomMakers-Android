@@ -16,6 +16,8 @@ public class Inventory : MonoBehaviour
     [SerializeField] private SpriteRenderer itemImage;
     public Sprite PackageSprite;
 
+    public static event Action<FurnitureOriginalData> OnFurniturePickUp; 
+
     public void UpdateMoney(int intMoney)
     {
         money += intMoney;
@@ -29,12 +31,12 @@ public class Inventory : MonoBehaviour
 
         if (HasItem()) return;
         
-        if(TutorialHandler.instance) TutorialHandler.instance.CompletedStep();
         TimerManager.StopTimer();
 
         furnitureInventory = Package._furnitureInPackage;
         Package.package.SetActive(false);
         EnablePackageUI(true);
+        OnFurniturePickUp?.Invoke(furnitureInventory);
         
         // Update UI with package information
         UpdatePackageUI();

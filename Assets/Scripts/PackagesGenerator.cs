@@ -6,9 +6,7 @@ using Random = UnityEngine.Random;
 public class PackagesGenerator : MonoBehaviour
 {
     [SerializeField] private FurnitureOriginalData[] allFurnitures;
-    [SerializeField] private FurnitureOriginalData wife;
     [SerializeField] private FurnitureOriginalData[] onePercent;
-    private bool isWife;
     private int quantityOfObjectSpawned = 0;
 
     [SerializeField] private GameObject packageGO;
@@ -23,8 +21,18 @@ public class PackagesGenerator : MonoBehaviour
     [SerializeField] private SpawnProbabilityConfig spawnConfig;
     [SerializeField] private bool useTagBasedProbabilities = true;
     
-    // Dictionary to track furniture spawn chances
     private Dictionary<FurnitureOriginalData, float> furnitureSpawnChances = new Dictionary<FurnitureOriginalData, float>();
+
+    private void OnEnable()
+    {
+        TutorialHandler.OnTutorialLockStateUpdated += HandleTutorialStateUpdate;
+    }
+
+    private void OnDisable()
+    {
+        TutorialHandler.OnTutorialLockStateUpdated -= HandleTutorialStateUpdate;
+    }
+
     private void Start()
     {
         InvokeRepeating("GeneratePackage", 2f, 5f);
@@ -33,6 +41,19 @@ public class PackagesGenerator : MonoBehaviour
         if (useTagBasedProbabilities && spawnConfig != null)
         {
             CalculateFurnitureSpawnChances();
+        }
+        HandleTutorialStateUpdate(); 
+    }
+
+    private void HandleTutorialStateUpdate()
+    {
+        if (!TutorialHandler.AreDoorsTutorialLocked()) 
+        {
+            if (tutorialObjects.Count > 0)
+            {
+                Debug.Log("[PackagesGenerator] Tutorial ended or skipped. Clearing remaining tutorial objects.");
+                tutorialObjects.Clear();
+            }
         }
     }
 
@@ -52,36 +73,74 @@ public class PackagesGenerator : MonoBehaviour
 
     private void GeneratePackage()
     {
-        if (packageGO.activeInHierarchy || TutorialHandler.instance.onTutorial) return;
-        
-        TimerManager.StartTimer();
-        packageGO.SetActive(true);
-
-        FurnitureOriginalData packageData;
-        if (tutorialObjects.Count > 0)
+        if (packageGO.activeInHierarchy)
         {
-            TutorialHandler.instance.onTutorial = true;
-            packageData = packageGO.GetComponent<Package>().furnitureInPackage = tutorialObjects[0];
-            tutorialObjects.RemoveAt(0);
+            // Debug.Log("[PackagesGenerator] Package already active, skipping generation.");
             return;
         }
 
-        packageData = packageGO.GetComponent<Package>().furnitureInPackage = GetRandomFurniture();
-        gameObject.transform.parent.GetComponent<MainRoom>().CheckIfLose(packageData);
-        
-    }
-
-    private FurnitureOriginalData GetRandomFurniture()
-    {
-
-        if(quantityOfObjectSpawned >= 25 && Random.Range(0, 1f) <= 0.1f && !isWife)
+        if (TutorialHandler.instance != null && 
+            tutorialObjects.Count > 0 && 
+            !TutorialHandler.instance.stepStarted)
         {
-            isWife = true;
-            Debug.Log("Sweetieee. I'm Home <3");
-            return wife;
+            Debug.Log($"[PackagesGenerator] Tutorial step not started and item available. Dispensing: {tutorialObjects[0].Name}");
+
+            Package package = packageGO.GetComponent<Package>();
+            package.furnitureInPackage = tutorialObjects[0];
+            tutorialObjects.RemoveAt(0);
+
+            packageGO.SetActive(true);
+            
+            return;
         }
 
-        if(Random.Range(0, 100f) <= 1f)
+        
+        if (TutorialHandler.AreDoorsTutorialLocked())
+        {
+            
+            Debug.Log("[PackagesGenerator] Tutorial is active and controlling flow (doors locked), but no specific tutorial items in queue. Waiting.");
+            return;
+        }
+        else 
+        {
+           
+            if (tutorialObjects.Count > 0)
+            {
+                Debug.LogWarning("[PackagesGenerator] Tutorial not locking doors, but stale tutorial objects found. Clearing them now.");
+                tutorialObjects.Clear();
+            }
+
+            Debug.Log("[PackagesGenerator] Generating regular package.");
+            TimerManager.StartTimer();
+            packageGO.SetActive(true);
+
+            FurnitureOriginalData regularPackageData = GetRandomFurniture();
+            if (regularPackageData == null)
+            {
+                Debug.LogWarning("[PackagesGenerator] GetRandomFurniture returned null. Skipping package generation for this cycle.");
+                packageGO.SetActive(false); 
+                TimerManager.StopTimer();
+                return;
+            }
+
+            packageGO.GetComponent<Package>().furnitureInPackage = regularPackageData;
+
+            MainRoom mainRoom = gameObject.transform.parent.GetComponent<MainRoom>();
+            if (mainRoom != null)
+            {
+                mainRoom.CheckIfLose(regularPackageData);
+            }
+            else
+            {
+                Debug.LogError("[PackagesGenerator] Parent MainRoom not found! Cannot perform CheckIfLose.");
+                packageGO.SetActive(false);
+                TimerManager.StopTimer();
+            }
+        }
+    }
+    private FurnitureOriginalData GetRandomFurniture()
+    {
+        if (Random.Range(0, 100f) <= 1f)
         {
             return onePercent[Random.Range(0, onePercent.Length)];
         }
@@ -98,6 +157,11 @@ public class PackagesGenerator : MonoBehaviour
         {
             deletedFurnitures.Clear();
             SetPossibleFurnitures();
+            if (possibleFurnitures.Count == 0)
+            {
+                Debug.LogError("[PackagesGenerator] SetPossibleFurnitures did not populate any furnitures. GetRandomFurniture cannot proceed.");
+                return null;
+            }
         }
 
         if (useTagBasedProbabilities && spawnConfig != null)
@@ -147,21 +211,22 @@ public class PackagesGenerator : MonoBehaviour
             {
                 deletedFurnitures.Clear();
                 SetPossibleFurnitures();
-                return GetRandomFurniture();
+                if (possibleFurnitures.Count > 0 && possibleFurnitures[0] != null) {
+                    // Try one more time after reset
+                    return GetRandomFurniture();
+                }
+                return null;
             }
         }
         
-        // Select a random value within the total weight
         float randomValue = Random.Range(0f, totalWeight);
         float currentWeight = 0f;
         
-        // Find the furniture that corresponds to the random value
         foreach (var kvp in availableFurniture)
         {
             currentWeight += kvp.Value;
             if (randomValue <= currentWeight)
             {
-                // Found our furniture
                 FurnitureOriginalData selectedFurniture = kvp.Key;
                 possibleFurnitures.Remove(selectedFurniture);
                 deletedFurnitures.Add(selectedFurniture);
@@ -170,14 +235,18 @@ public class PackagesGenerator : MonoBehaviour
             }
         }
         
-        // Fallback (should not reach here)
-        int index2 = GetRandomValueIn(possibleFurnitures);
-        FurnitureOriginalData fallbackFurniture2 = possibleFurnitures[index2];
-        possibleFurnitures.RemoveAt(index2);
-        deletedFurnitures.Add(fallbackFurniture2);
-        quantityOfObjectSpawned++;
-        return fallbackFurniture2;
+        if (possibleFurnitures.Count > 0) {
+            int index2 = GetRandomValueIn(possibleFurnitures);
+            FurnitureOriginalData fallbackFurniture2 = possibleFurnitures[index2];
+            possibleFurnitures.RemoveAt(index2);
+            deletedFurnitures.Add(fallbackFurniture2);
+            quantityOfObjectSpawned++;
+            return fallbackFurniture2;
+        }
+        Debug.LogError("[PackagesGenerator] GetRandomFurnitureByProbability fallback failed: no possible furnitures.");
+        return null;
     }
+
 
     private int GetRandomValueIn(List<FurnitureOriginalData> list)
     {
@@ -189,13 +258,13 @@ public class PackagesGenerator : MonoBehaviour
 
         foreach (var f in allFurnitures)
         {
-            if (f == null) return;
+            if (f == null) continue; 
             possibleFurnitures.Add(f);
         }
 
         if (possibleFurnitures.Count == 0)
         {
-            Debug.LogError("Fua loco");
+            Debug.LogError("[PackagesGenerator] SetPossibleFurnitures: No furnitures were added to possibleFurnitures. Check 'allFurnitures' configuration.");
         }
     }
 }

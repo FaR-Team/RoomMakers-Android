@@ -65,7 +65,7 @@ public class PlayerController : MovementController
 
     private void SwitchEditingMode()
     {
-        if (!playerInput.Movement.SwitchMode.WasPressedThisFrame() || (IsMoving && StateManager.currentGameState == GameState.Moving) || StateManager.currentGameState == GameState.Pause) return;
+        if (!playerInput.Movement.SwitchMode.WasPressedThisFrame() || (IsMoving && StateManager.CurrentGameState == GameState.Moving) || StateManager.CurrentGameState == GameState.Pause) return;
 
          // TODO: stop calling this everytime Space is pressed, do this only when turning edit mode on and object isn't updated
         
@@ -89,17 +89,35 @@ public class PlayerController : MovementController
         // Return if no data in the inventory
         if (furnitureData == null) return;
         
+        bool wasEditing = StateManager.IsEditing();
         StateManager.SwitchEditMode();
+        bool isNowEditing = StateManager.IsEditing();
 
-        //Debug.Log($"Game State: {StateManager.currentGameState}");
-
+        if (EditingManager.Instance != null)
+        {
+            if (isNowEditing)
+            {
+                EditingManager.Instance.SetCurrentlyHeldItem(furnitureData.originalData);
+            }
+            else
+            {
+                EditingManager.Instance.ClearCurrentlyHeldItem();
+            }
+        }
 
         foreach (var furniturePreview in furniturePreviews)
         {
             if (furniturePreview == furniturePreviews[(int)furnitureData.originalData.typeOfSize])
             {
-                furniturePreview.SetCurrentFurnitureData(furnitureData);
-                furniturePreview.gameObject.SetActive(!furniturePreview.gameObject.activeInHierarchy);
+                if (isNowEditing)
+                {
+                    furniturePreview.SetCurrentFurnitureData(furnitureData);
+                    furniturePreview.gameObject.SetActive(true);
+                }
+                else
+                {
+                    furniturePreview.gameObject.SetActive(false);
+                }
             }
             else
             {
@@ -130,17 +148,35 @@ public class PlayerController : MovementController
         // Return if no data in the inventory
         if (furnitureData == null) return;
         
+        bool wasEditing = StateManager.IsEditing();
         StateManager.SwitchEditMode();
+        bool isNowEditing = StateManager.IsEditing();
 
-        //Debug.Log($"Game State: {StateManager.currentGameState}");
-
+        if (EditingManager.Instance != null)
+        {
+            if (isNowEditing)
+            {
+                EditingManager.Instance.SetCurrentlyHeldItem(furnitureData.originalData);
+            }
+            else
+            {
+                EditingManager.Instance.ClearCurrentlyHeldItem();
+            }
+        }
 
         foreach (var furniturePreview in furniturePreviews)
         {
             if (furniturePreview == furniturePreviews[(int)furnitureData.originalData.typeOfSize])
             {
-                furniturePreview.SetCurrentFurnitureData(furnitureData);
-                furniturePreview.gameObject.SetActive(!furniturePreview.gameObject.activeInHierarchy);
+                if (isNowEditing)
+                {
+                    furniturePreview.SetCurrentFurnitureData(furnitureData);
+                    furniturePreview.gameObject.SetActive(true);
+                }
+                else
+                {
+                    furniturePreview.gameObject.SetActive(false);
+                }
             }
             else
             {

@@ -18,9 +18,29 @@ public class Interactor : MonoBehaviour
         // Si existe un PlacementData en el punto de interaccion, 
         if (House.instance.currentRoom.roomFurnitures.PlacementDatasInPosition.TryGetValue(gridPosition, out PlacementData placementData))
         {
-            //Debug.Log("hay placement data en: " + (Vector2)gridPosition);
             if (playerInventory.HasItem()) return;
  
+            if (placementData.stackedItems != null && placementData.stackedItems.Count > 0)
+            {
+                FurnitureObjectBase topStackedItem = placementData.PickUpTopStackedItem();
+            
+                if (topStackedItem != null)
+                {
+                    if (!IsSpanish) text_name.text = topStackedItem.Data.originalData.Name;
+                    else text_name.text = topStackedItem.Data.originalData.es_Name;
+                
+                    topStackedItem.Data.currentStackLevel = 0;
+                
+                    playerInventory.furnitureInventoryWithData = topStackedItem.Data;
+                    playerInventory.EnablePackageUI(true);
+                
+                    Destroy(topStackedItem.gameObject);
+                
+                    AudioManager.instance.PlaySfx(GlobalSfx.Grab);
+                    return;
+                }
+            }
+
             FurnitureData topFurnitureData = placementData.GetTopFurnitureData(gridPosition);
             
             if (topFurnitureData == null && placementData.furnitureData != null)
@@ -59,6 +79,18 @@ public class Interactor : MonoBehaviour
 
             return;
         }
+        
+        if (House.instance.currentRoom.roomFurnitures.KitsInPosition.TryGetValue(gridPosition,
+                     out KitObject kit))
+        {
+            if (!IsSpanish) text_name.text = kit.originalData.Name;
+            else text_name.text = kit.originalData.es_Name;
+            playerInventory.furnitureInventoryWithData = kit.Data;
+            playerInventory.EnablePackageUI(true);
+            House.instance.currentRoom.roomFurnitures.RemoveKitInPosition(gridPosition);
+            
+            return;
+        }
 
         var interactable = Physics2D.OverlapCircle(transform.position, 0.2f, interactableLayer);
 
@@ -75,15 +107,6 @@ public class Interactor : MonoBehaviour
             this.Log(shopItemData.name);
             shopItemData.TryPurchase();
             PlayerController.instance.CheckInFront();
-        }
-        else if (interactable.TryGetComponent(out KitObject kit) && !playerInventory.HasItem())
-        {
-            // GRAB KIT
-            if (!IsSpanish) text_name.text = kit.originalData.Name;
-            else text_name.text = kit.originalData.es_Name;
-            playerInventory.furnitureInventoryWithData = kit.Data;
-            playerInventory.EnablePackageUI(true);
-            Destroy(kit.gameObject);
         }
         else if (interactable.TryGetComponent(out RestockMachine machine))
         {

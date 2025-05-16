@@ -2,35 +2,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Experimental.Playables;
 
 public class RoomFurnitures : MonoBehaviour
 {
     public Dictionary<Vector2, PlacementData> PlacementDatasInPosition = new();
-    
+    public Dictionary<Vector2, KitObject> KitsInPosition = new();
+
     // TODO: que no se tenga que asignar aca la referencia al prefab
     [SerializeField] protected ComboPopUp popUpPrefab;
     [SerializeField] protected ComboPopUp matchPrefab;
 
     private LayerMask wallsLayerMask;
     private LayerMask unplaceableLayerMask;
-    private LayerMask kitLayerMask;
+    //private LayerMask kitLayerMask;
+    public static event Action<FurnitureOriginalData> OnPlaceFurniture;
+    public static event Action<FurnitureOriginalData> OnPlaceOnTop;
+    public static event Action<int> OnComboDone;
+    public static event Action<ItemType> OnItemUse;
 
     private void Start()
     {
         wallsLayerMask = LayerMask.GetMask("Walls", "InnerWalls");
         unplaceableLayerMask = ~(1 << 15); // Everything but kit 
-        kitLayerMask = (1 << 15);
+        //kitLayerMask = (1 << 15);
     }
 
     public bool PlaceFurniture(Vector2 position, FurnitureData furnitureData, bool isItem = false)
     {
+        if (furnitureData.instanceID == 0)
+        {
+            furnitureData.instanceID = System.DateTime.Now.GetHashCode() ^ furnitureData.GetHashCode();
+        }
+
         var originalData = furnitureData.originalData;
-        
-        
+
+        Debug.Log($"Placing furniture: {originalData.Name}, isStackable: {originalData.isStackable}");
+
         List<Vector2> positionToOccupy = CalculatePositions(position, furnitureData.size);
 
         bool requiresBase = furnitureData.originalData.requiredBase != null;
@@ -40,7 +48,37 @@ public class RoomFurnitures : MonoBehaviour
         bool placeOnTop = false;
         bool unboxed = true;
 
-        if (canPlace) // If there's nothing underneath object
+        bool isStacking = false;
+        BottomFurnitureObject stackReceiver = null;
+
+        if (originalData.isStackable)
+        {
+            foreach (var pos in positionToOccupy)
+            {
+                if (PlacementDatasInPosition.ContainsKey(pos))
+                {
+                    var existingData = PlacementDatasInPosition[pos];
+                    if (existingData.instantiatedFurniture is BottomFurnitureObject bottomObj &&
+                        bottomObj.Data.originalData.isStackReceiver)
+                    {
+                        bool isSameObject = furnitureData.instanceID != 0 &&
+                                           existingData.stackedItems != null &&
+                                           existingData.stackedItems.Any(item => item.Data.instanceID == furnitureData.instanceID);
+
+                        if (bottomObj.Data.currentStackLevel < bottomObj.Data.originalData.maxStackLevel || isSameObject)
+                        {
+                            stackReceiver = bottomObj;
+                            isStacking = true;
+                            position = pos;
+                            canPlace = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (canPlace && !isStacking)
         {
             if (!isItem) // Don't even create data for Kits
             {
@@ -49,15 +87,14 @@ public class RoomFurnitures : MonoBehaviour
                 {
                     PlacementDatasInPosition[pos] = data;
                 }
-                
+
                 if (requiresBase)
                 {
                     unboxed = false; // Set to false so we check later if any kits are underneath
-                    
+
                     for (int i = 0; i < positionToOccupy.Count; i++)
                     {
-                        var coll = Physics2D.OverlapCircle(positionToOccupy[i], 0.2f, kitLayerMask);
-                        if (coll != null && coll.TryGetComponent(out KitObject kit) &&
+                        if (KitsInPosition.TryGetValue(positionToOccupy[i], out KitObject kit) &&
                             furnitureData.originalData.requiredBase == kit.Data.originalData)
                         {
                             unboxed = true;
@@ -66,22 +103,26 @@ public class RoomFurnitures : MonoBehaviour
                     }
                 }
             }
+            else // If placing a kit
+            {
+                //if (KitsInPosition.ContainsKey(position)) canPlace = false;
+            }
         }
-        else
+        else if (!isStacking)
         {
             bool check = true;
             Vector2 validBottomPosition = Vector2.zero;
             bool foundValidPosition = false;
-         
+
             // First check if all positions are contained in the dictionary
             foreach (var pos in positionToOccupy)
             {
-                if (!PlacementDatasInPosition.ContainsKey(pos)) 
+                if (!PlacementDatasInPosition.ContainsKey(pos))
                 {
                     check = false;
                     break;
                 }
-                
+
                 // Find a valid position that we can use for compatibility checks
                 if (!foundValidPosition)
                 {
@@ -96,27 +137,178 @@ public class RoomFurnitures : MonoBehaviour
                 canPlace = PlacementDatasInPosition[validBottomPosition].instantiatedFurniture.IsUnpacked &&
                            positionToOccupy.Intersect(PlacementDatasInPosition[validBottomPosition].occupiedPositions).Count() == positionToOccupy.Count()
                            && PlacementDatasInPosition[validBottomPosition].IsCompatibleWith(originalData)
-                           && PlacementDatasInPosition[validBottomPosition].HasFreePositions(positionToOccupy); 
+                           && PlacementDatasInPosition[validBottomPosition].HasFreePositions(positionToOccupy);
                 placeOnTop = canPlace;
-                
+
                 // If we can place it, update the position to use for instantiation
                 if (canPlace)
                 {
                     position = validBottomPosition;
                 }
+
+                if (requiresBase)
+                {
+                    unboxed = false;
+
+                    // Check if bottom object is on top of necessary kit
+                    foreach (var pos in PlacementDatasInPosition[validBottomPosition].occupiedPositions)
+                    {
+                        if (KitsInPosition.TryGetValue(pos, out KitObject kit) &&
+                            furnitureData.originalData.requiredBase == kit.Data.originalData)
+                        {
+                            unboxed = true;
+                            break;
+                        }
+                    }
+                }
             }
         }
 
-        if (!canPlace) return false;
+        if (!canPlace && !isStacking) return false;
 
         var finalPos = GridManager.PositionToCellCenter(position);
 
-        // Guardamos el objeto que instanciamos en en cada PlacementData
+        if (isStacking && stackReceiver != null)
+        {
+            bool isSameObject = false;
+            int existingStackIndex = -1;
+
+            if (furnitureData.instanceID != 0 &&
+                PlacementDatasInPosition[position].stackedItems != null)
+            {
+                for (int i = 0; i < PlacementDatasInPosition[position].stackedItems.Count; i++)
+                {
+                    if (PlacementDatasInPosition[position].stackedItems[i].Data.instanceID == furnitureData.instanceID)
+                    {
+                        isSameObject = true;
+                        existingStackIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            if (!isSameObject)
+            {
+                if (stackReceiver.Data.currentStackLevel >= stackReceiver.Data.originalData.maxStackLevel)
+                {
+                    return false;
+                }
+
+                stackReceiver.Data.currentStackLevel++;
+            }
+
+            FurnitureObjectBase stackedItem = Instantiate(furnitureData.prefab, finalPos, stackReceiver.transform.rotation).GetComponent<FurnitureObjectBase>();
+
+            if (isSameObject && existingStackIndex >= 0)
+            {
+                furnitureData.currentStackLevel = PlacementDatasInPosition[position].stackedItems[existingStackIndex].Data.currentStackLevel;
+            }
+            else
+            {
+                furnitureData.currentStackLevel = stackReceiver.Data.currentStackLevel;
+            }
+
+            furnitureData.rotationStep = stackReceiver.Data.rotationStep;
+            furnitureData.VectorRotation = stackReceiver.Data.VectorRotation;
+
+            stackedItem.CopyFurnitureData(furnitureData);
+            stackedItem.SetUnpackedState(true);
+
+            if (stackedItem is TopFurnitureObject topObj &&
+                furnitureData.originalData.stackLevelSprites != null &&
+                furnitureData.originalData.stackLevelSprites.Length > stackReceiver.Data.currentStackLevel - 1)
+            {
+                SpriteRenderer spriteRenderer = topObj.GetComponentInChildren<SpriteRenderer>();
+                if (spriteRenderer != null)
+                {
+                    spriteRenderer.sprite = furnitureData.originalData.stackLevelSprites[stackReceiver.Data.currentStackLevel - 1];
+
+                    if (spriteRenderer.transform != stackedItem.transform)
+                    {
+                        spriteRenderer.transform.rotation = stackReceiver.transform.rotation;
+                    }
+                }
+            }
+
+            int tagBonus = 0;
+            Room currentRoom = GetComponent<Room>();
+
+            RoomTag furnitureTag = furnitureData.originalData.furnitureTag;
+            if (furnitureTag != RoomTag.None && currentRoom != null)
+            {
+                currentRoom.TrySetRoomTagFromFurniture(furnitureTag);
+            }
+
+            if (currentRoom != null &&
+                furnitureTag != RoomTag.None &&
+                furnitureTag == currentRoom.roomTag &&
+                !furnitureData.hasReceivedTagBonus)
+            {
+                tagBonus = furnitureData.originalData.tagMatchBonusPoints;
+                furnitureData.hasReceivedTagBonus = true;
+
+                PlayerController.instance.Inventory.UpdateMoney(tagBonus);
+                House.instance.UpdateScore(tagBonus);
+                ComboPopUp.Create(matchPrefab, tagBonus, finalPos, new Vector2(0f, 1.5f));
+            }
+
+            int comboPoints = 0;
+
+            if (stackReceiver is BottomFurnitureObject bottomObj)
+            {
+                List<Vector2> positionsForCombo = CalculatePositions(position, furnitureData.size);
+
+                comboPoints = bottomObj.MakeCombo(positionsForCombo.ToArray());
+
+                if (comboPoints > 0 && stackedItem is TopFurnitureObject topObject)
+                {
+                    topObject.MakeCombo();
+
+                    PlayerController.instance.Inventory.UpdateMoney(comboPoints);
+                    House.instance.UpdateScore(comboPoints);
+
+                    ComboPopUp.Create(popUpPrefab, comboPoints, finalPos, new Vector2(0f, 1.2f));
+
+                    if (tagBonus > 0)
+                    {
+                        StartCoroutine(ShowMatchPopupDelayed(tagBonus, finalPos));
+                    }
+                }
+            }
+
+            if (!furnitureData.firstTimePlaced)
+            {
+                PlayerController.instance.Inventory.UpdateMoney(furnitureData.originalData.price);
+                House.instance.UpdateScore(furnitureData.originalData.price);
+                furnitureData.firstTimePlaced = true;
+            }
+
+            AudioManager.instance.PlaySfx(GlobalSfx.Click);
+
+            PlacementData data = PlacementDatasInPosition[position];
+            data.stackedItems = data.stackedItems ?? new List<FurnitureObjectBase>();
+
+            if (isSameObject && existingStackIndex >= 0)
+            {
+                data.stackedItems[existingStackIndex] = stackedItem;
+            }
+            else
+            {
+                data.stackedItems.Add(stackedItem);
+            }
+
+            return true;
+        }
+
         FurnitureObjectBase furniturePrefab = Instantiate(furnitureData.prefab, finalPos, Quaternion.Euler(furnitureData.VectorRotation)).GetComponent<FurnitureObjectBase>();
         furniturePrefab.CopyFurnitureData(furnitureData);
         furniturePrefab.SetUnpackedState(unboxed);
         
-        if(!isItem) GivePoints(furnitureData, positionToOccupy, placeOnTop, finalPos, furniturePrefab, unboxed);
+        OnPlaceFurniture?.Invoke(furnitureData.originalData);
+        if(placeOnTop) OnPlaceOnTop?.Invoke(furnitureData.originalData);
+        
+        if (!isItem) GivePoints(furnitureData, positionToOccupy, placeOnTop, finalPos, furniturePrefab, unboxed);
+        else KitsInPosition[finalPos] = furniturePrefab as KitObject;
 
         return true;
     }
@@ -129,11 +321,8 @@ public class RoomFurnitures : MonoBehaviour
         switch (itemData.type)
         {
             case ItemType.Tagger:
-                if (currentRoom.roomTag is RoomTag.Shop){ placed = false; break;}
-                TagSelectionUI.instance.ShowTagSelection(currentRoom, () =>
-                {
-                    Debug.Log("Placed tagger");
-                });
+                if (currentRoom.roomTag is RoomTag.Shop) { placed = false; break; }
+                TagSelectionUI.instance.ShowTagSelection(currentRoom, ChangedTagCallback);
                 placed = true;
                 break;
             case ItemType.Sledgehammer:
@@ -141,6 +330,7 @@ public class RoomFurnitures : MonoBehaviour
                 if (coll != null && coll.TryGetComponent<DoorData>(out DoorData door) && !door.isUnlocked)
                 {
                     door.BuyNextRoom(true);
+                    OnItemUse?.Invoke(ItemType.Sledgehammer);
                     placed = true;
                     break;
                 }
@@ -156,10 +346,9 @@ public class RoomFurnitures : MonoBehaviour
                 placed = false;
                 break;
         }
-        
         return placed;
     }
-    
+
     #endregion
 
     #region Wall Objects
@@ -169,11 +358,11 @@ public class RoomFurnitures : MonoBehaviour
         bool isWallLeft = Physics2D.Raycast(position, Vector2.left, 1f, wallsLayerMask);
         bool isWallBottom = Physics2D.Raycast(position, Vector2.down, 1f, wallsLayerMask);
         bool isWallRight = Physics2D.Raycast(position, Vector2.right, 1f, wallsLayerMask);
-        
+
         if (!(isWallBottom || isWallRight || isWallLeft || isWallUp)) return false;
-        
-        bool[] availableWalls = {isWallUp, isWallLeft, isWallBottom, isWallRight};
-        
+
+        bool[] availableWalls = { isWallUp, isWallLeft, isWallBottom, isWallRight };
+
         RotateToWall(data, availableWalls);
         return true;
     }
@@ -194,7 +383,7 @@ public class RoomFurnitures : MonoBehaviour
             }
         }
     }
-    
+
     #endregion
 
     protected virtual void GivePoints(FurnitureData data, List<Vector2> positionToOccupy, bool placeOnTop, Vector2 finalPos, FurnitureObjectBase furnitureObject, bool unboxed)
@@ -205,7 +394,7 @@ public class RoomFurnitures : MonoBehaviour
             House.instance.UpdateScore(data.originalData.price);
             data.firstTimePlaced = true;
         }
-        
+
         int tagBonus = 0;
         if (unboxed) // Only do tag stuff if unboxed
         {
@@ -253,70 +442,75 @@ public class RoomFurnitures : MonoBehaviour
         }
         else
         {
-            // Si el objeto va encima de otro, lo guardamos en el PlacementData y damos doble score por combo
-            int totalCombo = 0;
-        
-            TopFurnitureObject topObject = (TopFurnitureObject) furnitureObject;
-            BottomFurnitureObject bottomObject = (BottomFurnitureObject) PlacementDatasInPosition[finalPos]
-                .instantiatedFurniture;
-        
-            // Check for sprite changes regardless of combo status
-            topObject.CheckAndUpdateSprite(bottomObject);
-        
-            // Only calculate and award points if combo hasn't been done yet
-            if(!topObject.ComboDone)
+            TopFurnitureObject topObject = (TopFurnitureObject)furnitureObject;
+            if (unboxed)
             {
-                // Calculamos y sumamos los puntos por cada tile en el que se hace combo
-                totalCombo += bottomObject.MakeCombo(positionToOccupy.ToArray());
+                // Si el objeto va encima de otro, lo guardamos en el PlacementData y damos doble score por combo
+                int totalCombo = 0;
 
-                // Si hubo al menos un tile en el que se hizo combo, gastamos el combo tambien en el objeto de arriba
-                if (totalCombo > 0)
+                BottomFurnitureObject bottomObject = (BottomFurnitureObject)PlacementDatasInPosition[finalPos]
+                    .instantiatedFurniture;
+
+                // Check for sprite changes regardless of combo status
+                topObject.CheckAndUpdateSprite(bottomObject);
+
+                // Only calculate and award points if combo hasn't been done yet
+                if (!topObject.ComboDone)
                 {
-                    topObject.MakeCombo();
-                    
-                    // Add tag bonus to combo points
-                    int comboPoints = totalCombo;
-                    if (tagBonus > 0)
+                    // Calculamos y sumamos los puntos por cada tile en el que se hace combo
+                    totalCombo += bottomObject.MakeCombo(positionToOccupy.ToArray());
+
+                    // Si hubo al menos un tile en el que se hizo combo, gastamos el combo tambien en el objeto de arriba
+                    if (totalCombo > 0)
                     {
-                        comboPoints += tagBonus;
+                        topObject.MakeCombo();
+
+                        // Add tag bonus to combo points
+                        int comboPoints = totalCombo;
+                        if (tagBonus > 0)
+                        {
+                            comboPoints += tagBonus;
+                        }
+
+                        PlayerController.instance.Inventory.UpdateMoney(comboPoints);
+                        House.instance.UpdateScore(comboPoints);
+
+                        // Show combo popup immediately
+                        ComboPopUp.Create(popUpPrefab, comboPoints, finalPos, new Vector2(0f, 1.2f));
+                        
+                        OnComboDone?.Invoke(totalCombo);
+
+                        // If there's also a tag bonus, show it after a delay
+                        if (tagBonus > 0)
+                        {
+                            StartCoroutine(ShowMatchPopupDelayed(tagBonus, finalPos));
+                        }
                     }
-                    
-                    PlayerController.instance.Inventory.UpdateMoney(comboPoints);
-                    House.instance.UpdateScore(comboPoints);
-                    
-                    // Show combo popup immediately
-                    ComboPopUp.Create(popUpPrefab, comboPoints, finalPos, new Vector2(0f, 1.2f));
-                    
-                    // If there's also a tag bonus, show it after a delay
-                    if (tagBonus > 0)
+                    else if (tagBonus > 0)
                     {
-                        StartCoroutine(ShowMatchPopupDelayed(tagBonus, finalPos));
+                        // If there's no combo but there is a tag bonus, add it separately
+                        PlayerController.instance.Inventory.UpdateMoney(tagBonus);
+                        House.instance.UpdateScore(tagBonus);
+
+                        ComboPopUp.Create(matchPrefab, tagBonus, finalPos, new Vector2(0f, 1.2f));
                     }
-                }
-                else if (tagBonus > 0)
-                {
-                    // If there's no combo but there is a tag bonus, add it separately
-                    PlayerController.instance.Inventory.UpdateMoney(tagBonus);
-                    House.instance.UpdateScore(tagBonus);
-                
-                    ComboPopUp.Create(matchPrefab, tagBonus, finalPos, new Vector2(0f, 1.2f));
                 }
             }
-        
+
             // Updateamos la placement data con el objeto que pusimos encima
             PlacementDatasInPosition[finalPos].PlaceObjectOnTop(positionToOccupy, topObject);
         }
     }
-    
+
     private IEnumerator ShowMatchPopupDelayed(int tagBonus, Vector2 position)
     {
         // Wait for half a second
         yield return new WaitForSeconds(0.7f);
-        
+
         // Show the match popup
         ComboPopUp.Create(matchPrefab, tagBonus, position, new Vector2(0f, 1f)); // Slightly higher position
     }
-    
+
     public void RemoveDataInPositions(List<Vector2> positions)
     {
         foreach (var pos in positions)
@@ -324,7 +518,7 @@ public class RoomFurnitures : MonoBehaviour
             PlacementDatasInPosition.Remove(pos);
         }
     }
-    
+
     public void RemoveDataInPosition(Vector2 pos)
     {
         var data = PlacementDatasInPosition[pos];
@@ -344,9 +538,22 @@ public class RoomFurnitures : MonoBehaviour
         }
     }
 
+    public void ChangedTagCallback()
+    {
+        OnItemUse?.Invoke(ItemType.Tagger);
+        Debug.Log("Changed tag");
+    }
+
     public void RemoveTopObjectInPosition(Vector2 pos)
     {
         PlacementDatasInPosition[pos].ClearTopObject(pos);
+    }
+
+    public void RemoveKitInPosition(Vector2 pos)
+    {
+        if (!KitsInPosition.TryGetValue(pos, out KitObject kit)) return;
+        Destroy(kit.gameObject);
+        KitsInPosition.Remove(pos);
     }
 
     private List<Vector2> CalculatePositions(Vector2 position, Vector2Int size)
@@ -363,5 +570,4 @@ public class RoomFurnitures : MonoBehaviour
         }
         return returnVal;
     }
-
 }

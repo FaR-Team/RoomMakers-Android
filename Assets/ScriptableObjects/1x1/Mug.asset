@@ -19,12 +19,12 @@ MonoBehaviour:
   prefab: {fileID: 5321329258631931752, guid: b51e65c8c9c1dd8479202fb243f9cffe, type: 3}
   typeOfSize: 0
   compatibles: []
+  requiredBase: {fileID: 0}
   sprites:
   - {fileID: 21300000, guid: 118a281053e6a5443980b376dcda48df, type: 3}
+  indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
   wallObject: 0
   furnitureTag: 1
   tagMatchBonusPoints: 50
-  isLabeler: 0
-  hasReceivedTagBonus: 0

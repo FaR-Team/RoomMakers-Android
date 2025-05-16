@@ -7,6 +7,9 @@ public class LocalizationManager : MonoBehaviour
     [SerializeField] private GameObject tutorialEN;
     [SerializeField] private GameObject tutorialES;
 
+    [SerializeField] private bool debug;
+    [SerializeField] private bool english;
+
     public bool IsSpanish { get; private set; }
 
     private void Awake()
@@ -24,6 +27,12 @@ public class LocalizationManager : MonoBehaviour
 
     private void Start()
     {
+        if (debug)
+        {
+            tutorialEN.SetActive(english);
+            tutorialES.SetActive(!english);
+            return;
+        }
         ActivateCorrectTutorial();
     }
 

@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class FurnitureObjectBase : MonoBehaviour
 {
@@ -12,12 +8,14 @@ public class FurnitureObjectBase : MonoBehaviour
     protected bool unpacked;
     protected int currentSpriteIndex = 0;
     protected bool hasReceivedTagBonus = false;
+    
+    private GameObject indicatorInstance;
 
     public FurnitureData Data => furnitureData;
     public bool IsUnpacked => unpacked;
     public bool HasReceivedTagBonus => hasReceivedTagBonus;
     
-    public void MarkTagBonusReceived() // TODO: Ver pa que está esto?
+    public void MarkTagBonusReceived()
     {
         hasReceivedTagBonus = true;
     }
@@ -29,18 +27,82 @@ public class FurnitureObjectBase : MonoBehaviour
             spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
     }
 
-    public void SetUnpackedState(bool unpacked)
+    public virtual void SetUnpackedState(bool unpacked)
     {
         this.unpacked = unpacked;
         if (!this.unpacked)
         {
             if(TryGetComponent(out Animator anim)) anim.enabled = false;
-            UpdateSprites(House.instance.GetSpritesBySize(Data.originalData.typeOfSize)); // Update with box sprites
+            UpdateSprites(House.instance.GetSpritesBySize(Data.originalData.typeOfSize));
+            
+            if (Data.originalData.requiredBase != null)
+            {
+                CreateRequiredBaseIndicator();
+            }
+        }
+        else
+        {
+            if (indicatorInstance != null)
+            {
+                Destroy(indicatorInstance);
+                indicatorInstance = null;
+            }
         }
     }
+    
+    private void CreateRequiredBaseIndicator()
+    {
+        if (indicatorInstance != null)
+        {
+            Destroy(indicatorInstance);
+        }
+        
+        if (furnitureData.originalData.requiredBase == null) return;
+        
+        indicatorInstance = Instantiate(House.instance.requiredBaseIndicatorPrefab, transform);
+        indicatorInstance.transform.rotation = Quaternion.identity;
+        
+        Vector3 indicatorPosition = CalculateIndicatorPosition();
+        indicatorInstance.transform.localPosition = new Vector3(indicatorPosition.x, indicatorPosition.y, 0.1f);
+        
+        Sprite kitSprite = null;
+        if (furnitureData.originalData.requiredBase.indicatorSprite != null)
+        {
+            kitSprite = furnitureData.originalData.requiredBase.indicatorSprite;
+        }
+        
+        RequiredBaseIndicator indicator = indicatorInstance.GetComponent<RequiredBaseIndicator>();
+        if (indicator != null)
+        {
+            indicator.Initialize(kitSprite);
+        }
+    }
+    
+    private Vector3 CalculateIndicatorPosition()
+    {
+        Vector3 position = Vector3.zero;
+        
+        switch (furnitureData.originalData.typeOfSize)
+        {
+            case TypeOfSize.one_one:
+                break;
+            case TypeOfSize.two_one:
+                position = new Vector3(0.5f, 0, 0);
+                break;
+            case TypeOfSize.two_two:
+                position = new Vector3(0.5f, 0.5f, 0);
+                break;
+            case TypeOfSize.three_one:
+                position = new Vector3(1f, 0, 0);
+                break;
+        }
+
+        //TODO: añadir rotación al indicador choto este
+        return position;
+    }
+    
     public virtual void CopyFurnitureData(FurnitureData newData)
     {
-        // Ensure furnitureData is initialized
         if (furnitureData == null)
         {
             furnitureData = new FurnitureData();
@@ -53,9 +115,13 @@ public class FurnitureObjectBase : MonoBehaviour
         furnitureData.rotationStep = newData.rotationStep;
         furnitureData.hasReceivedTagBonus = newData.hasReceivedTagBonus;
         
-        // Set initial sprite if needed
         if (spriteRenderers == null)
             spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
+            
+        if (furnitureData.originalData.requiredBase != null && !unpacked)
+        {
+            CreateRequiredBaseIndicator();
+        }
     }
     
     public virtual void UpdateSprites(Sprite[] sprites)
@@ -66,16 +132,11 @@ public class FurnitureObjectBase : MonoBehaviour
         }
     }
     
-    /*public virtual bool ChangeToComboSprite()
+    private void OnDestroy()
     {
-        // Only change sprite if this furniture has combo sprites enabled
-        if (furnitureData.originalData.hasComboSprite && 
-            furnitureData.originalData.sprites != null && 
-            furnitureData.originalData.sprites.Length > 1)
+        if (indicatorInstance != null)
         {
-            UpdateSprite(1); // Assuming index 1 is the combo sprite
-            return true;
+            Destroy(indicatorInstance);
         }
-        return false;
-    }*/
+    }
 }

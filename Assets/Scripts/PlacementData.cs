@@ -12,6 +12,8 @@ public class PlacementData
     //public FurnitureObjectBase instantiatedBaseObject;
     
     public List<TopPlacementData> topPlacementDatas = new List<TopPlacementData>();
+
+    public List<FurnitureObjectBase> stackedItems;
     
     public PlacementData(List<Vector2> occupiedPositions, FurnitureData furniture)
     {
@@ -69,6 +71,36 @@ public class PlacementData
         }
 
         return free;
+    }
+
+    public FurnitureObjectBase PickUpTopStackedItem()
+    {
+        if (stackedItems == null || stackedItems.Count == 0)
+            return null;
+        
+        FurnitureObjectBase topItem = stackedItems[stackedItems.Count - 1];
+        
+        stackedItems.RemoveAt(stackedItems.Count - 1);
+        
+        if (instantiatedFurniture is BottomFurnitureObject bottomObj)
+        {
+            bottomObj.Data.currentStackLevel--;
+        
+            if (stackedItems.Count > 0 && stackedItems[stackedItems.Count - 1] is TopFurnitureObject newTopObj)
+            {
+                newTopObj.Data.currentStackLevel = bottomObj.Data.currentStackLevel;
+            
+                SpriteRenderer spriteRenderer = newTopObj.GetComponentInChildren<SpriteRenderer>();
+                if (spriteRenderer != null && 
+                    newTopObj.Data.originalData.stackLevelSprites != null && 
+                    newTopObj.Data.originalData.stackLevelSprites.Length > bottomObj.Data.currentStackLevel - 1)
+                {
+                    spriteRenderer.sprite = newTopObj.Data.originalData.stackLevelSprites[bottomObj.Data.currentStackLevel - 1];
+                }
+            }
+        }
+        
+        return topItem;
     }
 }
 

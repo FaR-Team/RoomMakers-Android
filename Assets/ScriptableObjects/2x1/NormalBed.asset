@@ -20,9 +20,11 @@ MonoBehaviour:
   typeOfSize: 2
   compatibles:
   - {fileID: 11400000, guid: 5ef2e2c77af1e7d478780c49e1c6965f, type: 2}
+  requiredBase: {fileID: 0}
   sprites:
   - {fileID: 430621541, guid: 4d25eb57f4ace6d4094852f265b457d9, type: 3}
   - {fileID: 176327971, guid: 4d25eb57f4ace6d4094852f265b457d9, type: 3}
+  indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
   wallObject: 0

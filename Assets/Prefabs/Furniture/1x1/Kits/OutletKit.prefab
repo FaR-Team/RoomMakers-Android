@@ -157,4 +157,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originalData: {fileID: 11400000, guid: dadec6abf8f8e914e806e483f6c61e0a, type: 2}
-  spriteRenderer: {fileID: 5954944119104468497}
+  spriteRenderers:
+  - {fileID: 5954944119104468497}

@@ -31,5 +31,7 @@ MonoBehaviour:
   - tag: 8
     spawnProbability: 15
   furnitureSpecificProbabilities:
-  - furniture: {fileID: 11400000, guid: 130f9903c113749488c7a1107aa58724, type: 2}
-    spawnProbability: 2.9
+  - furniture: {fileID: 11400000, guid: dadec6abf8f8e914e806e483f6c61e0a, type: 2}
+    spawnProbability: 3
+  - furniture: {fileID: 11400000, guid: 48a20645606504b4889906c3cf64760c, type: 2}
+    spawnProbability: 3

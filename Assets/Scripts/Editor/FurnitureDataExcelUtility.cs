@@ -30,8 +30,8 @@ public static class FurnitureDataExcelUtility
         // Create CSV content
         StringBuilder csv = new StringBuilder();
         
-        // Write header - removed isLabeler, added wallObject and compatibles
-        csv.AppendLine("AssetPath,Name,es_Name,Price,SizeX,SizeY,TypeOfSize,PrefabPath,FurnitureTag,TagMatchBonusPoints,WallObject,HasComboSprite,ComboTriggerFurniturePath,Compatibles");
+        // Make sure header matches the data we're exporting
+        csv.AppendLine("AssetPath,Name,es_Name,Price,SizeX,SizeY,TypeOfSize,PrefabPath,FurnitureTag,TagMatchBonusPoints,WallObject,HasComboSprite,ComboTriggerFurniturePath,Compatibles,RequiresBase,RequiredBasePath");
         
         // Write data rows
         foreach (FurnitureOriginalData data in furnitureData)
@@ -42,7 +42,7 @@ public static class FurnitureDataExcelUtility
             
             // Create compatibles list as semicolon-separated paths
             string compatiblesStr = "";
-            if (data.compatibles != null && data.compatibles.Count() > 0)
+            if (data.compatibles != null && data.compatibles.Length > 0)
             {
                 List<string> compatiblePaths = new List<string>();
                 foreach (var compatible in data.compatibles)
@@ -54,8 +54,13 @@ public static class FurnitureDataExcelUtility
                 }
                 compatiblesStr = string.Join(";", compatiblePaths);
             }
+
+            // Check if requiredBase is set
+            bool requiresBase = data.requiredBase != null;
+            string requiredBasePath = requiresBase ? AssetDatabase.GetAssetPath(data.requiredBase) : "";
             
-            csv.AppendLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13}",
+            // Ensure we're writing the correct number of fields in the correct order
+            csv.AppendLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15}",
                 assetPath,
                 EscapeCSV(data.Name),
                 EscapeCSV(data.es_Name),
@@ -66,10 +71,12 @@ public static class FurnitureDataExcelUtility
                 EscapeCSV(prefabPath),
                 data.furnitureTag,
                 data.tagMatchBonusPoints,
-                data.wallObject, // Added wallObject instead of isLabeler
+                data.wallObject,
                 data.hasComboSprite,
                 EscapeCSV(comboTriggerPath),
-                EscapeCSV(compatiblesStr) // Added compatibles list
+                EscapeCSV(compatiblesStr),
+                requiresBase.ToString(), // Explicitly convert to string
+                EscapeCSV(requiredBasePath)
             ));
         }
         
@@ -107,9 +114,9 @@ public static class FurnitureDataExcelUtility
                 continue;
                 
             string[] values = ParseCSVLine(line);
-            if (values.Length < 14) // Updated for new fields
+            if (values.Length < 16) // Make sure we have all fields including RequiresBase and RequiredBasePath
             {
-                Debug.LogError($"Line {i} has incorrect format: {line}");
+                Debug.LogError($"Line {i} has incorrect format: {line}. Expected 16 fields, got {values.Length}");
                 continue;
             }
             
@@ -127,7 +134,20 @@ public static class FurnitureDataExcelUtility
             data.es_Name = values[2];
             data.price = int.Parse(values[3]);
             data.size = new Vector2Int(int.Parse(values[4]), int.Parse(values[5]));
-            data.typeOfSize = (TypeOfSize)Enum.Parse(typeof(TypeOfSize), values[6]);
+            
+            // Handle TypeOfSize safely
+            if (!string.IsNullOrEmpty(values[6]))
+            {
+                try
+                {
+                    data.typeOfSize = (TypeOfSize)Enum.Parse(typeof(TypeOfSize), values[6]);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"Failed to parse TypeOfSize '{values[6]}' for {data.Name}: {ex.Message}");
+                    // Keep existing value
+                }
+            }
             
             // Load prefab
             string prefabPath = values[7];
@@ -135,15 +155,29 @@ public static class FurnitureDataExcelUtility
                 data.prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
                 
             // Parse enum
-            data.furnitureTag = (RoomTag)Enum.Parse(typeof(RoomTag), values[8]);
+            if (!string.IsNullOrEmpty(values[8]))
+            {
+                try
+                {
+                    data.furnitureTag = (RoomTag)Enum.Parse(typeof(RoomTag), values[8]);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"Failed to parse RoomTag '{values[8]}' for {data.Name}: {ex.Message}");
+                    // Keep existing value
+                }
+            }
+            
             data.tagMatchBonusPoints = int.Parse(values[9]);
-            data.wallObject = bool.Parse(values[10]); // Changed from isLabeler to wallObject
+            data.wallObject = bool.Parse(values[10]);
             data.hasComboSprite = bool.Parse(values[11]);
             
             // Load combo trigger furniture
             string comboTriggerPath = values[12];
             if (!string.IsNullOrEmpty(comboTriggerPath))
                 data.comboTriggerFurniture = AssetDatabase.LoadAssetAtPath<FurnitureOriginalData>(comboTriggerPath);
+            else
+                data.comboTriggerFurniture = null;
             
             // Load compatibles list
             string compatiblesStr = values[13];
@@ -164,6 +198,28 @@ public static class FurnitureDataExcelUtility
                 }
             }
             data.compatibles = compatiblesList.ToArray();
+
+            // Handle RequiresBase field - index 14
+            bool requiresBase = false;
+            if (!string.IsNullOrEmpty(values[14]))
+            {
+                requiresBase = bool.Parse(values[14]);
+            }
+    
+            // Load required base object - index 15
+            data.requiredBase = null; // Default to null
+            if (requiresBase)
+            {
+                string requiredBasePath = values[15];
+                if (!string.IsNullOrEmpty(requiredBasePath))
+                {
+                    data.requiredBase = AssetDatabase.LoadAssetAtPath<FurnitureOriginalData>(requiredBasePath);
+                    if (data.requiredBase == null)
+                    {
+                        Debug.LogWarning($"Could not find required base at path: {requiredBasePath} for furniture: {data.Name}");
+                    }
+                }
+            }
                 
             EditorUtility.SetDirty(data);
         }
