@@ -3003,6 +3003,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tutorialEN: {fileID: 2067707888}
   tutorialES: {fileID: 255296957}
+  debug: 1
+  english: 1
 --- !u!4 &768024394
 Transform:
   m_ObjectHideFlags: 0
@@ -9055,6 +9057,18 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Tutorial
       objectReference: {fileID: 0}
+    - target: {fileID: 2216017494996933814, guid: f45fd9392ad1c6e48b35b97a19793f76, type: 3}
+      propertyPath: tvData
+      value: 
+      objectReference: {fileID: 11400000, guid: b0169168ff310264292d9af4de8dbe59, type: 2}
+    - target: {fileID: 2216017494996933814, guid: f45fd9392ad1c6e48b35b97a19793f76, type: 3}
+      propertyPath: sofaData
+      value: 
+      objectReference: {fileID: 11400000, guid: 5d3bf39e9b59b5e4fabbf6c92e9df8ef, type: 2}
+    - target: {fileID: 2216017494996933814, guid: f45fd9392ad1c6e48b35b97a19793f76, type: 3}
+      propertyPath: tableData
+      value: 
+      objectReference: {fileID: 11400000, guid: 6e00cf28cf6b3724892f7167e0e46a54, type: 2}
     - target: {fileID: 2216017494996933814, guid: f45fd9392ad1c6e48b35b97a19793f76, type: 3}
       propertyPath: dialogueImageDisplay
       value: 

@@ -75,7 +75,7 @@ public class RoomFurnituresTutorial : RoomFurnitures
                 if (!firstCombo)
                 {
                     firstCombo = true;
-                    if(TutorialHandler.instance) TutorialHandler.instance.CompletedStep();
+                    //if(TutorialHandler.instance) TutorialHandler.instance.CompletedStep();
                 }
 
                 BottomFurnitureObject bottomObject = (BottomFurnitureObject)PlacementDatasInPosition[finalPos]

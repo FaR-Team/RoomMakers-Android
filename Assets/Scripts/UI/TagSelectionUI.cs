@@ -202,6 +202,7 @@ public class TagSelectionUI : MonoBehaviour
 
     private void CancelTagSelection()
     {
+        onConfirmCallback?.Invoke();
         ClosePanel();
     }
     
