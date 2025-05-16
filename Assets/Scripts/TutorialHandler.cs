@@ -9,7 +9,7 @@ public class TutorialHandler : MonoBehaviour
     [SerializeField] private GameObject tutorialObject;
 
     private bool animPlaying;
-    [SerializeField] private int tutorialStep;
+    public int tutorialStep;
 
     [SerializeField] private float reminderTimer = 0f;
     private const float reminderDelay = 30f;
@@ -23,6 +23,8 @@ public class TutorialHandler : MonoBehaviour
     public bool onTutorial;
     public bool stepStarted;
     
+    public static event Action OnTutorialLockStateUpdated;
+
     public static TutorialHandler instance;
 
     private void Awake()
@@ -30,12 +32,13 @@ public class TutorialHandler : MonoBehaviour
         if (instance == null) instance = this;
         else
         {
-            Destroy(this);
+            Destroy(gameObject); // Destroy the GameObject, not just the component
         }
 
         tutorialStep = 0;
+        OnTutorialLockStateUpdated?.Invoke(); // Initial state
     }
-    
+
     void Start()
     {
         Inventory.OnFurniturePickUp += BeginStep;
@@ -44,7 +47,17 @@ public class TutorialHandler : MonoBehaviour
     private void OnDestroy()
     {
         Inventory.OnFurniturePickUp -= BeginStep;
+        // Ensure all possible subscriptions are removed
+        RoomFurnitures.OnPlaceFurniture -= CompletedStepPlacedFurniture;
+        RoomFurnitures.OnPlaceOnTop -= CompletedStepPlacedFurniture;
+        RoomFurnitures.OnComboDone -= CompletedStepCombo;
         RoomFurnitures.OnItemUse -= CompletedStepItemUse;
+
+        if (instance == this)
+        {
+            instance = null;
+        }
+        Debug.Log("TutorialHandler.OnDestroy() called. Instance is now: " + (instance == null ? "null" : "not null"));
     }
 
     private void BeginStep(FurnitureOriginalData obj)
@@ -53,6 +66,7 @@ public class TutorialHandler : MonoBehaviour
         
         tutorialStep++;
         stepStarted = true;
+        OnTutorialLockStateUpdated?.Invoke();
 
         if (tutorialObject != null)
         {
@@ -66,6 +80,7 @@ public class TutorialHandler : MonoBehaviour
         switch (tutorialStep)
         {
             case 1:
+                // No comprar
                 RoomFurnitures.OnPlaceFurniture += CompletedStepPlacedFurniture;
                 break;
             case 2:
@@ -118,7 +133,7 @@ public class TutorialHandler : MonoBehaviour
         animPlaying = true;
         onTutorial = false;
         stepStarted = false;
-        
+        OnTutorialLockStateUpdated?.Invoke();
     }
     
     public void CompletedStepPlacedFurniture(FurnitureOriginalData furniture)
@@ -130,7 +145,12 @@ public class TutorialHandler : MonoBehaviour
 
     void Update()
     {
-        if(Input.anyKeyDown) CloseTutorialWindow();
+        if (PlayerController.instance.playerInput.Movement.Start.WasPressedThisFrame())
+        {
+            SkipTutorial();
+        }
+
+        if (Input.anyKeyDown) CloseTutorialWindow();
 
         if (tutorialStep is 3 or 4 && !tutorialObject.activeSelf && stepStarted)
         {
@@ -176,11 +196,60 @@ public class TutorialHandler : MonoBehaviour
         anim.SetBool("Reminder", false);
         StateManager.StartGame();
     
-        reminderTimer = 0f; // Reset the timer when closing the window
+        reminderTimer = 0f; 
     
         if(tutorialStep > 5 && !onTutorial)
         {
+            OnTutorialLockStateUpdated?.Invoke();
             Destroy(gameObject);
         }
+    }
+
+    public static bool AreDoorsTutorialLocked()
+    {
+        if (instance == null) return false;
+        return instance.tutorialStep < 6;
+    }
+    
+    public void SkipTutorial()
+    {
+        Debug.Log($"Tutorial skip requested. Current step: {tutorialStep}, onTutorial: {onTutorial}, Time.timeScale before skip: {Time.timeScale}");
+
+        // 1. Set tutorial state to "completed" first.
+        // This ensures any listeners to OnTutorialLockStateUpdated see the correct final state.
+        tutorialStep = 6; 
+        onTutorial = false;
+        stepStarted = false;
+        animPlaying = false;
+        extraDialogueRequested = false;
+
+        // 2. Signal that tutorial lock conditions have changed.
+        // Rooms might listen to this to unlock doors or populate furniture.
+        // Listeners will see tutorialStep = 6 and onTutorial = false.
+        OnTutorialLockStateUpdated?.Invoke(); 
+
+        // 3. Clean up tutorial UI elements.
+        if (tutorialObject != null)
+        {
+            if (tutorialObject.activeSelf)
+            {
+                tutorialObject.SetActive(false);
+            }
+            if (anim != null) // Check if anim component exists
+            {
+                anim.SetBool("Extra", false);
+                anim.SetBool("Reminder", false);
+                // anim.SetInteger("TutorialStep", 0); // Optionally reset animator step if it affects non-UI things
+            }
+        }
+        
+        // 4. Critical: Ensure game is unpaused and running.
+        StateManager.StartGame(); 
+        Debug.Log($"Time.timeScale after StateManager.StartGame() in SkipTutorial: {Time.timeScale}");
+
+        // 5. The TutorialHandler is no longer needed.
+        // OnDestroy will handle unsubscribing from events and nullifying 'instance'.
+        Destroy(gameObject);
+        Debug.Log("TutorialHandler.SkipTutorial() finished, object destroyed.");
     }
 }
