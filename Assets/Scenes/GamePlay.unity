@@ -3971,6 +3971,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderers: []
+--- !u!212 &873791545 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2216017494161320627, guid: f45fd9392ad1c6e48b35b97a19793f76, type: 3}
+  m_PrefabInstance: {fileID: 2067707887}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &896257901
 GameObject:
   m_ObjectHideFlags: 0
@@ -9050,6 +9055,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Tutorial
       objectReference: {fileID: 0}
+    - target: {fileID: 2216017494996933814, guid: f45fd9392ad1c6e48b35b97a19793f76, type: 3}
+      propertyPath: dialogueImageDisplay
+      value: 
+      objectReference: {fileID: 873791545}
     - target: {fileID: 2216017494996933815, guid: f45fd9392ad1c6e48b35b97a19793f76, type: 3}
       propertyPath: m_RootOrder
       value: 10
@@ -9822,6 +9831,7 @@ MonoBehaviour:
   clickOkClip: {fileID: 8300000, guid: 113bfe07f3b1f184380fbaca3d2f3b80, type: 3}
   errorClip: {fileID: 8300000, guid: 09dbd978f5915b04d98f319b71ad075d, type: 3}
   grabClip: {fileID: 8300000, guid: 196605b6950721a41b93780fb013badf, type: 3}
+  restockClip: {fileID: 8300000, guid: 6fcb5ed296dd97d40b55f360edaec093, type: 3}
   audioMixer: {fileID: 24100000, guid: 8ca7b6b4ab3c78f4e9ba735375e950eb, type: 2}
   lowpassParameterName: Lowpass
   muffledLowPassCutoff: 150

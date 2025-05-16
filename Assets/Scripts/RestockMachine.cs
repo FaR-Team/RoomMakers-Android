@@ -34,7 +34,7 @@ public class RestockMachine : MonoBehaviour
                 PlayerController.instance.Inventory.UpdateMoney(-restockPrice);
                 House.instance.IncreaseRestockPrice();
                 
-                //TODO: AudioManager.instance.PlaySfx(GlobalSfx.Restock);
+                AudioManager.instance.PlaySfx(GlobalSfx.Restock);
             }
             else
             {
