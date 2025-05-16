@@ -111,7 +111,7 @@ public class DoorData : MonoBehaviour
     // Modified to support free doors from debug menu
     public void BuyNextRoom(bool isFree = false)
     {
-        if (TutorialHandler.AreDoorsTutorialLocked())
+        if (TutorialHandler.AreDoorsTutorialLocked() && !isFree)
         {
             AudioManager.instance.PlaySfx(GlobalSfx.Error);
             StartCoroutine(ShakeDoorCoroutine());

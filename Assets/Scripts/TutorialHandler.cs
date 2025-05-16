@@ -132,6 +132,12 @@ public class TutorialHandler : MonoBehaviour
         animPlaying = true;
         onTutorial = false;
         stepStarted = false;
+
+        if (tutorialStep == 6)
+        {
+            tutorialStep = 7;
+        }
+        
         OnTutorialLockStateUpdated?.Invoke();
     }
     
@@ -214,7 +220,7 @@ public class TutorialHandler : MonoBehaviour
     {
         Debug.Log($"Tutorial skip requested. Current step: {tutorialStep}, onTutorial: {onTutorial}, Time.timeScale before skip: {Time.timeScale}");
 
-        tutorialStep = 6; 
+        tutorialStep = 7; 
         onTutorial = false;
         stepStarted = false;
         animPlaying = false;
