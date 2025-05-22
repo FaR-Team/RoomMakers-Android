@@ -34,7 +34,11 @@ public class StateManager : MonoBehaviour
         currentGameState = currentGameState == GameState.Moving ? GameState.Editing : GameState.Moving;
         OnStateChanged?.Invoke(currentGameState);
     }
-
+    public static void PauseGame()
+    {
+        currentGameState = GameState.Pause;
+        OnStateChanged?.Invoke(currentGameState);
+    }
     public static void SwitchGameOverMode()
     {
         currentGameState = GameState.Lose;

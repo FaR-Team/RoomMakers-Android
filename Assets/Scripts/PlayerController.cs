@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using TMPro;
 using Unity.VisualScripting;
@@ -29,6 +30,24 @@ public class PlayerController : MovementController
 
         playerInput = new Controls();
         playerInput.Enable();
+    }
+
+    private void OnEnable()
+    {
+        StateManager.OnStateChanged += HandleStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        StateManager.OnStateChanged -= HandleStateChanged;
+    }
+
+    private void HandleStateChanged(GameState newState)
+    {
+        if (newState is GameState.Editing or GameState.Pause)
+        {
+            anim.SetBool("IsWalking", false);
+        }
     }
 
     void Update()
