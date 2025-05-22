@@ -5,9 +5,10 @@ using UnityEngine;
 
 public class Interactor : MonoBehaviour
 {
-    [SerializeField] private bool spanish;
     [SerializeField] private LayerMask doorLayer;
     [SerializeField] private TextMeshProUGUI text_name;
+    
+    private bool IsSpanish => LocalizationManager.Instance != null ? LocalizationManager.Instance.IsSpanish : false;
     public void Interact(Inventory playerInventory)
     {
         var gridPosition = GridManager.PositionToCellCenter(transform.position);
@@ -23,7 +24,7 @@ public class Interactor : MonoBehaviour
             {
                 if (placementData.topPlacementDatas.Count == 0)
                 {
-                    if (!spanish) text_name.text = placementData.furnitureData.originalData.Name;
+                    if (!IsSpanish) text_name.text = placementData.furnitureData.originalData.Name;
                     else text_name.text = placementData.furnitureData.originalData.es_Name;
                     MainRoom.instance.availableTiles += placementData.furnitureData.originalData.size.x *
                                                         placementData.furnitureData.originalData.size.y;
@@ -35,7 +36,7 @@ public class Interactor : MonoBehaviour
                 {
                     topFurnitureData = placementData.GetAndClearFirstObject();
                     
-                    if (!spanish) text_name.text = topFurnitureData.originalData.Name;
+                    if (!IsSpanish) text_name.text = topFurnitureData.originalData.Name;
                     else text_name.text = topFurnitureData.originalData.es_Name;
                     playerInventory.furnitureInventoryWithData = topFurnitureData;
                     playerInventory.EnablePackageUI(true);
@@ -43,7 +44,7 @@ public class Interactor : MonoBehaviour
             }
             else 
             {
-                if (!spanish) text_name.text = topFurnitureData.originalData.Name;
+                if (!IsSpanish) text_name.text = topFurnitureData.originalData.Name;
                 else text_name.text = topFurnitureData.originalData.es_Name;
                 playerInventory.furnitureInventoryWithData = topFurnitureData;
                 playerInventory.EnablePackageUI(true);
