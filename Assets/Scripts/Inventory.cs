@@ -38,7 +38,6 @@ public class Inventory : MonoBehaviour
         EnablePackageUI(true);
         OnFurniturePickUp?.Invoke(furnitureInventory);
         
-        // Update UI with package information
         UpdatePackageUI();
     }
 
@@ -46,32 +45,40 @@ public class Inventory : MonoBehaviour
     {
         packageUI.SetActive(enabled);
         
-        // If enabling the UI, update it with current item information
         if (enabled)
         {
             UpdatePackageUI();
         }
     }
-    
-    // New method to update the package UI with the current item's information
+
     private void UpdatePackageUI()
     {
-        // Get language preference safely
         bool isSpanish = false;
         if (LocalizationManager.Instance != null)
         {
             isSpanish = LocalizationManager.Instance.IsSpanish;
         }
-        
-        // Set the text based on language and item type
+
         if (furnitureInventory != null)
         {
-            // Set the name text
-            text_name.text = isSpanish ? furnitureInventory.es_Name : furnitureInventory.Name;
-            
+            text_name.text = isSpanish ? furnitureInventory.es_Name.ToUpper() : furnitureInventory.Name.ToUpper();
+
             if (furnitureInventory is ItemData itemData && itemImage != null)
             {
-                // Set the sprite from ItemData's ShopSprite
+                itemImage.sprite = itemData.ShopSprite;
+            }
+            else
+            {
+                itemImage.sprite = PackageSprite;
+            }
+        }
+
+        if (furnitureInventoryWithData != null)
+        {
+            text_name.text = isSpanish ? furnitureInventoryWithData.originalData.es_Name.ToUpper() : furnitureInventoryWithData.originalData.Name.ToUpper();
+
+            if (furnitureInventoryWithData.originalData is ItemData itemData && itemImage != null)
+            {
                 itemImage.sprite = itemData.ShopSprite;
             }
             else

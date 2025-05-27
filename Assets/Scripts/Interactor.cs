@@ -15,7 +15,6 @@ public class Interactor : MonoBehaviour
     public void Interact(Inventory playerInventory)
     {
         var gridPosition = GridManager.PositionToCellCenter(transform.position);
-        // Si existe un PlacementData en el punto de interaccion, 
         if (House.instance.currentRoom.roomFurnitures.PlacementDatasInPosition.TryGetValue(gridPosition, out PlacementData placementData))
         {
             if (playerInventory.HasItem()) return;
@@ -25,10 +24,7 @@ public class Interactor : MonoBehaviour
                 FurnitureObjectBase topStackedItem = placementData.PickUpTopStackedItem();
             
                 if (topStackedItem != null)
-                {
-                    if (!IsSpanish) text_name.text = topStackedItem.Data.originalData.Name;
-                    else text_name.text = topStackedItem.Data.originalData.es_Name;
-                
+                {        
                     topStackedItem.Data.currentStackLevel = 0;
                 
                     playerInventory.furnitureInventoryWithData = topStackedItem.Data;
@@ -47,8 +43,6 @@ public class Interactor : MonoBehaviour
             {
                 if (placementData.topPlacementDatas.Count == 0)
                 {
-                    if (!IsSpanish) text_name.text = placementData.furnitureData.originalData.Name;
-                    else text_name.text = placementData.furnitureData.originalData.es_Name;
                     MainRoom.instance.availableTiles += placementData.furnitureData.originalData.size.x *
                                                         placementData.furnitureData.originalData.size.y;
                     playerInventory.furnitureInventoryWithData = placementData.furnitureData;
@@ -59,16 +53,12 @@ public class Interactor : MonoBehaviour
                 {
                     topFurnitureData = placementData.GetAndClearFirstObject();
                     
-                    if (!IsSpanish) text_name.text = topFurnitureData.originalData.Name;
-                    else text_name.text = topFurnitureData.originalData.es_Name;
                     playerInventory.furnitureInventoryWithData = topFurnitureData;
                     playerInventory.EnablePackageUI(true);
                 }
             }
             else 
             {
-                if (!IsSpanish) text_name.text = topFurnitureData.originalData.Name;
-                else text_name.text = topFurnitureData.originalData.es_Name;
                 playerInventory.furnitureInventoryWithData = topFurnitureData;
                 playerInventory.EnablePackageUI(true);
                 House.instance.currentRoom.roomFurnitures.RemoveTopObjectInPosition(gridPosition);
@@ -81,10 +71,8 @@ public class Interactor : MonoBehaviour
         }
         
         if (House.instance.currentRoom.roomFurnitures.KitsInPosition.TryGetValue(gridPosition,
-                     out KitObject kit))
+                     out KitObject kit) && !playerInventory.HasItem())
         {
-            if (!IsSpanish) text_name.text = kit.originalData.Name;
-            else text_name.text = kit.originalData.es_Name;
             playerInventory.furnitureInventoryWithData = kit.Data;
             playerInventory.EnablePackageUI(true);
             House.instance.currentRoom.roomFurnitures.RemoveKitInPosition(gridPosition);

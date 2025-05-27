@@ -49,7 +49,7 @@ public class TutorialHandler : MonoBehaviour
         Inventory.OnFurniturePickUp -= BeginStep;
         // Ensure all possible subscriptions are removed
         RoomFurnitures.OnPlaceFurniture -= CompletedStepPlacedFurniture;
-        RoomFurnitures.OnPlaceOnTop -= CompletedStepPlacedFurniture;
+        RoomFurnitures.OnPlaceOnTopEvent -= CompletedStepPlacedFurniture;
         RoomFurnitures.OnComboDone -= CompletedStepCombo;
         RoomFurnitures.OnItemUse -= CompletedStepItemUse;
 
@@ -86,11 +86,11 @@ public class TutorialHandler : MonoBehaviour
                 break;
             case 3:
                 RoomFurnitures.OnPlaceFurniture -= CompletedStepPlacedFurniture;
-                RoomFurnitures.OnPlaceOnTop += CompletedStepPlacedFurniture;
+                RoomFurnitures.OnPlaceOnTopEvent += CompletedStepPlacedFurniture;
                 break;
             case 4:
                 onTutorial = true;
-                RoomFurnitures.OnPlaceOnTop -= CompletedStepPlacedFurniture;
+                RoomFurnitures.OnPlaceOnTopEvent -= CompletedStepPlacedFurniture;
                 RoomFurnitures.OnComboDone += CompletedStepCombo;
                 break;
             case 5:

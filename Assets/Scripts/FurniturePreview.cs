@@ -59,7 +59,6 @@ public class FurniturePreview : MonoBehaviour
 
     private void OnEnable()
     {
-        //SetFurnitureData();
         CheckRotation();
 
         var playerPos = GameObject.FindGameObjectWithTag("Player").transform.position;
