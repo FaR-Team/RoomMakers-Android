@@ -7,6 +7,7 @@ public class TutorialHandler : MonoBehaviour
 {
     [SerializeField] private Animator anim;
     [SerializeField] private GameObject tutorialObject;
+    [SerializeField] private GameObject bButtonPromptObject; // Prompt for B button interaction
 
     private bool animPlaying;
     public int tutorialStep;
@@ -33,10 +34,16 @@ public class TutorialHandler : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
         }
 
         tutorialStep = 0;
         OnTutorialLockStateUpdated?.Invoke();
+
+        if (bButtonPromptObject != null)
+        {
+            bButtonPromptObject.SetActive(false);
+        }
     }
 
     void Start()
@@ -47,17 +54,29 @@ public class TutorialHandler : MonoBehaviour
     private void OnDestroy()
     {
         Inventory.OnFurniturePickUp -= BeginStep;
-        // Ensure all possible subscriptions are removed
         RoomFurnitures.OnPlaceFurniture -= CompletedStepPlacedFurniture;
         RoomFurnitures.OnPlaceOnTopEvent -= CompletedStepPlacedFurniture;
         RoomFurnitures.OnComboDone -= CompletedStepCombo;
         RoomFurnitures.OnItemUse -= CompletedStepItemUse;
+
+        if (bButtonPromptObject != null && bButtonPromptObject.activeSelf)
+        {
+            bButtonPromptObject.SetActive(false);
+        }
 
         if (instance == this)
         {
             instance = null;
         }
         Debug.Log("TutorialHandler.OnDestroy() called. Instance is now: " + (instance == null ? "null" : "not null"));
+    }
+    
+    private void UpdateBButtonPromptState()
+    {
+        if (bButtonPromptObject == null) return;
+
+        bool shouldBeActive = tutorialObject != null && tutorialObject.activeSelf && !animPlaying;
+        bButtonPromptObject.SetActive(shouldBeActive);
     }
 
     private void BeginStep(FurnitureOriginalData obj)
@@ -75,7 +94,8 @@ public class TutorialHandler : MonoBehaviour
         }
         anim.SetInteger("TutorialStep", tutorialStep);
         anim.SetBool("Completed", false);
-        
+        animPlaying = true;
+        UpdateBButtonPromptState();
 
         switch (tutorialStep)
         {
@@ -130,6 +150,8 @@ public class TutorialHandler : MonoBehaviour
         anim.SetInteger("TutorialStep", tutorialStep);
         anim.SetBool("Completed", true);
         animPlaying = true;
+        UpdateBButtonPromptState();
+
         onTutorial = false;
         stepStarted = false;
 
@@ -137,7 +159,6 @@ public class TutorialHandler : MonoBehaviour
         {
             tutorialStep = 7;
         }
-        
         OnTutorialLockStateUpdated?.Invoke();
     }
     
@@ -155,7 +176,7 @@ public class TutorialHandler : MonoBehaviour
             SkipTutorial();
         }
 
-        if (Input.anyKeyDown) CloseTutorialWindow();
+        if (PlayerController.instance != null && PlayerController.instance.playerInput != null && PlayerController.instance.playerInput.Movement.Rotate.WasPressedThisFrame()) CloseTutorialWindow();
 
         if (tutorialStep is 3 or 4 && !tutorialObject.activeSelf && stepStarted)
         {
@@ -179,15 +200,17 @@ public class TutorialHandler : MonoBehaviour
         anim.SetInteger("TutorialStep", tutorialStep);
         anim.SetBool("Reminder", true);
         animPlaying = true;
+        UpdateBButtonPromptState();
     }
     public void AnimationStopped()
     {
         animPlaying = false;
+        UpdateBButtonPromptState();
     }
     public void CloseTutorialWindow()
     {
         if(!tutorialObject.activeSelf || animPlaying) return;
-
+        
         if (extraDialogueRequested)
         {
             anim.SetBool("Extra", true);
@@ -195,19 +218,21 @@ public class TutorialHandler : MonoBehaviour
             animPlaying = true;
             return;
         }
-        
+
         tutorialObject.SetActive(false);
-            anim.SetBool("Extra", false);
+        anim.SetBool("Extra", false);
         anim.SetBool("Reminder", false);
         StateManager.StartGame();
-    
+        UpdateBButtonPromptState();
+
         reminderTimer = 0f; 
-    
+
         if(tutorialStep > 5 && !onTutorial)
         {
             OnTutorialLockStateUpdated?.Invoke();
             Destroy(gameObject);
         }
+
     }
 
     public static bool AreDoorsTutorialLocked()
@@ -243,6 +268,8 @@ public class TutorialHandler : MonoBehaviour
         
         StateManager.StartGame(); 
         Debug.Log($"Time.timeScale after StateManager.StartGame() in SkipTutorial: {Time.timeScale}");
+        
+        UpdateBButtonPromptState();
 
         Destroy(gameObject);
         Debug.Log("TutorialHandler.SkipTutorial() finished, object destroyed.");
