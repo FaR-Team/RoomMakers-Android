@@ -42,6 +42,7 @@ public class FurnitureObjectBase : MonoBehaviour
         }
         else
         {
+            UpdateSprites(originalData.sprites);
             if (indicatorInstance != null)
             {
                 Destroy(indicatorInstance);
@@ -114,6 +115,7 @@ public class FurnitureObjectBase : MonoBehaviour
         furnitureData.VectorRotation = newData.VectorRotation;
         furnitureData.rotationStep = newData.rotationStep;
         furnitureData.hasReceivedTagBonus = newData.hasReceivedTagBonus;
+        furnitureData.firstTimePlaced = newData.firstTimePlaced;
         
         if (spriteRenderers == null)
             spriteRenderers = GetComponentsInChildren<SpriteRenderer>();

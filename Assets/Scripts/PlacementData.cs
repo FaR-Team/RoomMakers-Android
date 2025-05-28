@@ -59,7 +59,12 @@ public class PlacementData
     }
     public FurnitureData GetTopFurnitureData(Vector2 pos)
     {
-        return topPlacementDatas.FirstOrDefault(x => x.occupiedPositions.Contains(pos))?.furnitureOnTopData;
+        return topPlacementDatas?.FirstOrDefault(x => x.occupiedPositions.Contains(pos))?.furnitureOnTopData;
+    }
+
+    public TopPlacementData GetTopFurnitureTopData(Vector2 pos)
+    {
+        return topPlacementDatas?.FirstOrDefault(x => x.occupiedPositions.Contains(pos));
     }
 
     public bool HasFreePositions(List<Vector2> positions)

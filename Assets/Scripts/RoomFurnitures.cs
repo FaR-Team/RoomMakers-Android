@@ -363,6 +363,7 @@ public class RoomFurnitures : MonoBehaviour
             PlayerController.instance.Inventory.UpdateMoney(originalData.price);
             House.instance.UpdateScore(originalData.price);
             furnitureData.firstTimePlaced = true;
+            Debug.Log("Called update score from first time placement");
         }
     }
 
@@ -385,6 +386,7 @@ public class RoomFurnitures : MonoBehaviour
             PlayerController.instance.Inventory.UpdateMoney(tagBonus);
             House.instance.UpdateScore(tagBonus);
             ComboPopUp.Create(matchPrefab, tagBonus, popupPosition, new Vector2(0f, 1.5f));
+            Debug.Log("Called stacked tag bonus from HandleStackedTagBonus");
         }
         return tagBonus;
     }
@@ -405,6 +407,8 @@ public class RoomFurnitures : MonoBehaviour
             {
                 StartCoroutine(ShowMatchPopupDelayed(existingTagBonus, popupPosition));
             }
+
+            Debug.Log("Called stacked combo points from HandleStackedComboPoints");
         }
     }
 
@@ -429,6 +433,8 @@ public class RoomFurnitures : MonoBehaviour
                 PlayerController.instance.Inventory.UpdateMoney(tagBonus);
                 House.instance.UpdateScore(tagBonus);
                 ComboPopUp.Create(matchPrefab, tagBonus, finalPos, new Vector2(0f, 1.5f));
+
+                Debug.Log("Called tag bonus from ProcessTagLogicForNonStacked");
             }
         }
         return tagBonus;
@@ -459,12 +465,14 @@ public class RoomFurnitures : MonoBehaviour
                 {
                     StartCoroutine(ShowMatchPopupDelayed(tagBonusIfAny, finalPos));
                 }
+                Debug.Log("Called combo points from ProcessComboForPlaceOnTop 1");
             }
             else if (tagBonusIfAny > 0)
             {
                 PlayerController.instance.Inventory.UpdateMoney(tagBonusIfAny);
                 House.instance.UpdateScore(tagBonusIfAny);
                 ComboPopUp.Create(matchPrefab, tagBonusIfAny, finalPos, new Vector2(0f, 1.2f));
+                Debug.Log("Called tag bonus from ProcessComboForPlaceOnTop 2");
             }
         }
     }
@@ -494,50 +502,7 @@ public class RoomFurnitures : MonoBehaviour
             TopFurnitureObject topObject = (TopFurnitureObject)furnitureObject;
             if (unboxed)
             {
-                // Si el objeto va encima de otro, lo guardamos en el PlacementData y damos doble score por combo
-                int totalCombo = 0;
-
-                BottomFurnitureObject bottomObject = (BottomFurnitureObject)PlacementDatasInPosition[finalPos]
-                    .instantiatedFurniture;
-
-                topObject.CheckAndUpdateSprite(bottomObject);
-
-                if (!topObject.ComboDone)
-                {
-                    // Calculamos y sumamos los puntos por cada tile en el que se hace combo
-                    totalCombo += bottomObject.MakeCombo(positionToOccupy.ToArray());
-
-                    // Si hubo al menos un tile en el que se hizo combo, gastamos el combo tambien en el objeto de arriba
-                    if (totalCombo > 0)
-                    {
-                        topObject.MakeCombo();
-
-                        int comboPoints = totalCombo;
-                        if (tagBonus > 0)
-                        {
-                            comboPoints += tagBonus;
-                        }
-
-                        PlayerController.instance.Inventory.UpdateMoney(comboPoints);
-                        House.instance.UpdateScore(comboPoints);
-
-                        ComboPopUp.Create(popUpPrefab, comboPoints, finalPos, new Vector2(0f, 1.2f));
-
-                        OnComboDone?.Invoke(totalCombo);
-
-                        if (tagBonus > 0)
-                        {
-                            StartCoroutine(ShowMatchPopupDelayed(tagBonus, finalPos));
-                        }
-                    }
-                    else if (tagBonus > 0)
-                    {
-                        PlayerController.instance.Inventory.UpdateMoney(tagBonus);
-                        House.instance.UpdateScore(tagBonus);
-
-                        ComboPopUp.Create(matchPrefab, tagBonus, finalPos, new Vector2(0f, 1.2f));
-                    }
-                }
+                ProcessComboForPlaceOnTop(data, positionToOccupy, finalPos, topObject, tagBonus);
             }
 
             // Updateamos la placement data con el objeto que pusimos encima
@@ -597,30 +562,30 @@ public class RoomFurnitures : MonoBehaviour
         if (PlacementDatasInPosition.TryGetValue(placedKitCell, out PlacementData affectedData) &&
             affectedData.instantiatedFurniture != null)
         {
-            FurnitureObjectBase furniture = affectedData.instantiatedFurniture;
+            var topFurniture = affectedData.GetTopFurnitureTopData(placedKitCell);
+            FurnitureObjectBase furniture = (topFurniture != null && topFurniture.furnitureOnTopData.originalData.requiredBase) ? topFurniture.instantiatedFurnitureOnTop : affectedData.instantiatedFurniture;
             FurnitureData furnitureData = furniture.Data;
             FurnitureOriginalData originalFurnitureData = furnitureData.originalData;
 
-            // Check if this furniture is not already unboxed and requires the type of kit just placed.
-            if (!furniture.IsUnpacked && // IsUnpacked should reflect the unboxed state
+            if (!furniture.IsUnpacked &&
                 originalFurnitureData.requiredBase != null &&
                 originalFurnitureData.requiredBase == placedKit.Data.originalData)
             {
-                // Now, re-evaluate if it's *truly* unboxed with the new kit.
                 bool nowUnboxed = CheckKitRequirement(affectedData.occupiedPositions, originalFurnitureData);
 
                 if (nowUnboxed)
                 {
                     Debug.Log($"Kit placed under {originalFurnitureData.Name}. Updating its state to unboxed.");
                     furniture.SetUnpackedState(true);
-                    // furnitureData.unboxed = true; // Should be handled by SetUnpackedState
 
                     ApplyFirstTimePlacementBonus(furnitureData, originalFurnitureData, true);
 
                     Room currentRoom = GetComponent<Room>();
                     Vector2 furnitureAnchorPos = GridManager.PositionToCellCenter(affectedData.occupiedPositions.First());
-                    
-                    ProcessTagLogicForNonStacked(furnitureData, originalFurnitureData, currentRoom, furnitureAnchorPos, false);
+
+                    bool placeOnTop = topFurniture != null && furnitureData == topFurniture.furnitureOnTopData;
+                    int tagBonus = ProcessTagLogicForNonStacked(furnitureData, originalFurnitureData, currentRoom, furnitureAnchorPos, placeOnTop);
+                    if (placeOnTop) ProcessComboForPlaceOnTop(furnitureData, affectedData.occupiedPositions, furnitureAnchorPos, furniture, tagBonus);
                 }
             }
         }
@@ -639,17 +604,12 @@ public class RoomFurnitures : MonoBehaviour
                 originalFurnitureData.requiredBase != null &&
                 originalFurnitureData.requiredBase == removedKitType) 
             {
-                // Re-evaluate if it's still unboxed without this specific kit.
-                // It might still be unboxed if it's a multi-cell item and another required kit exists under another cell,
-                // or if it didn't strictly need this kit but was compatible.
                 bool stillUnboxed = CheckKitRequirement(affectedData.occupiedPositions, originalFurnitureData);
 
                 if (!stillUnboxed)
                 {
                     Debug.Log($"Kit removed from under {originalFurnitureData.Name}. Updating its state to boxed.");
                     furniture.SetUnpackedState(false);
-                    // furnitureData.unboxed = false; // Should be handled by SetUnpackedState
-                    // Typically, points/bonuses are not reversed on boxing.
                 }
             }
         }
