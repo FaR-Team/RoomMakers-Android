@@ -10,8 +10,6 @@ public class Interactor : MonoBehaviour
     [FormerlySerializedAs("doorLayer")] [SerializeField] private LayerMask interactableLayer;
     [SerializeField] private TextMeshProUGUI text_name;
 
-    private bool IsSpanish => LocalizationManager.Instance != null ? LocalizationManager.Instance.IsSpanish : false;
-
     public void Interact(Inventory playerInventory)
     {
         var gridPosition = GridManager.PositionToCellCenter(transform.position);

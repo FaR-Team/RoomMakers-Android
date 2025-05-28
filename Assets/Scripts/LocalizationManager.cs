@@ -39,10 +39,17 @@ public class LocalizationManager : MonoBehaviour
     private void DetectLanguage()
     {
         SystemLanguage deviceLanguage = Application.systemLanguage;
-        
-        IsSpanish = deviceLanguage == SystemLanguage.Spanish || 
-                   deviceLanguage == SystemLanguage.Catalan || 
+
+        if (!debug)
+        {
+            IsSpanish = deviceLanguage == SystemLanguage.Spanish ||
+                   deviceLanguage == SystemLanguage.Catalan ||
                    deviceLanguage == SystemLanguage.Spanish;
+        }
+        else
+        {
+            IsSpanish = !english;
+        }
         
         Debug.Log($"Device language detected: {deviceLanguage}. Spanish mode: {IsSpanish}");
     }
