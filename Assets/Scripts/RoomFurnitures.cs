@@ -43,7 +43,6 @@ public class RoomFurnitures : MonoBehaviour
             furnitureData.instanceID = System.DateTime.Now.GetHashCode() ^ furnitureData.GetHashCode();
 
         var originalData = furnitureData.originalData;
-        Debug.Log($"Placing furniture: {originalData.Name}, isStackable: {originalData.isStackable}");
 
         List<Vector2> potentialOccupiedCells = CalculatePositions(worldPosition, furnitureData.size);
         Vector2 currentTargetWorldPosition = worldPosition;
@@ -363,7 +362,6 @@ public class RoomFurnitures : MonoBehaviour
             PlayerController.instance.Inventory.UpdateMoney(originalData.price);
             House.instance.UpdateScore(originalData.price);
             furnitureData.firstTimePlaced = true;
-            Debug.Log("Called update score from first time placement");
         }
     }
 
@@ -386,7 +384,6 @@ public class RoomFurnitures : MonoBehaviour
             PlayerController.instance.Inventory.UpdateMoney(tagBonus);
             House.instance.UpdateScore(tagBonus);
             ComboPopUp.Create(matchPrefab, tagBonus, popupPosition, new Vector2(0f, 1.5f));
-            Debug.Log("Called stacked tag bonus from HandleStackedTagBonus");
         }
         return tagBonus;
     }
@@ -408,7 +405,6 @@ public class RoomFurnitures : MonoBehaviour
                 StartCoroutine(ShowMatchPopupDelayed(existingTagBonus, popupPosition));
             }
 
-            Debug.Log("Called stacked combo points from HandleStackedComboPoints");
         }
     }
 
@@ -433,8 +429,6 @@ public class RoomFurnitures : MonoBehaviour
                 PlayerController.instance.Inventory.UpdateMoney(tagBonus);
                 House.instance.UpdateScore(tagBonus);
                 ComboPopUp.Create(matchPrefab, tagBonus, finalPos, new Vector2(0f, 1.5f));
-
-                Debug.Log("Called tag bonus from ProcessTagLogicForNonStacked");
             }
         }
         return tagBonus;
@@ -465,14 +459,12 @@ public class RoomFurnitures : MonoBehaviour
                 {
                     StartCoroutine(ShowMatchPopupDelayed(tagBonusIfAny, finalPos));
                 }
-                Debug.Log("Called combo points from ProcessComboForPlaceOnTop 1");
             }
             else if (tagBonusIfAny > 0)
             {
                 PlayerController.instance.Inventory.UpdateMoney(tagBonusIfAny);
                 House.instance.UpdateScore(tagBonusIfAny);
                 ComboPopUp.Create(matchPrefab, tagBonusIfAny, finalPos, new Vector2(0f, 1.2f));
-                Debug.Log("Called tag bonus from ProcessComboForPlaceOnTop 2");
             }
         }
     }
