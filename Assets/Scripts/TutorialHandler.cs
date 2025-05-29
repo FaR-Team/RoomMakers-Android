@@ -8,6 +8,8 @@ public class TutorialHandler : MonoBehaviour
     [SerializeField] private Animator anim;
     [SerializeField] private GameObject tutorialObject;
     [SerializeField] private GameObject bButtonPromptObject; // Prompt for B button interaction
+    
+    [SerializeField] TutorialStepData[] stepsData;
 
     private bool animPlaying;
     public int tutorialStep;
@@ -144,13 +146,18 @@ public class TutorialHandler : MonoBehaviour
     public void CompleteStep()
     {
         if (!stepStarted) return;
-        extraDialogueRequested = tutorialStep is 1 or 4 or 6;
-        StateManager.PauseGame();
-        if(tutorialObject != null) tutorialObject.SetActive(true);
-        anim.SetInteger("TutorialStep", tutorialStep);
-        anim.SetBool("Completed", true);
-        animPlaying = true;
-        UpdateBButtonPromptState();
+
+        if (stepsData[tutorialStep - 1].hasCompletedAnim)
+        {
+            extraDialogueRequested = stepsData[tutorialStep - 1].hasExtraDialogue;
+            StateManager.PauseGame();
+
+            if (tutorialObject != null) tutorialObject.SetActive(true);
+            anim.SetInteger("TutorialStep", tutorialStep);
+            anim.SetBool("Completed", true);
+            animPlaying = true;
+            UpdateBButtonPromptState();
+        }
 
         onTutorial = false;
         stepStarted = false;
@@ -165,7 +172,7 @@ public class TutorialHandler : MonoBehaviour
     public void CompletedStepPlacedFurniture(FurnitureOriginalData furniture)
     {
         if((tutorialStep == 1 && furniture == sofaData) || 
-           (tutorialStep == 2 && furniture == tvData) ||
+           (tutorialStep == 2 && furniture == tableData) ||
            (tutorialStep == 3 && furniture == tvData)) CompleteStep();
     }
 
@@ -178,7 +185,7 @@ public class TutorialHandler : MonoBehaviour
 
         if (PlayerController.instance != null && PlayerController.instance.playerInput != null && PlayerController.instance.playerInput.Movement.Rotate.WasPressedThisFrame()) CloseTutorialWindow();
 
-        if (tutorialStep is 3 or 4 && !tutorialObject.activeSelf && stepStarted)
+        if (stepStarted && stepsData[tutorialStep - 1].hasReminder && !tutorialObject.activeSelf)
         {
             reminderTimer += Time.deltaTime;
             if (reminderTimer >= reminderDelay)
@@ -274,4 +281,13 @@ public class TutorialHandler : MonoBehaviour
         Destroy(gameObject);
         Debug.Log("TutorialHandler.SkipTutorial() finished, object destroyed.");
     }
+}
+
+[System.Serializable]
+public struct TutorialStepData
+{
+    public string stepName;
+    public bool hasCompletedAnim;
+    public bool hasReminder;
+    public bool hasExtraDialogue;
 }

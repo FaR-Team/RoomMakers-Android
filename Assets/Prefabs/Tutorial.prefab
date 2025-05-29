@@ -289,6 +289,31 @@ MonoBehaviour:
   anim: {fileID: 2216017494161320624}
   tutorialObject: {fileID: 2216017494161320630}
   bButtonPromptObject: {fileID: 0}
+  stepsData:
+  - stepName: 1- Couch
+    hasCompletedAnim: 1
+    hasReminder: 0
+    hasExtraDialogue: 1
+  - stepName: 2- Table
+    hasCompletedAnim: 0
+    hasReminder: 0
+    hasExtraDialogue: 0
+  - stepName: 3- Tv
+    hasCompletedAnim: 1
+    hasReminder: 1
+    hasExtraDialogue: 0
+  - stepName: 4- Kit
+    hasCompletedAnim: 1
+    hasReminder: 1
+    hasExtraDialogue: 1
+  - stepName: 5- Labeler
+    hasCompletedAnim: 1
+    hasReminder: 0
+    hasExtraDialogue: 0
+  - stepName: 6- Hammer
+    hasCompletedAnim: 1
+    hasReminder: 0
+    hasExtraDialogue: 1
   tutorialStep: 0
   reminderTimer: 0
   sofaData: {fileID: 0}
