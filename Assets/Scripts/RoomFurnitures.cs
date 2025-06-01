@@ -554,30 +554,53 @@ public class RoomFurnitures : MonoBehaviour
         if (PlacementDatasInPosition.TryGetValue(placedKitCell, out PlacementData affectedData) &&
             affectedData.instantiatedFurniture != null)
         {
-            var topFurniture = affectedData.GetTopFurnitureTopData(placedKitCell);
-            FurnitureObjectBase furniture = (topFurniture != null && topFurniture.furnitureOnTopData.originalData.requiredBase) ? topFurniture.instantiatedFurnitureOnTop : affectedData.instantiatedFurniture;
-            FurnitureData furnitureData = furniture.Data;
-            FurnitureOriginalData originalFurnitureData = furnitureData.originalData;
-
-            if (!furniture.IsUnpacked &&
-                originalFurnitureData.requiredBase != null &&
-                originalFurnitureData.requiredBase == placedKit.Data.originalData)
+            var topFurnitures  = affectedData.topPlacementDatas?.Where(f => f.furnitureOnTopData?.originalData.requiredBase).ToArray();
+            
+            if (topFurnitures == null || topFurnitures.Length == 0) // If checking Base Object, not top objects
             {
-                bool nowUnboxed = CheckKitRequirement(affectedData.occupiedPositions, originalFurnitureData);
-
-                if (nowUnboxed)
+                FurnitureObjectBase furniture = affectedData.instantiatedFurniture;
+                FurnitureData furnitureData = furniture.Data;
+                FurnitureOriginalData originalFurnitureData = furnitureData.originalData;
+                
+                if (!furniture.IsUnpacked &&
+                    originalFurnitureData.requiredBase != null &&
+                    originalFurnitureData.requiredBase == placedKit.Data.originalData)
                 {
-                    Debug.Log($"Kit placed under {originalFurnitureData.Name}. Updating its state to unboxed.");
-                    furniture.SetUnpackedState(true);
+                    if (CheckKitRequirement(affectedData.occupiedPositions, originalFurnitureData))
+                    {
+                        Debug.Log($"Kit placed under {originalFurnitureData.Name}. Updating its state to unboxed.");
+                        furniture.SetUnpackedState(true);
 
-                    ApplyFirstTimePlacementBonus(furnitureData, originalFurnitureData, true);
+                        ApplyFirstTimePlacementBonus(furnitureData, originalFurnitureData, true);
 
-                    Room currentRoom = GetComponent<Room>();
-                    Vector2 furnitureAnchorPos = GridManager.PositionToCellCenter(affectedData.occupiedPositions.First());
+                        Room currentRoom = GetComponent<Room>();
+                        Vector2 furnitureAnchorPos = GridManager.PositionToCellCenter(affectedData.occupiedPositions.First());
+                        ProcessTagLogicForNonStacked(furnitureData, originalFurnitureData, currentRoom, furnitureAnchorPos, false);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < topFurnitures.Length; i++)
+                {
+                    FurnitureObjectBase furniture = topFurnitures[i].instantiatedFurnitureOnTop;
+                    FurnitureData furnitureData = furniture.Data;
+                    FurnitureOriginalData originalFurnitureData = furnitureData.originalData;
+                    
+                    bool nowUnboxed = CheckKitRequirement(affectedData.occupiedPositions, originalFurnitureData);
 
-                    bool placeOnTop = topFurniture != null && furnitureData == topFurniture.furnitureOnTopData;
-                    int tagBonus = ProcessTagLogicForNonStacked(furnitureData, originalFurnitureData, currentRoom, furnitureAnchorPos, placeOnTop);
-                    if (placeOnTop) ProcessComboForPlaceOnTop(furnitureData, affectedData.occupiedPositions, furnitureAnchorPos, furniture, tagBonus);
+                    if (nowUnboxed)
+                    {
+                        Debug.Log($"Kit placed under {originalFurnitureData.Name}. Updating its state to unboxed.");
+                        furniture.SetUnpackedState(true);
+
+                        ApplyFirstTimePlacementBonus(furnitureData, originalFurnitureData, true);
+
+                        Room currentRoom = GetComponent<Room>();
+                        Vector2 furnitureAnchorPos = GridManager.PositionToCellCenter(affectedData.occupiedPositions.First());
+                        int tagBonus = ProcessTagLogicForNonStacked(furnitureData, originalFurnitureData, currentRoom, furnitureAnchorPos, true);
+                        ProcessComboForPlaceOnTop(furnitureData, topFurnitures[i].occupiedPositions, furnitureAnchorPos, furniture, tagBonus);
+                    }
                 }
             }
         }
