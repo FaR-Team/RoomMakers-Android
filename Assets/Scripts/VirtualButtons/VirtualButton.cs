@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using CandyCoded.HapticFeedback;
+//using CandyCoded.HapticFeedback;
 
 public class VirtualButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
@@ -32,7 +32,7 @@ public class VirtualButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     public void OnPointerDown(PointerEventData pointerEventData)
     {
         pressed = true;
-        HapticFeedback.LightFeedback();
+        //HapticFeedback.LightFeedback();
     }
 
     public void OnPointerUp(PointerEventData pointerEventData)
