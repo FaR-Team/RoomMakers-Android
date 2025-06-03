@@ -290,7 +290,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3746,7 +3746,6 @@ GameObject:
   - component: {fileID: 843628705}
   - component: {fileID: 843628704}
   - component: {fileID: 843628706}
-  - component: {fileID: 843628707}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -3814,20 +3813,6 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
---- !u!114 &843628707
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 843628702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58ae6170e48a99f4395a226003e37601, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enableSave: 1
-  enableDiscord: 1
 --- !u!1 &858450939
 GameObject:
   m_ObjectHideFlags: 0
