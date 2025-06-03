@@ -78,11 +78,10 @@ public class PackagesGenerator : MonoBehaviour
             // Debug.Log("[PackagesGenerator] Package already active, skipping generation.");
             return;
         }
-
-        if (TutorialHandler.instance != null && 
-            tutorialObjects.Count > 0 && 
-            !TutorialHandler.instance.stepStarted)
+        
+        if (TutorialHandler.instance != null)
         {
+            if (!TutorialHandler.instance.CanSpawnPackage() || tutorialObjects.Count == 0) return;
             Debug.Log($"[PackagesGenerator] Tutorial step not started and item available. Dispensing: {tutorialObjects[0].Name}");
 
             Package package = packageGO.GetComponent<Package>();

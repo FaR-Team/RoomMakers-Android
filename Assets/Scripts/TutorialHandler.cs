@@ -23,6 +23,7 @@ public class TutorialHandler : MonoBehaviour
 
     public bool onTutorial;
     public bool stepStarted;
+    public bool dialogueBoxOpen;
     
     public static event Action OnTutorialLockStateUpdated;
 
@@ -91,6 +92,7 @@ public class TutorialHandler : MonoBehaviour
         {
             StateManager.PauseGame();
             tutorialObject.SetActive(true);
+            dialogueBoxOpen = true;
         }
         anim.SetInteger("TutorialStep", tutorialStep);
         anim.SetBool("Completed", false);
@@ -146,7 +148,11 @@ public class TutorialHandler : MonoBehaviour
         if (!stepStarted) return;
         extraDialogueRequested = tutorialStep is 1 or 4 or 6;
         StateManager.PauseGame();
-        if(tutorialObject != null) tutorialObject.SetActive(true);
+        if (tutorialObject != null)
+        {
+            tutorialObject.SetActive(true);
+            dialogueBoxOpen = true;
+        }
         anim.SetInteger("TutorialStep", tutorialStep);
         anim.SetBool("Completed", true);
         animPlaying = true;
@@ -197,6 +203,7 @@ public class TutorialHandler : MonoBehaviour
         }
         StateManager.PauseGame();
         tutorialObject.SetActive(true);
+        dialogueBoxOpen = true;
         anim.SetInteger("TutorialStep", tutorialStep);
         anim.SetBool("Reminder", true);
         animPlaying = true;
@@ -219,6 +226,7 @@ public class TutorialHandler : MonoBehaviour
             return;
         }
 
+        dialogueBoxOpen = false;
         tutorialObject.SetActive(false);
         anim.SetBool("Extra", false);
         anim.SetBool("Reminder", false);
@@ -273,5 +281,10 @@ public class TutorialHandler : MonoBehaviour
 
         Destroy(gameObject);
         Debug.Log("TutorialHandler.SkipTutorial() finished, object destroyed.");
+    }
+
+    public bool CanSpawnPackage()
+    {
+        return !stepStarted && !dialogueBoxOpen;
     }
 }
