@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -235,9 +235,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      Clone_0: 2146665254
       Clone_1: 864624083
       Clone_2: -621599797
-      Clone_0: 2146665254
       Clone_3: -697715274
   spritePackingTag: 
   pSDRemoveMatte: 0

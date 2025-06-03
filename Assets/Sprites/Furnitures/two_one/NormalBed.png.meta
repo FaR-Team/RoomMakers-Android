@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -319,14 +319,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      NormalBed_0: -1765737064
       NormalBed_1: 430621541
+      NormalBed_2: 176327971
+      NormalBed_3: 247533534
       NormalBed_4: -1638018498
       NormalBed_5: 1149566871
       NormalBed_6: -601245180
-      NormalBed_3: 247533534
       NormalBed_7: 884740248
-      NormalBed_0: -1765737064
-      NormalBed_2: 176327971
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -236,9 +236,9 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       BigBox_0: 976519800
-      BigBox_3: -372101818
       BigBox_1: -1459985630
       BigBox_2: 96403712
+      BigBox_3: -372101818
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

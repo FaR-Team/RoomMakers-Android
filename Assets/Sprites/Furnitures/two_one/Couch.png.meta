@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -319,14 +319,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Couch_5: -800463587
-      Couch_3: 1750973360
-      Couch_6: -82313373
       Couch_0: 425533724
-      Couch_4: 1874734654
       Couch_1: -1451224422
-      Couch_7: 1722288883
       Couch_2: -1503374730
+      Couch_3: 1750973360
+      Couch_4: 1874734654
+      Couch_5: -800463587
+      Couch_6: -82313373
+      Couch_7: 1722288883
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

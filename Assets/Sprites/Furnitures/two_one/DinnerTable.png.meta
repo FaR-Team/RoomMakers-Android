@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -319,14 +319,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      DinnerTable_1: -1030993009
-      DinnerTable_4: 841095540
-      DinnerTable_6: 1756189053
-      DinnerTable_5: -103549124
-      DinnerTable_3: 1736956010
-      DinnerTable_2: -1119942959
-      DinnerTable_7: -280878970
       DinnerTable_0: 1948914527
+      DinnerTable_1: -1030993009
+      DinnerTable_2: -1119942959
+      DinnerTable_3: 1736956010
+      DinnerTable_4: 841095540
+      DinnerTable_5: -103549124
+      DinnerTable_6: 1756189053
+      DinnerTable_7: -280878970
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

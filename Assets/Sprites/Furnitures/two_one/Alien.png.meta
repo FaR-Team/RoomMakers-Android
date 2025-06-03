@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -279,10 +279,10 @@ TextureImporter:
     nameFileIdTable:
       Alien_0: 1470370603
       Alien_1: 29144630
-      Alien_5: -1592502752
       Alien_2: -857958158
-      Alien_4: 618700741
       Alien_3: -246863575
+      Alien_4: 618700741
+      Alien_5: -1592502752
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

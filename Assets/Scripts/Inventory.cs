@@ -1,12 +1,10 @@
 ﻿using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
 {
-    // TODO: fix unnecessary double data
-
     public FurnitureOriginalData furnitureInventory;
     public FurnitureData furnitureInventoryWithData;
     public int money;
@@ -15,14 +13,133 @@ public class Inventory : MonoBehaviour
     [SerializeField] private TextMeshProUGUI text_name;
     [SerializeField] private SpriteRenderer itemImage;
     public Sprite PackageSprite;
+    
+    [Header("Money Animation")]
+    [SerializeField] private float increaseAnimationDuration = 1f;
+    [SerializeField] private float decreaseAnimationDuration = 2f;
+    [SerializeField] private AnimationCurve increaseAnimationCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [SerializeField] private AnimationCurve decreaseAnimationCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [SerializeField] private float shakeIntensity = 5f;
+    [SerializeField] private float shakeDuration = 0.5f;
+    
+    private Coroutine moneyAnimationCoroutine;
+    private int displayedMoney;
+    private Vector3 originalMoneyTextPosition;
 
-    public static event Action<FurnitureOriginalData> OnFurniturePickUp; 
+    public static event Action<FurnitureOriginalData> OnFurniturePickUp;
+
+    private void Start()
+    {
+        displayedMoney = money;
+        originalMoneyTextPosition = moneyText.transform.localPosition;
+        UpdateMoneyDisplay(money);
+    }
 
     public void UpdateMoney(int intMoney)
     {
+        int previousMoney = money;
         money += intMoney;
-        if(money < 0) moneyText.text = "0";
-        else moneyText.text = money.ToString();
+        
+        if (money < 0) 
+        {
+            money = 0;
+        }
+        
+        if (intMoney > 0)
+        {
+            AnimateMoneyIncrease(previousMoney, money);
+        }
+        else if (intMoney < 0)
+        {
+            AnimateMoneyDecrease(previousMoney, money);
+        }
+        else
+        {
+            UpdateMoneyDisplay(money);
+        }
+    }
+    
+    private void AnimateMoneyIncrease(int fromAmount, int toAmount)
+    {
+        if (moneyAnimationCoroutine != null)
+        {
+            StopCoroutine(moneyAnimationCoroutine);
+        }
+        
+        moneyAnimationCoroutine = StartCoroutine(AnimateMoneyIncreaseCoroutine(fromAmount, toAmount));
+    }
+    
+    private void AnimateMoneyDecrease(int fromAmount, int toAmount)
+    {
+        if (moneyAnimationCoroutine != null)
+        {
+            StopCoroutine(moneyAnimationCoroutine);
+        }
+        
+        moneyAnimationCoroutine = StartCoroutine(AnimateMoneyDecreaseCoroutine(fromAmount, toAmount));
+    }
+    
+    private IEnumerator AnimateMoneyIncreaseCoroutine(int fromAmount, int toAmount)
+    {
+        float elapsedTime = 0f;
+        
+        while (elapsedTime < increaseAnimationDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float progress = elapsedTime / increaseAnimationDuration;
+            float curveValue = increaseAnimationCurve.Evaluate(progress);
+            
+            int currentDisplayMoney = Mathf.RoundToInt(Mathf.Lerp(fromAmount, toAmount, curveValue));
+            UpdateMoneyDisplay(currentDisplayMoney);
+            
+            yield return null;
+        }
+        
+        UpdateMoneyDisplay(toAmount);
+        displayedMoney = toAmount;
+        moneyAnimationCoroutine = null;
+    }
+    
+    private IEnumerator AnimateMoneyDecreaseCoroutine(int fromAmount, int toAmount)
+    {
+        float elapsedTime = 0f;
+        
+        while (elapsedTime < decreaseAnimationDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float progress = elapsedTime / decreaseAnimationDuration;
+            float curveValue = decreaseAnimationCurve.Evaluate(progress);
+            
+            int currentDisplayMoney = Mathf.RoundToInt(Mathf.Lerp(fromAmount, toAmount, curveValue));
+            UpdateMoneyDisplay(currentDisplayMoney);
+            
+            if (progress < shakeDuration / decreaseAnimationDuration)
+            {
+                float shakeProgress = (progress * decreaseAnimationDuration) / shakeDuration;
+                Vector3 shakeOffset = new Vector3(
+                    UnityEngine.Random.Range(-shakeIntensity, shakeIntensity) * (1 - shakeProgress),
+                    UnityEngine.Random.Range(-shakeIntensity, shakeIntensity) * (1 - shakeProgress),
+                    0
+                );
+                moneyText.transform.localPosition = originalMoneyTextPosition + shakeOffset;
+            }
+            else
+            {
+                moneyText.transform.localPosition = originalMoneyTextPosition;
+            }
+            
+            yield return null;
+        }
+        
+        UpdateMoneyDisplay(toAmount);
+        moneyText.transform.localPosition = originalMoneyTextPosition;
+        displayedMoney = toAmount;
+        moneyAnimationCoroutine = null;
+    }
+    
+    private void UpdateMoneyDisplay(int amount)
+    {
+        moneyText.text = amount.ToString();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

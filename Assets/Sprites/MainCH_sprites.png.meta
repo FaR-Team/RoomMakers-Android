@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -403,18 +403,18 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      MainCH_sprites_4: -253974542
+      MainCH_sprites_0: -725404168
+      MainCH_sprites_1: 1537435557
+      MainCH_sprites_10: 1544654954
+      MainCH_sprites_11: 1487714898
+      MainCH_sprites_2: -1617960442
       MainCH_sprites_3: -1983818092
+      MainCH_sprites_4: -253974542
+      MainCH_sprites_5: 1443165501
+      MainCH_sprites_6: 1452171241
       MainCH_sprites_7: 1156951115
       MainCH_sprites_8: 276272757
-      MainCH_sprites_6: 1452171241
-      MainCH_sprites_10: 1544654954
-      MainCH_sprites_1: 1537435557
-      MainCH_sprites_2: -1617960442
       MainCH_sprites_9: 1973450518
-      MainCH_sprites_5: 1443165501
-      MainCH_sprites_11: 1487714898
-      MainCH_sprites_0: -725404168
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

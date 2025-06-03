@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -320,13 +320,13 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       BathTub_0: -806342515
-      BathTub_7: -620335021
-      BathTub_2: 1022097502
-      BathTub_5: 4712758
       BathTub_1: -571170425
-      BathTub_4: 1124882442
-      BathTub_6: 591658475
+      BathTub_2: 1022097502
       BathTub_3: 1421732481
+      BathTub_4: 1124882442
+      BathTub_5: 4712758
+      BathTub_6: 591658475
+      BathTub_7: -620335021
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
