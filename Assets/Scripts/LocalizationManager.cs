@@ -6,6 +6,9 @@ public class LocalizationManager : MonoBehaviour
 
     [SerializeField] private GameObject tutorialEN;
     [SerializeField] private GameObject tutorialES;
+    [SerializeField] private UnityEngine.UI.Image labelerBackground;
+    [SerializeField] private Sprite labelerEN;
+    [SerializeField] private Sprite labelerES; // TODO: Capaz mas facil hacer nuestros scripts LocalizedSprite y LocalizedText pa agregar como componentes, que vean el bool de aca y se actualicen solos
 
     [SerializeField] private bool debug;
     [SerializeField] private bool english;
@@ -27,13 +30,7 @@ public class LocalizationManager : MonoBehaviour
 
     private void Start()
     {
-        if (debug)
-        {
-            tutorialEN.SetActive(english);
-            tutorialES.SetActive(!english);
-            return;
-        }
-        ActivateCorrectTutorial();
+        UpdateLocalizedObjects();
     }
 
     private void DetectLanguage()
@@ -54,7 +51,7 @@ public class LocalizationManager : MonoBehaviour
         Debug.Log($"Device language detected: {deviceLanguage}. Spanish mode: {IsSpanish}");
     }
 
-    private void ActivateCorrectTutorial()
+    private void UpdateLocalizedObjects()
     {
         if (tutorialEN != null && tutorialES != null)
         {
@@ -66,11 +63,13 @@ public class LocalizationManager : MonoBehaviour
         {
             Debug.LogWarning("Tutorial GameObjects not assigned in LocalizationManager!");
         }
+
+        if(labelerBackground) labelerBackground.sprite = IsSpanish ? labelerES : labelerEN;
     }
 
     public void SetLanguage(bool spanish)
     {
         IsSpanish = spanish;
-        ActivateCorrectTutorial();
+        UpdateLocalizedObjects();
     }
 }

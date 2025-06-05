@@ -3176,6 +3176,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tutorialEN: {fileID: 2067707888}
   tutorialES: {fileID: 255296957}
+  labelerBackground: {fileID: 1052995725}
+  labelerEN: {fileID: 21300000, guid: 1435f7f293d706f49aaa37dfa7fdf316, type: 3}
+  labelerES: {fileID: 21300000, guid: eec431ab6f6f98a40b3ce84138e3e03a, type: 3}
   debug: 0
   english: 0
 --- !u!4 &768024394
