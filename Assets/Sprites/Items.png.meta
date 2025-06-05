@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -320,13 +320,13 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       Hammer: 1070548395
-      Outlet: 783685359
-      Labeler: 1509756928
-      OutletInv: 145304480
-      LabelerInv: -407197743
-      PipeInv: -726473480
       HammerInv: -249881416
+      Labeler: 1509756928
+      LabelerInv: -407197743
+      Outlet: 783685359
+      OutletInv: 145304480
       Pipe: -1314714500
+      PipeInv: -726473480
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

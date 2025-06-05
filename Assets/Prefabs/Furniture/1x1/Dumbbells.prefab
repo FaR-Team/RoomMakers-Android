@@ -156,6 +156,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc2c07814d420624f927b3c233ee82ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalData: {fileID: 11400000, guid: 37c6be31b3b15e747b3582dbb7120ff6, type: 2}
+  originalData: {fileID: 11400000, guid: 591eb857dbc795f4cadee4bf710d0170, type: 2}
   comboValue: 20
   comboStarContainer: {fileID: 0}

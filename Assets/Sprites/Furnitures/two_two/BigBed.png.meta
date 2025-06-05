@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -487,22 +487,22 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      BigBed_4: 1109003892
-      BigBed_12: -134590812
       BigBed_0: 1570763965
-      BigBed_3: 305477545
-      BigBed_7: -540143952
-      BigBed_10: 398399262
-      BigBed_8: -1671170138
-      BigBed_13: -651952655
-      BigBed_2: -189906085
       BigBed_1: -396865226
-      BigBed_6: 1991041709
-      BigBed_14: 1267066451
-      BigBed_9: -1220510703
+      BigBed_10: 398399262
       BigBed_11: -1033768111
+      BigBed_12: -134590812
+      BigBed_13: -651952655
+      BigBed_14: 1267066451
       BigBed_15: 608180496
+      BigBed_2: -189906085
+      BigBed_3: 305477545
+      BigBed_4: 1109003892
       BigBed_5: 908913364
+      BigBed_6: 1991041709
+      BigBed_7: -540143952
+      BigBed_8: -1671170138
+      BigBed_9: -1220510703
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

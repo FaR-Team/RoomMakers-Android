@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -277,11 +277,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Treadmill_4: 925830817
+      Treadmill_0: -1989195346
       Treadmill_1: -1250495333
       Treadmill_2: 1877665223
       Treadmill_3: -2067741747
-      Treadmill_0: -1989195346
+      Treadmill_4: 925830817
       Treadmill_5: 509310691
   spritePackingTag: 
   pSDRemoveMatte: 0

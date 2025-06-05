@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -119,6 +119,18 @@ TextureImporter:
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -391,18 +403,18 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      Confirmed_0: 1508561150
+      Confirmed_1: 281228562
+      Confirmed_10: 57690082
+      Confirmed_11: -161422962
       Confirmed_2: -529881126
       Confirmed_3: -403081393
-      Confirmed_5: 779078359
-      Confirmed_8: -1552101936
-      Confirmed_7: -1553342661
-      Confirmed_10: 57690082
       Confirmed_4: 1890509349
-      Confirmed_1: 281228562
-      Confirmed_11: -161422962
-      Confirmed_0: 1508561150
-      Confirmed_9: 2112252001
+      Confirmed_5: 779078359
       Confirmed_6: 585170074
+      Confirmed_7: -1553342661
+      Confirmed_8: -1552101936
+      Confirmed_9: 2112252001
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

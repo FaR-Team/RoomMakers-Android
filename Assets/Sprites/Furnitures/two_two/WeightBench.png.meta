@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -236,8 +236,8 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       WeightBench_0: -1510173736
-      WeightBench_2: -1273439623
       WeightBench_1: 142199858
+      WeightBench_2: -1273439623
       WeightBench_3: 1767117329
   spritePackingTag: 
   pSDRemoveMatte: 0

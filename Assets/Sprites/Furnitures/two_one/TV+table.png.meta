@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -319,14 +319,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      TV+table_4: -696778899
+      TV+table_0: 1358170180
+      TV+table_1: 1858973809
       TV+table_2: -1240223865
       TV+table_3: 799244646
-      TV+table_0: 1358170180
+      TV+table_4: -696778899
       TV+table_5: 1493276417
-      TV+table_7: 1798604784
       TV+table_6: 484112232
-      TV+table_1: 1858973809
+      TV+table_7: 1798604784
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

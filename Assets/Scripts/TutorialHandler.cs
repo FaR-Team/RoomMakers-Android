@@ -8,6 +8,7 @@ public class TutorialHandler : MonoBehaviour
     [SerializeField] private Animator anim;
     [SerializeField] private GameObject tutorialObject;
     [SerializeField] private GameObject bButtonPromptObject; // Prompt for B button interaction
+    [SerializeField] private GameObject skipPromptObject; // Prompt for tutorial skip
     
     [SerializeField] TutorialStepData[] stepsData;
 
@@ -21,10 +22,14 @@ public class TutorialHandler : MonoBehaviour
     [SerializeField] private FurnitureOriginalData tvData;
     [SerializeField] private FurnitureOriginalData tableData;
 
+    private const string TutorialCompletedKey = "TutorialCompleted";
+
     private bool extraDialogueRequested;
+    private bool _canSkip;
 
     public bool onTutorial;
     public bool stepStarted;
+    public bool dialogueBoxOpen;
     
     public static event Action OnTutorialLockStateUpdated;
 
@@ -46,6 +51,8 @@ public class TutorialHandler : MonoBehaviour
         {
             bButtonPromptObject.SetActive(false);
         }
+
+        _canSkip = PlayerPrefs.GetInt(TutorialCompletedKey, 0) != 0;
     }
 
     void Start()
@@ -93,6 +100,9 @@ public class TutorialHandler : MonoBehaviour
         {
             StateManager.PauseGame();
             tutorialObject.SetActive(true);
+            dialogueBoxOpen = true;
+            
+            skipPromptObject.SetActive(_canSkip && tutorialStep == 1);
         }
         anim.SetInteger("TutorialStep", tutorialStep);
         anim.SetBool("Completed", false);
@@ -178,7 +188,7 @@ public class TutorialHandler : MonoBehaviour
 
     void Update()
     {
-        if (PlayerController.instance.playerInput.Movement.Start.WasPressedThisFrame())
+        if (_canSkip && PlayerController.instance.playerInput.Movement.Start.WasPressedThisFrame())
         {
             SkipTutorial();
         }
@@ -204,6 +214,7 @@ public class TutorialHandler : MonoBehaviour
         }
         StateManager.PauseGame();
         tutorialObject.SetActive(true);
+        dialogueBoxOpen = true;
         anim.SetInteger("TutorialStep", tutorialStep);
         anim.SetBool("Reminder", true);
         animPlaying = true;
@@ -226,7 +237,9 @@ public class TutorialHandler : MonoBehaviour
             return;
         }
 
+        dialogueBoxOpen = false;
         tutorialObject.SetActive(false);
+        skipPromptObject.SetActive(false);
         anim.SetBool("Extra", false);
         anim.SetBool("Reminder", false);
         StateManager.StartGame();
@@ -237,7 +250,7 @@ public class TutorialHandler : MonoBehaviour
         if(tutorialStep > 5 && !onTutorial)
         {
             OnTutorialLockStateUpdated?.Invoke();
-            Destroy(gameObject);
+            FinishTutorial();
         }
 
     }
@@ -278,8 +291,19 @@ public class TutorialHandler : MonoBehaviour
         
         UpdateBButtonPromptState();
 
-        Destroy(gameObject);
+        FinishTutorial();
         Debug.Log("TutorialHandler.SkipTutorial() finished, object destroyed.");
+    }
+
+    void FinishTutorial()
+    {
+        Destroy(gameObject);
+        PlayerPrefs.SetInt("TutorialCompleted", 1);
+    }
+
+    public bool CanSpawnPackage()
+    {
+        return !stepStarted && !dialogueBoxOpen;
     }
 }
 

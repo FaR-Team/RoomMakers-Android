@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -214,8 +214,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      PizzaBox_1: -1096245465
       PizzaBox_0: 1364092285
+      PizzaBox_1: -1096245465
       PizzaBox_2: -1091125020
   spritePackingTag: 
   pSDRemoveMatte: 0

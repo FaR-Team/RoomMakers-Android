@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -235,9 +235,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      BookStack_2: -128392697
       BookStack_0: 1863284609
       BookStack_1: -1038917469
+      BookStack_2: -128392697
       BookStack_3: -702354934
   spritePackingTag: 
   pSDRemoveMatte: 0

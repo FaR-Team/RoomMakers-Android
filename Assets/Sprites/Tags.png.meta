@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -340,15 +340,15 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Tags_7: 43272085
-      Tags_8: -1727320507
       Tags_0: 1147334548
-      Tags_6: -255480783
-      Tags_5: -1474585169
       Tags_1: -2089067712
       Tags_2: -1775409612
       Tags_3: -1962739621
       Tags_4: -933409266
+      Tags_5: -1474585169
+      Tags_6: -255480783
+      Tags_7: 43272085
+      Tags_8: -1727320507
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

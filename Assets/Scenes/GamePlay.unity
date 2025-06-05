@@ -1468,6 +1468,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2323899853877586473, guid: f45fd9392ad1c6e48b35b97a19793f76, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1ba2b6726e4782e40a99f473b8c80213, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f45fd9392ad1c6e48b35b97a19793f76, type: 3}
 --- !u!1 &255296957 stripped
@@ -3742,7 +3746,6 @@ GameObject:
   - component: {fileID: 843628705}
   - component: {fileID: 843628704}
   - component: {fileID: 843628706}
-  - component: {fileID: 843628707}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -3810,20 +3813,6 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
---- !u!114 &843628707
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 843628702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58ae6170e48a99f4395a226003e37601, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enableSave: 1
-  enableDiscord: 1
 --- !u!1 &858450939
 GameObject:
   m_ObjectHideFlags: 0
@@ -9066,6 +9055,58 @@ MonoBehaviour:
   text_name: {fileID: 248926907}
   itemImage: {fileID: 1970789222}
   PackageSprite: {fileID: 21300000, guid: 06b2c1d097903d649bc72a3029bd042f, type: 3}
+  increaseAnimationDuration: 1
+  decreaseAnimationDuration: 1
+  increaseAnimationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  decreaseAnimationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  shakeIntensity: 0.2
+  shakeDuration: 0.5
 --- !u!114 &2043652588
 MonoBehaviour:
   m_ObjectHideFlags: 0

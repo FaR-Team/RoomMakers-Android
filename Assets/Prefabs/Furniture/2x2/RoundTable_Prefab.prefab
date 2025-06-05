@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5380495227550931860}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4742169462697311698
 SpriteRenderer:
@@ -284,8 +284,8 @@ Transform:
   m_Children:
   - {fileID: 228621120225085452}
   - {fileID: 2769071299379545747}
-  - {fileID: 6675731748086053149}
   - {fileID: 7826829555525170765}
+  - {fileID: 6675731748086053149}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -328,7 +328,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originalData: {fileID: 11400000, guid: 733fd517e1f4d6b4681477fa636f927a, type: 2}
-  spriteRenderer: {fileID: 0}
   comboValue: 20
   comboStarContainer: {fileID: 0}
 --- !u!1 &8462201392644951220
@@ -361,7 +360,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5380495227550931860}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5740211150696872013
 SpriteRenderer:

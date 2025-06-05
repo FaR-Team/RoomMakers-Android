@@ -67,11 +67,7 @@ public class PlayerController : MovementController
     {
         if (!playerInput.Movement.SwitchMode.WasPressedThisFrame() || (IsMoving && StateManager.CurrentGameState == GameState.Moving) || StateManager.CurrentGameState == GameState.Pause) return;
 
-         // TODO: stop calling this everytime Space is pressed, do this only when turning edit mode on and object isn't updated
-        
-        // Create new furniture data if placing object for the first time
         FurnitureData furnitureData = null;
-        bool firstTimePlacing = false;
         
         if (inventory.furnitureInventoryWithData != null)
         {
@@ -81,15 +77,12 @@ public class PlayerController : MovementController
         {
             if (inventory.furnitureInventory)
             {
-                firstTimePlacing = true; // If there's no data in the inventory object, we're placing it for the first time, so we tell the furniturePreview to reward points when placed
                 furnitureData = new FurnitureData(inventory.furnitureInventory);
             }
         }
 
-        // Return if no data in the inventory
         if (furnitureData == null) return;
         
-        bool wasEditing = StateManager.IsEditing();
         StateManager.SwitchEditMode();
         bool isNowEditing = StateManager.IsEditing();
 
@@ -128,9 +121,7 @@ public class PlayerController : MovementController
 
     public void ForceSwitchEditingMode()
     {
-        // Create new furniture data if placing object for the first time
         FurnitureData furnitureData = null;
-        bool firstTimePlacing = false;
         
         if (inventory.furnitureInventoryWithData != null)
         {
@@ -140,15 +131,12 @@ public class PlayerController : MovementController
         {
             if (inventory.furnitureInventory)
             {
-                firstTimePlacing = true; // If there's no data in the inventory object, we're placing it for the first time, so we tell the furniturePreview to reward points when placed
                 furnitureData = new FurnitureData(inventory.furnitureInventory);
             }
         }
 
-        // Return if no data in the inventory
         if (furnitureData == null) return;
         
-        bool wasEditing = StateManager.IsEditing();
         StateManager.SwitchEditMode();
         bool isNowEditing = StateManager.IsEditing();
 
@@ -194,7 +182,6 @@ public class PlayerController : MovementController
 
     public void CheckInFront()
     {
-
         var hit = Physics2D.Raycast(transform.position, transform.up, 1f, 1 << 10 | 1 << 13 | 1 << 16);
 
         if (hit.collider != null)
@@ -202,16 +189,11 @@ public class PlayerController : MovementController
             Vector3 costPosition = GetCostTextPosition();
             costCanvas.transform.position = costPosition;
 
-            Color backgroundColor = SampleBackgroundColorAt(costPosition);
-            costText.color = GetInvertedColor(backgroundColor);
-
-            // Check if it's a door
             if (hit.collider.TryGetComponent(out DoorData doorData))
             {
                 costText.text = House.instance.DoorPrice.ToString();
                 costCanvas.SetActive(true);
             }
-            // Check if it's a shop item
             else if (hit.collider.TryGetComponent(out ShopItem shopItem))
             {
                 ItemData itemData = shopItem.GetItemData();
@@ -247,48 +229,6 @@ public class PlayerController : MovementController
             offset = new Vector3(-1, 1, 0);
 
         return transform.position + offset;
-    }
-
-    private Color GetInvertedColor(Color backgroundColor)
-    {
-        return new Color(1 - backgroundColor.r, 1 - backgroundColor.g, 1 - backgroundColor.b);
-    }
-
-    private Color SampleBackgroundColorAt(Vector3 position)
-    {
-        RenderTexture tempRT = RenderTexture.GetTemporary(1, 1, 0);
-        Camera mainCamera = Camera.main;
-        
-        RenderTexture prevRT = mainCamera.targetTexture;
-        
-        mainCamera.targetTexture = tempRT;
-        
-        int prevCullingMask = mainCamera.cullingMask;
-        
-        mainCamera.cullingMask = prevCullingMask & ~(1 << LayerMask.NameToLayer("UI"));
-        
-        mainCamera.Render();
-        
-        Texture2D texture = new Texture2D(1, 1, TextureFormat.RGB24, false);
-        
-        RenderTexture prevActive = RenderTexture.active;
-        
-        RenderTexture.active = tempRT;
-        
-        texture.ReadPixels(new Rect(0, 0, 1, 1), 0, 0);
-        texture.Apply();
-        
-        Color backgroundColor = texture.GetPixel(0, 0);
-        
-        RenderTexture.active = prevActive;
-        mainCamera.targetTexture = prevRT;
-        mainCamera.cullingMask = prevCullingMask;
-        
-        RenderTexture.ReleaseTemporary(tempRT);
-    
-        Destroy(texture);
-        
-        return backgroundColor;
     }
 
     private void Animate()

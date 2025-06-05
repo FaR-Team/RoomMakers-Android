@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -320,11 +320,11 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       TV_0: -862840100
-      TV_2: -718465577
       TV_1: 245489044
-      TV_5: -518771065
-      TV_4: 187858048
+      TV_2: -718465577
       TV_3: -1919344604
+      TV_4: 187858048
+      TV_5: -518771065
       TV_6: 629548532
       TV_7: 720831879
   spritePackingTag: 
