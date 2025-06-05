@@ -162,7 +162,12 @@ public class TutorialHandler : MonoBehaviour
             extraDialogueRequested = stepsData[tutorialStep - 1].hasExtraDialogue;
             StateManager.PauseGame();
 
-            if (tutorialObject != null) tutorialObject.SetActive(true);
+            if (tutorialObject != null)
+            {
+                tutorialObject.SetActive(true);
+                dialogueBoxOpen = true;
+            }
+            
             anim.SetInteger("TutorialStep", tutorialStep);
             anim.SetBool("Completed", true);
             animPlaying = true;
