@@ -30,7 +30,8 @@ public class TutorialHandler : MonoBehaviour
     public bool onTutorial;
     public bool stepStarted;
     public bool dialogueBoxOpen;
-    
+
+    private GameObject _currentPreviewAnimation;
     public static event Action OnTutorialLockStateUpdated;
 
     public static TutorialHandler instance;
@@ -103,6 +104,8 @@ public class TutorialHandler : MonoBehaviour
             dialogueBoxOpen = true;
             
             skipPromptObject.SetActive(_canSkip && tutorialStep == 1);
+            if(stepsData[tutorialStep - 1].animOnBeginStep) _currentPreviewAnimation = stepsData[tutorialStep - 1].animOnBeginStep;
+            _currentPreviewAnimation?.SetActive(true);
         }
         anim.SetInteger("TutorialStep", tutorialStep);
         anim.SetBool("Completed", false);
@@ -245,6 +248,8 @@ public class TutorialHandler : MonoBehaviour
         dialogueBoxOpen = false;
         tutorialObject.SetActive(false);
         skipPromptObject.SetActive(false);
+        _currentPreviewAnimation?.SetActive(false);
+        _currentPreviewAnimation = null;
         anim.SetBool("Extra", false);
         anim.SetBool("Reminder", false);
         StateManager.StartGame();
@@ -270,11 +275,13 @@ public class TutorialHandler : MonoBehaviour
     {
         Debug.Log($"Tutorial skip requested. Current step: {tutorialStep}, onTutorial: {onTutorial}, Time.timeScale before skip: {Time.timeScale}");
 
+        _currentPreviewAnimation?.SetActive(false);
         tutorialStep = 7; 
         onTutorial = false;
         stepStarted = false;
         animPlaying = false;
         extraDialogueRequested = false;
+        _currentPreviewAnimation = null;
 
         OnTutorialLockStateUpdated?.Invoke(); 
 
@@ -319,4 +326,5 @@ public struct TutorialStepData
     public bool hasCompletedAnim;
     public bool hasReminder;
     public bool hasExtraDialogue;
+    public GameObject animOnBeginStep;
 }
