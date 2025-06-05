@@ -1106,30 +1106,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93554bce9e975a142977c67b09ffeb90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugMode: 0
+  forceSpanish: 0
   controlsScreenRenderer: {fileID: 2076005581}
-  englishControlsSprite: {fileID: 21300000, guid: 514d0f37cf5e1da4699d528992ef56eb, type: 3}
-  spanishControlsSprite: {fileID: 21300000, guid: 5dac13803081dec44929f6e4d8efea7b, type: 3}
+  controlsEN: {fileID: 21300000, guid: 514d0f37cf5e1da4699d528992ef56eb, type: 3}
+  controlsES: {fileID: 21300000, guid: 5dac13803081dec44929f6e4d8efea7b, type: 3}
   creditsScreenRenderer: {fileID: 656125844}
-  englishCreditsSprite: {fileID: 21300000, guid: 25eb1d1be0ceb8a47aa270d14a46de01, type: 3}
-  spanishCreditsSprite: {fileID: 21300000, guid: 25eb1d1be0ceb8a47aa270d14a46de01, type: 3}
+  creditsEN: {fileID: 21300000, guid: 25eb1d1be0ceb8a47aa270d14a46de01, type: 3}
+  creditsES: {fileID: 21300000, guid: cd331ddf6b6569146a2f854a578d3466, type: 3}
+  buttonsMenuBackground: {fileID: 367749333}
+  buttonsMenuEN: {fileID: 21300000, guid: 2e4a920c585fd0e45b1f0088c65c08a4, type: 3}
+  buttonsMenuES: {fileID: 21300000, guid: 5890afc5c88fd104bbf9d017b6b4b20d, type: 3}
+  gameModeMenuBackground: {fileID: 2114795781}
+  gameModeMenuEN: {fileID: 21300000, guid: a8bdaf25f228ad749b4ffab4cee5f0fb, type: 3}
+  gameModeMenuES: {fileID: 21300000, guid: ba9c28f08c6d5e94ab3698551f658fcb, type: 3}
   playButton: {fileID: 2070536711}
   controlsButton: {fileID: 178707903}
   leaderboardsButton: {fileID: 9980620}
   creditsButton: {fileID: 1066480821}
   casualButton: {fileID: 937073572}
   rogueButton: {fileID: 1552428996}
-  englishPlaySprite: {fileID: 21300000, guid: 86f3d097c92f2394bb7c669beba2e37f, type: 3}
-  spanishPlaySprite: {fileID: 21300000, guid: 32a88837ac8d61348a1c24562bd0343b, type: 3}
-  englishControlsButtonSprite: {fileID: 21300000, guid: 04f4c097e12cc1f4aa88a7d9d6b6e0dd, type: 3}
-  spanishControlsButtonSprite: {fileID: 21300000, guid: 57ef1db164ff25b4d91ec7aa2fa9373e, type: 3}
-  englishLeaderboardsSprite: {fileID: 21300000, guid: 745f2401aa739e04f8b553701a3cb500, type: 3}
-  spanishLeaderboardsSprite: {fileID: 21300000, guid: 745f2401aa739e04f8b553701a3cb500, type: 3}
-  englishCreditsButtonSprite: {fileID: 21300000, guid: 150575b970e45c6469ac8399a8740202, type: 3}
-  spanishCreditsButtonSprite: {fileID: 21300000, guid: a692588ab8859af4d9877bdf45e22475, type: 3}
-  englishCasualSprite: {fileID: 21300000, guid: 73bbcf2e363a04b4893c937a3c0863f4, type: 3}
-  spanishCasualSprite: {fileID: 21300000, guid: 73bbcf2e363a04b4893c937a3c0863f4, type: 3}
-  englishRogueSprite: {fileID: 21300000, guid: 3e5c19cf1de0a174bb88e7f41c5a60c8, type: 3}
-  spanishRogueSprite: {fileID: 21300000, guid: 3e5c19cf1de0a174bb88e7f41c5a60c8, type: 3}
+  playEN: {fileID: 21300000, guid: 86f3d097c92f2394bb7c669beba2e37f, type: 3}
+  playES: {fileID: 21300000, guid: 32a88837ac8d61348a1c24562bd0343b, type: 3}
+  controlsBtnEN: {fileID: 21300000, guid: 04f4c097e12cc1f4aa88a7d9d6b6e0dd, type: 3}
+  controlsBtnES: {fileID: 21300000, guid: 57ef1db164ff25b4d91ec7aa2fa9373e, type: 3}
+  leaderboardsEN: {fileID: 21300000, guid: 745f2401aa739e04f8b553701a3cb500, type: 3}
+  leaderboardsES: {fileID: 21300000, guid: 745f2401aa739e04f8b553701a3cb500, type: 3}
+  creditsBtnEN: {fileID: 21300000, guid: 150575b970e45c6469ac8399a8740202, type: 3}
+  creditsBtnES: {fileID: 21300000, guid: a692588ab8859af4d9877bdf45e22475, type: 3}
+  casualEN: {fileID: 21300000, guid: 73bbcf2e363a04b4893c937a3c0863f4, type: 3}
+  casualES: {fileID: 21300000, guid: 73bbcf2e363a04b4893c937a3c0863f4, type: 3}
+  rogueEN: {fileID: 21300000, guid: 3e5c19cf1de0a174bb88e7f41c5a60c8, type: 3}
+  rogueES: {fileID: 21300000, guid: 3e5c19cf1de0a174bb88e7f41c5a60c8, type: 3}
 --- !u!1 &367749330
 GameObject:
   m_ObjectHideFlags: 0
