@@ -94,7 +94,7 @@ public class PackagesGenerator : MonoBehaviour
         }
 
         
-        if (TutorialHandler.AreDoorsTutorialLocked())
+        if (TutorialHandler.AreDoorsTutorialLocked()) //TODO: Creo que este if ya está al pedo, probar
         {
             
             Debug.Log("[PackagesGenerator] Tutorial is active and controlling flow (doors locked), but no specific tutorial items in queue. Waiting.");
