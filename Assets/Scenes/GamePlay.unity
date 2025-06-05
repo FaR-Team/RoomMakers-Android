@@ -6010,8 +6010,8 @@ MonoBehaviour:
   deletedFurnitures: []
   tutorialObjects:
   - {fileID: 11400000, guid: 5d3bf39e9b59b5e4fabbf6c92e9df8ef, type: 2}
-  - {fileID: 11400000, guid: b0169168ff310264292d9af4de8dbe59, type: 2}
   - {fileID: 11400000, guid: 6e00cf28cf6b3724892f7167e0e46a54, type: 2}
+  - {fileID: 11400000, guid: b0169168ff310264292d9af4de8dbe59, type: 2}
   - {fileID: 11400000, guid: dadec6abf8f8e914e806e483f6c61e0a, type: 2}
   - {fileID: 11400000, guid: 78d2305b33f3e5f41a9997d6bb9ab345, type: 2}
   - {fileID: 11400000, guid: ef5bd1895e952a546a8317cc234ca22e, type: 2}
