@@ -49,6 +49,12 @@ public class DebugManager : MonoBehaviour
     private Slider maxDoorPriceSlider;
     private TextMeshProUGUI maxDoorPriceValueText;
     private Button setMaxDoorPriceButton;
+
+    private TextMeshProUGUI difficultyInfoText;
+    private Toggle difficultySystemToggle;
+    private Slider difficultyTierSlider;
+    private TextMeshProUGUI difficultyTierText;
+    private Button resetDifficultyButton;
     
     private Button addRoomButton;
     private Button clearRoomButton;
@@ -329,6 +335,8 @@ public class DebugManager : MonoBehaviour
         CreateShopControls(contentTransform);
         
         CreateRoomControls(contentTransform);
+        
+        CreateDifficultyControls(contentTransform);
 
         CreateConsole(contentTransform);
         
@@ -970,14 +978,14 @@ public class DebugManager : MonoBehaviour
         RectTransform panelRect = roomPanel.GetComponent<RectTransform>();
         panelRect.sizeDelta = new Vector2(0, buttonHeight * 2 + elementSpacing + panelPadding * 2);
     }
-
-    private void CreateConsole(Transform parent)
+    
+    private void CreateDifficultyControls(Transform parent)
     {
-        CreateSectionHeader(parent, "CONSOLE");
+        CreateSectionHeader(parent, "DIFFICULTY CONTROLS");
         
-        GameObject consolePanel = CreatePanel(parent, "ConsolePanel");
+        GameObject difficultyPanel = CreatePanel(parent, "DifficultyPanel");
         
-        VerticalLayoutGroup layoutGroup = consolePanel.AddComponent<VerticalLayoutGroup>();
+        VerticalLayoutGroup layoutGroup = difficultyPanel.AddComponent<VerticalLayoutGroup>();
         layoutGroup.padding = new RectOffset(
             Mathf.RoundToInt(panelPadding), 
             Mathf.RoundToInt(panelPadding), 
@@ -989,95 +997,178 @@ public class DebugManager : MonoBehaviour
         layoutGroup.childControlWidth = true;
         layoutGroup.childForceExpandWidth = true;
         
+        difficultyInfoText = CreateLabel(difficultyPanel.transform, "Difficulty: Disabled", buttonHeight * 0.5f);
+        
+        difficultySystemToggle = CreateToggle(difficultyPanel.transform, "Enable Difficulty System", 
+                                            GetDifficultySystemEnabled(), ToggleDifficultySystem);
+        
+        difficultyTierSlider = CreateSlider(difficultyPanel.transform, "Manual Difficulty Tier", 0, 10, 
+                                        GetCurrentDifficultyTier(), UpdateDifficultyTier, out difficultyTierText);
+        difficultyTierText.text = $"Tier: {GetCurrentDifficultyTier()}";
+        
+        resetDifficultyButton = CreateButton(difficultyPanel.transform, "Reset Difficulty", ResetDifficulty);
+        
+        RectTransform panelRect = difficultyPanel.GetComponent<RectTransform>();
+        panelRect.sizeDelta = new Vector2(0, buttonHeight * 1.5f + toggleHeight + sliderHeight * 2.2f + buttonHeight + elementSpacing * 3 + panelPadding * 2);
+    }
+
+    private bool GetDifficultySystemEnabled()
+    {
+        if (House.instance == null) return false;
+        
+        var field = typeof(House).GetField("useDifficultySystem", 
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        
+        if (field != null)
+            return (bool)field.GetValue(House.instance);
+            
+        return false;
+    }
+
+    private int GetCurrentDifficultyTier()
+    {
+        if (House.instance == null) return 0;
+        return House.instance.CurrentDifficultyTier;
+    }
+
+    private void ToggleDifficultySystem(bool isOn)
+    {
+        if (House.instance == null) return;
+        House.instance.SetDifficultySystem(isOn);
+    }
+
+    private void UpdateDifficultyTier(float value)
+    {
+        int tier = Mathf.RoundToInt(value);
+        if (House.instance != null)
+        {
+            House.instance.SetDifficultyTier(tier);
+        }
+        
+        if (difficultyTierText != null)
+        {
+            difficultyTierText.text = $"Tier: {tier}";
+        }
+    }
+
+    private void ResetDifficulty()
+    {
+        if (House.instance == null) return;
+        House.instance.ResetDifficulty();
+        
+        if (difficultyTierSlider != null)
+        {
+            difficultyTierSlider.value = 0;
+        }
+    }
+
+    private void CreateConsole(Transform parent)
+    {
+        CreateSectionHeader(parent, "CONSOLE");
+
+        GameObject consolePanel = CreatePanel(parent, "ConsolePanel");
+
+        VerticalLayoutGroup layoutGroup = consolePanel.AddComponent<VerticalLayoutGroup>();
+        layoutGroup.padding = new RectOffset(
+            Mathf.RoundToInt(panelPadding),
+            Mathf.RoundToInt(panelPadding),
+            Mathf.RoundToInt(panelPadding),
+            Mathf.RoundToInt(panelPadding)
+        );
+        layoutGroup.spacing = elementSpacing;
+        layoutGroup.childAlignment = TextAnchor.UpperLeft;
+        layoutGroup.childControlWidth = true;
+        layoutGroup.childForceExpandWidth = true;
+
         GameObject controlsObj = new GameObject("ConsoleControls", typeof(RectTransform));
         controlsObj.transform.SetParent(consolePanel.transform, false);
-        
+
         HorizontalLayoutGroup controlsLayout = controlsObj.AddComponent<HorizontalLayoutGroup>();
         controlsLayout.spacing = elementSpacing;
         controlsLayout.childAlignment = TextAnchor.MiddleLeft;
         controlsLayout.childControlWidth = false;
         controlsLayout.childForceExpandWidth = false;
-        
+
         RectTransform controlsRect = controlsObj.GetComponent<RectTransform>();
         controlsRect.sizeDelta = new Vector2(0, buttonHeight * 0.8f);
-        
+
         Toggle logsToggle = CreateConsoleToggle(controlsObj.transform, "Logs", true, Color.white, ToggleLogMessages);
         Toggle warningsToggle = CreateConsoleToggle(controlsObj.transform, "Warnings", true, new Color(1f, 0.8f, 0.2f), ToggleWarningMessages);
         Toggle errorsToggle = CreateConsoleToggle(controlsObj.transform, "Errors", true, new Color(1f, 0.3f, 0.3f), ToggleErrorMessages);
-        
+
         GameObject spacerObj = new GameObject("Spacer", typeof(RectTransform));
         spacerObj.transform.SetParent(controlsObj.transform, false);
         LayoutElement spacer = spacerObj.AddComponent<LayoutElement>();
         spacer.flexibleWidth = 1;
-        
+
         GameObject clearButtonObj = new GameObject("ClearButton", typeof(RectTransform));
         clearButtonObj.transform.SetParent(controlsObj.transform, false);
-        
+
         Image clearButtonImage = clearButtonObj.AddComponent<Image>();
         clearButtonImage.color = new Color(0.3f, 0.3f, 0.3f, 1f);
-        
+
         Button clearButton = clearButtonObj.AddComponent<Button>();
         clearButton.onClick.AddListener(ClearConsole);
         clearButton.targetGraphic = clearButtonImage;
-        
+
         ColorBlock clearColors = clearButton.colors;
         clearColors.normalColor = new Color(0.4f, 0.2f, 0.2f, 1f);
         clearColors.highlightedColor = new Color(0.5f, 0.3f, 0.3f, 1f);
         clearColors.pressedColor = new Color(0.3f, 0.1f, 0.1f, 1f);
         clearButton.colors = clearColors;
-        
+
         GameObject clearTextObj = new GameObject("Text", typeof(RectTransform));
         clearTextObj.transform.SetParent(clearButtonObj.transform, false);
-        
+
         TextMeshProUGUI clearButtonText = clearTextObj.AddComponent<TextMeshProUGUI>();
         clearButtonText.text = "Clear";
         clearButtonText.fontSize = baseFontSize * 0.9f;
         clearButtonText.color = Color.white;
         clearButtonText.alignment = TextAlignmentOptions.Center;
-        
+
         RectTransform clearButtonRect = clearButtonObj.GetComponent<RectTransform>();
         clearButtonRect.sizeDelta = new Vector2(buttonHeight * 1.5f, buttonHeight * 0.8f);
-        
+
         RectTransform clearTextRect = clearTextObj.GetComponent<RectTransform>();
         clearTextRect.anchorMin = Vector2.zero;
         clearTextRect.anchorMax = Vector2.one;
         clearTextRect.sizeDelta = Vector2.zero;
-        
+
         GameObject consoleOutputObj = new GameObject("ConsoleOutput", typeof(RectTransform));
         consoleOutputObj.transform.SetParent(consolePanel.transform, false);
-        
+
         Image outputBgImage = consoleOutputObj.AddComponent<Image>();
         outputBgImage.color = new Color(0.08f, 0.08f, 0.08f, 1f);
-        
+
         GameObject scrollViewObj = CreateScrollView(consoleOutputObj.transform);
         Transform contentTransform = scrollViewObj.transform.Find("Viewport/Content");
-        
+
         VerticalLayoutGroup contentLayout = contentTransform.gameObject.AddComponent<VerticalLayoutGroup>();
         contentLayout.padding = new RectOffset(
-            Mathf.RoundToInt(panelPadding/2), 
-            Mathf.RoundToInt(panelPadding/2), 
-            Mathf.RoundToInt(panelPadding/2), 
-            Mathf.RoundToInt(panelPadding/2)
+            Mathf.RoundToInt(panelPadding / 2),
+            Mathf.RoundToInt(panelPadding / 2),
+            Mathf.RoundToInt(panelPadding / 2),
+            Mathf.RoundToInt(panelPadding / 2)
         );
-        contentLayout.spacing = elementSpacing/2;
+        contentLayout.spacing = elementSpacing / 2;
         contentLayout.childAlignment = TextAnchor.UpperLeft;
         contentLayout.childControlWidth = true;
         contentLayout.childForceExpandWidth = true;
         contentLayout.childControlHeight = false;
         contentLayout.childForceExpandHeight = false;
-        
+
         ContentSizeFitter contentSizeFitter = contentTransform.gameObject.AddComponent<ContentSizeFitter>();
         contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-        
+
         consoleContent = contentTransform;
         scrollRect = scrollViewObj.GetComponent<ScrollRect>();
-        
+
         RectTransform outputRect = consoleOutputObj.GetComponent<RectTransform>();
         outputRect.sizeDelta = new Vector2(0, buttonHeight * 5);
-        
+
         RectTransform panelRect = consolePanel.GetComponent<RectTransform>();
         panelRect.sizeDelta = new Vector2(0, buttonHeight * 6 + elementSpacing * 2 + panelPadding * 2);
-        
+
         Application.logMessageReceived += HandleLog;
     }
     
@@ -1407,23 +1498,28 @@ public class DebugManager : MonoBehaviour
             UpdateDebugInfo();
         }
     }
-    
+
     public void UpdateDebugInfo()
     {
         if (!isDebugEnabled || House.instance == null) return;
-        
+
         scoreText.text = $"Score: {House.instance.Score}";
         doorPriceText.text = $"Door Price: {House.instance.DoorPrice}";
         roomsBuiltText.text = $"Rooms Built: {GetRoomsBuilt()}";
-        
+
         if (growthFactorText != null)
         {
             growthFactorText.text = $"Growth Factor: {GetGrowthFactor():F2}";
         }
-        
+
         if (availableTilesText != null && MainRoom.instance != null)
         {
             availableTilesText.text = $"Available Tiles: {MainRoom.instance.availableTiles}";
+        }
+        
+        if (difficultyInfoText != null)
+        {
+            difficultyInfoText.text = House.instance.GetDifficultyInfo();
         }
     }
     

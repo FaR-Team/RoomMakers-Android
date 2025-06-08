@@ -40,6 +40,19 @@ public class House : MonoBehaviour
     [SerializeField] private float shopSpawnProbability = 0.15f;
     [SerializeField] private bool allowShopsInCorners = false;
     
+    [Header("Difficulty Settings")]
+    [SerializeField] private bool useDifficultySystem = false;
+    [SerializeField] private int roomsPerDifficultyTier = 5;
+    [SerializeField] private float difficultyMultiplier = 1.2f;
+    [SerializeField] private int maxDifficultyTier = 10;
+    [SerializeField] private bool showDifficultyDebug = false;
+    
+    [Header("Difficulty Room Variants")]
+    [SerializeField] private GameObject[] easyRoomPrefabs;
+    [SerializeField] private GameObject[] mediumRoomPrefabs;
+    [SerializeField] private GameObject[] hardRoomPrefabs;
+    [SerializeField] private GameObject[] extremeRoomPrefabs;
+    
     [Header("Door Price Settings")]
     [Tooltip("Precio inicial")] public int baseDoorPrice = 100;
     [Tooltip("Controla qué tan rápido suben los precios")] public float priceGrowthFactor = 1.2f;
@@ -50,11 +63,13 @@ public class House : MonoBehaviour
     private int doorPrice;
     private int roomsBuilt = 0;
     private int score = 0;
+    private int currentDifficultyTier = 0;
 
     public int roomHeight = 9;
     public int roomWidth = 10;
     public int DoorPrice => doorPrice;
     public int Score => score;
+    public int CurrentDifficultyTier => currentDifficultyTier;
 
     [SerializeField] private float roomTransitionTime = .3f;
     private Camera _mainCam;
@@ -71,7 +86,6 @@ public class House : MonoBehaviour
     [Header("Furniture Indicators")]
     public GameObject requiredBaseIndicatorPrefab;
 
-
     void Awake()
     {
         if (instance == null || instance != this)
@@ -85,7 +99,9 @@ public class House : MonoBehaviour
         roomsBuilt = 0;
         restockPrice = baseRestockPrice;
         timesRestocked = 0;
+        currentDifficultyTier = 0;
     }
+    
     public Room SpawnRoom(Vector3 position)
     {
         if (!Habitaciones.TryGetValue(position, out Room room))
@@ -93,6 +109,7 @@ public class House : MonoBehaviour
             UpdateScore(doorPrice);
             roomsBuilt++;
             CalculateNextDoorPrice();
+            UpdateDifficultyTier();
         
             int x = (int)position.x / roomWidth;
             int y = (int)position.y / roomHeight;
@@ -102,19 +119,80 @@ public class House : MonoBehaviour
             Habitaciones.Add(position, _room);
             _room.cameraVector = new Vector3(position.x, position.y, -3);
 
+            if (showDifficultyDebug)
+            {
+                Debug.Log($"Spawned room at tier {currentDifficultyTier}, total rooms: {roomsBuilt}");
+            }
+
             return _room;
         }
         else return GetRoom(position);
     }
+    
+    private void UpdateDifficultyTier()
+    {
+        if (!useDifficultySystem) return;
+        
+        int newTier = Mathf.Min(roomsBuilt / roomsPerDifficultyTier, maxDifficultyTier);
+        
+        if (newTier > currentDifficultyTier)
+        {
+            currentDifficultyTier = newTier;
+            if (showDifficultyDebug)
+            {
+                Debug.Log($"Difficulty increased to tier {currentDifficultyTier}!");
+            }
+        }
+    }
+    
+    private DifficultyLevel GetCurrentDifficultyLevel()
+    {
+        if (!useDifficultySystem) return DifficultyLevel.Easy;
+        
+        float tierProgress = (float)currentDifficultyTier / maxDifficultyTier;
+        
+        if (tierProgress <= 0.25f) return DifficultyLevel.Easy;
+        if (tierProgress <= 0.5f) return DifficultyLevel.Medium;
+        if (tierProgress <= 0.75f) return DifficultyLevel.Hard;
+        return DifficultyLevel.Extreme;
+    }
+    
+    private GameObject[] GetRoomPrefabsByDifficulty(DifficultyLevel difficulty)
+    {
+        return difficulty switch
+        {
+            DifficultyLevel.Easy => easyRoomPrefabs?.Length > 0 ? easyRoomPrefabs : roomPrefabs,
+            DifficultyLevel.Medium => mediumRoomPrefabs?.Length > 0 ? mediumRoomPrefabs : roomPrefabs,
+            DifficultyLevel.Hard => hardRoomPrefabs?.Length > 0 ? hardRoomPrefabs : roomPrefabs,
+            DifficultyLevel.Extreme => extremeRoomPrefabs?.Length > 0 ? extremeRoomPrefabs : roomPrefabs,
+            _ => roomPrefabs
+        };
+    }
+    
+    private float GetDifficultyShopProbability()
+    {
+        if (!useDifficultySystem) return shopSpawnProbability;
+        
+        float difficultyBonus = currentDifficultyTier * 0.05f;
+        return shopSpawnProbability - difficultyBonus;
+    }
+
     private void CalculateNextDoorPrice()
     {
+        float difficultyPriceMultiplier = 1f;
+        
+        if (useDifficultySystem)
+        {
+            difficultyPriceMultiplier = Mathf.Pow(difficultyMultiplier, currentDifficultyTier);
+        }
+        
         if (useExponentialGrowth)
         {
-            doorPrice = Mathf.RoundToInt(baseDoorPrice * Mathf.Pow(priceGrowthFactor, roomsBuilt));
+            doorPrice = Mathf.RoundToInt(baseDoorPrice * Mathf.Pow(priceGrowthFactor, roomsBuilt) * difficultyPriceMultiplier);
         }
         else
         {
-            doorPrice = baseDoorPrice + (priceAdditive * roomsBuilt);
+            doorPrice = Mathf.RoundToInt((baseDoorPrice + (priceAdditive * roomsBuilt)) * difficultyPriceMultiplier);
         }
 
         doorPrice = Mathf.RoundToInt(doorPrice / 5f) * 5;
@@ -181,14 +259,10 @@ public class House : MonoBehaviour
         else return null;
     }
 
-
     public void TransitionToRoom(Vector3 position, int color)
     {
-        // Si ya estamos en la habitacion, no mover, pensar mejor forma de hacer que no se interactue con las
-        // puertas de la habitacion en la que ya estamos
         if (_mainCam.transform.position == position) return;
 
-        // CAMBIAR DESPUES, NO HARDCODEAR -12 SINO CAPAZ PASAR LA HABITACION POR PARAMETRO Y AHI SACAR LAS POSICIONES
         Vector3 roomPos = new Vector3(position.x, position.y, -12f);
         currentRoom = Habitaciones[roomPos];
 
@@ -203,7 +277,6 @@ public class House : MonoBehaviour
 
     IEnumerator MoveCamNextRoom(Vector3 position, int color)
     {
-        // Esconder UI temporalmente
         uiContainer.SetActive(false);
         
         Vector3 initialCameraPos = _mainCam.transform.position;
@@ -226,7 +299,6 @@ public class House : MonoBehaviour
         _mainCam.transform.position = position;
         ColourChanger.instance.ChangeColour(color);
         
-        // Mostrar UI tras la transición
         uiContainer.SetActive(true);
         
         yield return null;
@@ -235,11 +307,11 @@ public class House : MonoBehaviour
     void RandomizeRoom(string type)
     {
         bool shouldSpawnShop = false;
-
+        DifficultyLevel currentDifficulty = GetCurrentDifficultyLevel();
 
         if (type == "center" && shopRoomPrefabs != null && shopRoomPrefabs.Length > 0)
         {
-            shouldSpawnShop = Random.value < shopSpawnProbability;
+            shouldSpawnShop = Random.value < GetDifficultyShopProbability();
         }
         
         if (shouldSpawnShop)
@@ -248,10 +320,13 @@ public class House : MonoBehaviour
             selectedPrefab = shopRoomPrefabs[shopIndex];
             return;
         }
+        
+        GameObject[] roomsToUse = GetRoomPrefabsByDifficulty(currentDifficulty);
+        
         if (type == "center")
         {
-            int index = Random.Range(0, roomPrefabs.Length);
-            selectedPrefab = roomPrefabs[index];
+            int index = Random.Range(0, roomsToUse.Length);
+            selectedPrefab = roomsToUse[index];
         }
         else if (type == "Top")
         {
@@ -268,7 +343,7 @@ public class House : MonoBehaviour
             int index = Random.Range(0, roomLeftPrefabs.Length);
             selectedPrefab = roomLeftPrefabs[index];
         }
-        else if (type == "Right")
+        else if (type == "right")
         {
             int index = Random.Range(0, roomRightPrefabs.Length);
             selectedPrefab = roomRightPrefabs[index];
@@ -293,6 +368,11 @@ public class House : MonoBehaviour
             int index = Random.Range(0, roomBottomRightCornerPrefabs.Length);
             selectedPrefab = roomBottomRightCornerPrefabs[index];
         }
+        
+        if (showDifficultyDebug && type == "center")
+        {
+            Debug.Log($"Selected {currentDifficulty} difficulty room from {roomsToUse.Length} options");
+        }
     }
 
     public void IncreaseRestockPrice()
@@ -305,7 +385,7 @@ public class House : MonoBehaviour
         if (maxRestockPrice > 0 && restockPrice > maxRestockPrice)
         {
             restockPrice = maxRestockPrice;
-            restockPrice = Mathf.RoundToInt(restockPrice / 5f) * 5;
+                        restockPrice = Mathf.RoundToInt(restockPrice / 5f) * 5;
         }
     }
 
@@ -320,4 +400,49 @@ public class House : MonoBehaviour
             _ => null
         };
     }
+    
+    public void SetDifficultySystem(bool enabled)
+    {
+        useDifficultySystem = enabled;
+        if (showDifficultyDebug)
+        {
+            Debug.Log($"Difficulty system {(enabled ? "enabled" : "disabled")}");
+        }
+    }
+    
+    public void SetDifficultyTier(int tier)
+    {
+        currentDifficultyTier = Mathf.Clamp(tier, 0, maxDifficultyTier);
+        if (showDifficultyDebug)
+        {
+            Debug.Log($"Difficulty tier manually set to {currentDifficultyTier}");
+        }
+    }
+    
+    public void ResetDifficulty()
+    {
+        currentDifficultyTier = 0;
+        if (showDifficultyDebug)
+        {
+            Debug.Log("Difficulty reset to tier 0");
+        }
+    }
+    
+    public string GetDifficultyInfo()
+    {
+        if (!useDifficultySystem) return "Difficulty: Disabled";
+        
+        DifficultyLevel level = GetCurrentDifficultyLevel();
+        float shopProb = GetDifficultyShopProbability();
+        
+        return $"Tier: {currentDifficultyTier}/{maxDifficultyTier} | Level: {level} | Shop Prob: {shopProb:P0}";
+    }
+}
+
+public enum DifficultyLevel
+{
+    Easy,
+    Medium,
+    Hard,
+    Extreme
 }

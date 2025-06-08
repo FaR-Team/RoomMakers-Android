@@ -4458,6 +4458,20 @@ MonoBehaviour:
   - {fileID: 5748501361486919024, guid: 75928f108f2ba454f9077e9e0cb4c18f, type: 3}
   shopSpawnProbability: 0.1
   allowShopsInCorners: 0
+  useDifficultySystem: 0
+  roomsPerDifficultyTier: 5
+  difficultyMultiplier: 1.2
+  maxDifficultyTier: 10
+  showDifficultyDebug: 0
+  easyRoomPrefabs:
+  - {fileID: 5748501361486919024, guid: 548fac61bf3e4a746843ea49bfa68b30, type: 3}
+  - {fileID: 5748501361486919024, guid: 364389e3fda97374ca7186476b5dc335, type: 3}
+  mediumRoomPrefabs:
+  - {fileID: 5748501361486919024, guid: b8bba40f1c4cd4f45b4719926a492a04, type: 3}
+  hardRoomPrefabs:
+  - {fileID: 5748501361486919024, guid: 2efb1333c3ce84848966928dc931ba4c, type: 3}
+  - {fileID: 5748501361486919024, guid: be6c35782de254c418034fa1a3bf4232, type: 3}
+  extremeRoomPrefabs: []
   baseDoorPrice: 100
   priceGrowthFactor: 1.3
   priceAdditive: 200
