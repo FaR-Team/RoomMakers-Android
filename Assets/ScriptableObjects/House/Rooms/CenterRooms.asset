@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db47fd7b9034b7a43a532dd944c6a58e, type: 3}
+  m_Name: CenterRooms
+  m_EditorClassIdentifier: 
+  roomTypeName: Center
+  position: 0
+  roomPrefabs:
+  - {fileID: 5748501361486919024, guid: 548fac61bf3e4a746843ea49bfa68b30, type: 3}
+  - {fileID: 5748501361486919024, guid: be6c35782de254c418034fa1a3bf4232, type: 3}
+  - {fileID: 5748501361486919024, guid: 364389e3fda97374ca7186476b5dc335, type: 3}
+  - {fileID: 5748501361486919024, guid: 2efb1333c3ce84848966928dc931ba4c, type: 3}
+  - {fileID: 5748501361486919024, guid: b8bba40f1c4cd4f45b4719926a492a04, type: 3}
+  easyVariants: []
+  mediumVariants: []
+  hardVariants: []
+  extremeVariants: []
+  canSpawnShops: 1
+  shopSpawnMultiplier: 1

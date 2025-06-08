@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db47fd7b9034b7a43a532dd944c6a58e, type: 3}
+  m_Name: BottomRightCornerRooms
+  m_EditorClassIdentifier: 
+  roomTypeName: Bottom Right Corner
+  position: 8
+  roomPrefabs:
+  - {fileID: 5748501361486919024, guid: 0a257a16a7f080b42ad4ddefdca0cf89, type: 3}
+  - {fileID: 5748501361486919024, guid: 215f4131e7875aa4ca05a46760bd48e2, type: 3}
+  - {fileID: 5748501361486919024, guid: ad3ce27ac4ca4b746bc5cc119fe61392, type: 3}
+  - {fileID: 5748501361486919024, guid: 1c34e7521c19dbd48afaaa2cbe7c9142, type: 3}
+  - {fileID: 5748501361486919024, guid: e804c41bc10c42d42b3e4d51fcfc56f6, type: 3}
+  easyVariants: []
+  mediumVariants: []
+  hardVariants: []
+  extremeVariants: []
+  canSpawnShops: 0
+  shopSpawnMultiplier: 1

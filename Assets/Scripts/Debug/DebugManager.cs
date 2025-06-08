@@ -869,12 +869,16 @@ public class DebugManager : MonoBehaviour
     {
         if (House.instance == null) return 0.15f;
         
-        var field = typeof(House).GetField("shopSpawnProbability", 
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-        
-        if (field != null)
-            return (float)field.GetValue(House.instance);
+        RoomGenerator generator = House.instance.GetRoomGenerator();
+        if (generator != null)
+        {
+            var field = typeof(RoomGenerator).GetField("baseShopProbability", 
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             
+            if (field != null)
+                return (float)field.GetValue(generator);
+        }
+        
         return 0.15f;
     }
 
@@ -882,21 +886,15 @@ public class DebugManager : MonoBehaviour
     {
         if (House.instance == null) return;
         
-        var field = typeof(House).GetField("shopSpawnProbability", 
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        House.instance.SetShopSpawnProbability(value);
         
-        if (field != null)
+        var textComponents = GameObject.FindObjectsOfType<TextMeshProUGUI>();
+        foreach (var text in textComponents)
         {
-            field.SetValue(House.instance, value);
-            
-            var textComponents = GameObject.FindObjectsOfType<TextMeshProUGUI>();
-            foreach (var text in textComponents)
+            if (text.gameObject.name == "Value" && text.transform.parent.name.Contains("Shop"))
             {
-                if (text.gameObject.name == "Value" && text.transform.parent.name.Contains("Shop"))
-                {
-                    text.text = $"Probability: {value:P0}";
-                    break;
-                }
+                text.text = $"Probability: {value:P0}";
+                break;
             }
         }
     }
@@ -905,12 +903,16 @@ public class DebugManager : MonoBehaviour
     {
         if (House.instance == null) return false;
         
-        var field = typeof(House).GetField("allowShopsInCorners", 
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-        
-        if (field != null)
-            return (bool)field.GetValue(House.instance);
+        RoomGenerator generator = House.instance.GetRoomGenerator();
+        if (generator != null)
+        {
+            var field = typeof(RoomGenerator).GetField("allowShopsInCorners", 
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             
+            if (field != null)
+                return (bool)field.GetValue(generator);
+        }
+        
         return false;
     }
 
@@ -918,37 +920,33 @@ public class DebugManager : MonoBehaviour
     {
         if (House.instance == null) return;
         
-        var field = typeof(House).GetField("allowShopsInCorners", 
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-        
-        if (field != null)
-            field.SetValue(House.instance, isOn);
+        House.instance.SetAllowShopsInCorners(isOn);
     }
     
     private void CreateDoorPriceControls(Transform parent)
     {
         CreateSectionHeader(parent, "DOOR PRICE CONTROLS");
-        
+
         GameObject doorPricePanel = CreatePanel(parent, "DoorPricePanel");
-        
+
         VerticalLayoutGroup layoutGroup = doorPricePanel.AddComponent<VerticalLayoutGroup>();
         layoutGroup.padding = new RectOffset(
-            Mathf.RoundToInt(panelPadding), 
-            Mathf.RoundToInt(panelPadding), 
-            Mathf.RoundToInt(panelPadding), 
+            Mathf.RoundToInt(panelPadding),
+            Mathf.RoundToInt(panelPadding),
+            Mathf.RoundToInt(panelPadding),
             Mathf.RoundToInt(panelPadding)
         );
         layoutGroup.spacing = elementSpacing;
-                layoutGroup.childAlignment = TextAnchor.UpperLeft;
+        layoutGroup.childAlignment = TextAnchor.UpperLeft;
         layoutGroup.childControlWidth = true;
         layoutGroup.childForceExpandWidth = true;
-        
-        maxDoorPriceSlider = CreateSlider(doorPricePanel.transform, "Max Door Price", 0, 10000, 
+
+        maxDoorPriceSlider = CreateSlider(doorPricePanel.transform, "Max Door Price", 0, 10000,
                                          maxDoorPrice, UpdateMaxDoorPriceSlider, out maxDoorPriceValueText);
         maxDoorPriceValueText.text = $"Max Door Price: {maxDoorPrice} (0 = unlimited)";
-        
+
         setMaxDoorPriceButton = CreateButton(doorPricePanel.transform, "Set Max Door Price", SetMaxDoorPrice);
-        
+
         RectTransform panelRect = doorPricePanel.GetComponent<RectTransform>();
         panelRect.sizeDelta = new Vector2(0, sliderHeight * 2.2f + buttonHeight + elementSpacing * 2 + panelPadding * 2);
     }

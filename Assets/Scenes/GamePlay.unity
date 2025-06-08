@@ -4334,6 +4334,7 @@ GameObject:
   - component: {fileID: 943811824}
   - component: {fileID: 943811826}
   - component: {fileID: 943811825}
+  - component: {fileID: 943811827}
   m_Layer: 0
   m_Name: House
   m_TagString: Untagged
@@ -4382,61 +4383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 362e1c7703f438b4ca20eeda40138b7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomPrefabs:
-  - {fileID: 5748501361486919024, guid: 548fac61bf3e4a746843ea49bfa68b30, type: 3}
-  - {fileID: 5748501361486919024, guid: be6c35782de254c418034fa1a3bf4232, type: 3}
-  - {fileID: 5748501361486919024, guid: 364389e3fda97374ca7186476b5dc335, type: 3}
-  - {fileID: 5748501361486919024, guid: 2efb1333c3ce84848966928dc931ba4c, type: 3}
-  - {fileID: 5748501361486919024, guid: b8bba40f1c4cd4f45b4719926a492a04, type: 3}
-  roomTopPrefabs:
-  - {fileID: 5748501361486919024, guid: ad2c6103fb90a3845a3144060d64d760, type: 3}
-  - {fileID: 5748501361486919024, guid: 56e70cc6cd91f3e4fb49760d683798c3, type: 3}
-  - {fileID: 5748501361486919024, guid: 6cee1859074cdc241a7eada3aeb9c826, type: 3}
-  - {fileID: 5748501361486919024, guid: 5144d39bafc68c9419588fa71f7b3d9b, type: 3}
-  - {fileID: 5748501361486919024, guid: 1d1691453e384a44786f6740e90c0cee, type: 3}
-  roomBottomPrefabs:
-  - {fileID: 5748501361486919024, guid: 0166fbbb4939ccb4c9edce0763473ef3, type: 3}
-  - {fileID: 5748501361486919024, guid: 8d3092268fa6ad846b6c691949e753a4, type: 3}
-  - {fileID: 5748501361486919024, guid: 6a296a8e1d66c8a469fce831691105d0, type: 3}
-  - {fileID: 5748501361486919024, guid: 89035a3f082a34546ae8ddddbf300f4d, type: 3}
-  - {fileID: 5748501361486919024, guid: 5a91e0186c54d7542b9566bb027a11a1, type: 3}
-  roomLeftPrefabs:
-  - {fileID: 5748501361486919024, guid: 480e4564d35623747bd3d36aaf1d79cf, type: 3}
-  - {fileID: 5748501361486919024, guid: 1ee5c56e67845a1458e803cca5884ea2, type: 3}
-  - {fileID: 5748501361486919024, guid: 6b76636ccf7301044a95c1544ea8ca79, type: 3}
-  - {fileID: 5748501361486919024, guid: 0f8d1aad3f7c06349b48bf02a73d574a, type: 3}
-  - {fileID: 5748501361486919024, guid: 5798cd3ea684c5240b28a13904d8dac3, type: 3}
-  roomRightPrefabs:
-  - {fileID: 5748501361486919024, guid: 82c1a23128c90c041bd80e8a1ca8895d, type: 3}
-  - {fileID: 5748501361486919024, guid: b59d8ff5a823ce846bfd7c1da5e9857f, type: 3}
-  - {fileID: 5748501361486919024, guid: 90206f1d4b4bc744388193cc549fb773, type: 3}
-  - {fileID: 5748501361486919024, guid: 03378eb0d1e6feb499467d6ec3560e04, type: 3}
-  - {fileID: 5748501361486919024, guid: 601359fe348412c4984a80ab3cdb8c73, type: 3}
-  roomTopLeftCornerPrefabs:
-  - {fileID: 5748501361486919024, guid: 98319a28cf75c4e4f88a8eb6c07c088f, type: 3}
-  - {fileID: 5748501361486919024, guid: 541fe77c247d2ac4ba76426a829ec417, type: 3}
-  - {fileID: 5748501361486919024, guid: e0ea6d161d2ccc5469b70ff8fc4e0f3f, type: 3}
-  - {fileID: 5748501361486919024, guid: 8096ac04532ac9d459d15dd5eabd4584, type: 3}
-  - {fileID: 5748501361486919024, guid: 9f01019e5349f4c449dcb4ff149469ff, type: 3}
-  roomTopRightCornerPrefabs:
-  - {fileID: 5748501361486919024, guid: 7102cd1204eba7043b6a99672ec5b071, type: 3}
-  - {fileID: 5748501361486919024, guid: 47ae9d29a9f431f47922ef096116defd, type: 3}
-  - {fileID: 5748501361486919024, guid: daa114277c0e0774b86c70b688adaf41, type: 3}
-  - {fileID: 5748501361486919024, guid: 859d6f78018987e4ab6179b9939c04dd, type: 3}
-  - {fileID: 5748501361486919024, guid: 3598dd5a36a6d524ea0d35965d23c7df, type: 3}
-  roomBottomLeftCornerPrefabs:
-  - {fileID: 5748501361486919024, guid: 06339c9e536019447a88348c2d8f3a11, type: 3}
-  - {fileID: 5748501361486919024, guid: b3a95bd98453f6247848b836ec2ee59c, type: 3}
-  - {fileID: 5748501361486919024, guid: 3c9be92e99b418046b52545b6c53d4cb, type: 3}
-  - {fileID: 5748501361486919024, guid: b12c1044aa804644bab640d67346e02f, type: 3}
-  - {fileID: 5748501361486919024, guid: bcfe75e54eee32d4588c147f4d3a9373, type: 3}
-  roomBottomRightCornerPrefabs:
-  - {fileID: 5748501361486919024, guid: 0a257a16a7f080b42ad4ddefdca0cf89, type: 3}
-  - {fileID: 5748501361486919024, guid: 215f4131e7875aa4ca05a46760bd48e2, type: 3}
-  - {fileID: 5748501361486919024, guid: ad3ce27ac4ca4b746bc5cc119fe61392, type: 3}
-  - {fileID: 5748501361486919024, guid: 1c34e7521c19dbd48afaaa2cbe7c9142, type: 3}
-  - {fileID: 5748501361486919024, guid: e804c41bc10c42d42b3e4d51fcfc56f6, type: 3}
-  selectedPrefab: {fileID: 0}
+  roomGenerator: {fileID: 943811827}
   houseParent: {fileID: 943811823}
   currentRoom: {fileID: 0}
   comboStarSprite: {fileID: 3817393959942364799, guid: f66ce8377de79f94081daa738e46cf17, type: 3}
@@ -4454,24 +4401,11 @@ MonoBehaviour:
   - {fileID: 2043279408, guid: fc366a84b6ed2184796b8412791a1b1a, type: 3}
   - {fileID: -1871375598, guid: fc366a84b6ed2184796b8412791a1b1a, type: 3}
   - {fileID: 1246508500, guid: fc366a84b6ed2184796b8412791a1b1a, type: 3}
-  shopRoomPrefabs:
-  - {fileID: 5748501361486919024, guid: 75928f108f2ba454f9077e9e0cb4c18f, type: 3}
-  shopSpawnProbability: 0.1
-  allowShopsInCorners: 0
   useDifficultySystem: 0
   roomsPerDifficultyTier: 5
   difficultyMultiplier: 1.2
   maxDifficultyTier: 10
   showDifficultyDebug: 0
-  easyRoomPrefabs:
-  - {fileID: 5748501361486919024, guid: 548fac61bf3e4a746843ea49bfa68b30, type: 3}
-  - {fileID: 5748501361486919024, guid: 364389e3fda97374ca7186476b5dc335, type: 3}
-  mediumRoomPrefabs:
-  - {fileID: 5748501361486919024, guid: b8bba40f1c4cd4f45b4719926a492a04, type: 3}
-  hardRoomPrefabs:
-  - {fileID: 5748501361486919024, guid: 2efb1333c3ce84848966928dc931ba4c, type: 3}
-  - {fileID: 5748501361486919024, guid: be6c35782de254c418034fa1a3bf4232, type: 3}
-  extremeRoomPrefabs: []
   baseDoorPrice: 100
   priceGrowthFactor: 1.3
   priceAdditive: 200
@@ -4484,6 +4418,24 @@ MonoBehaviour:
   baseRestockPrice: 100
   maxRestockPrice: 0
   requiredBaseIndicatorPrefab: {fileID: 7359638280929937491, guid: d40907a54629b5f4a8021d63dd342f8b, type: 3}
+--- !u!114 &943811827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 943811823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eecc42938f3400343926027c119848b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config: {fileID: 11400000, guid: 3375f4630cd861240b1e0db87f00d2a0, type: 2}
+  useDifficultySystem: 0
+  currentDifficultyLevel: 0
+  baseShopProbability: 0.15
+  allowShopsInCorners: 0
+  showDebugInfo: 1
 --- !u!1 &996624849
 GameObject:
   m_ObjectHideFlags: 0

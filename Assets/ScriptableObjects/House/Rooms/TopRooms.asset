@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db47fd7b9034b7a43a532dd944c6a58e, type: 3}
+  m_Name: TopRooms
+  m_EditorClassIdentifier: 
+  roomTypeName: Top
+  position: 1
+  roomPrefabs:
+  - {fileID: 5748501361486919024, guid: ad2c6103fb90a3845a3144060d64d760, type: 3}
+  - {fileID: 5748501361486919024, guid: 56e70cc6cd91f3e4fb49760d683798c3, type: 3}
+  - {fileID: 5748501361486919024, guid: 6cee1859074cdc241a7eada3aeb9c826, type: 3}
+  - {fileID: 5748501361486919024, guid: 5144d39bafc68c9419588fa71f7b3d9b, type: 3}
+  - {fileID: 5748501361486919024, guid: 1d1691453e384a44786f6740e90c0cee, type: 3}
+  easyVariants: []
+  mediumVariants: []
+  hardVariants: []
+  extremeVariants: []
+  canSpawnShops: 0
+  shopSpawnMultiplier: 1

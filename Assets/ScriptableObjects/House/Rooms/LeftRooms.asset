@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db47fd7b9034b7a43a532dd944c6a58e, type: 3}
+  m_Name: LeftRooms
+  m_EditorClassIdentifier: 
+  roomTypeName: Left
+  position: 3
+  roomPrefabs:
+  - {fileID: 5748501361486919024, guid: 480e4564d35623747bd3d36aaf1d79cf, type: 3}
+  - {fileID: 5748501361486919024, guid: 1ee5c56e67845a1458e803cca5884ea2, type: 3}
+  - {fileID: 5748501361486919024, guid: 6b76636ccf7301044a95c1544ea8ca79, type: 3}
+  - {fileID: 5748501361486919024, guid: 0f8d1aad3f7c06349b48bf02a73d574a, type: 3}
+  - {fileID: 5748501361486919024, guid: 5798cd3ea684c5240b28a13904d8dac3, type: 3}
+  easyVariants: []
+  mediumVariants: []
+  hardVariants: []
+  extremeVariants: []
+  canSpawnShops: 0
+  shopSpawnMultiplier: 1
