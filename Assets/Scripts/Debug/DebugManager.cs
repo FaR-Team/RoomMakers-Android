@@ -17,6 +17,10 @@ public class DebugManager : MonoBehaviour
     [SerializeField] [Range(0.5f, 2.0f)] private float uiScaleFactor = 1.0f;
     [SerializeField] private bool autoScaleWithScreen = true;
     
+    [Header("Debug Activation")]
+    [SerializeField] private int requiredTaps = 5;
+    [SerializeField] private float tapTimeWindow = 3f;
+    
     private float baseFontSize = 18f;
     private float buttonHeight = 80f;
     private float sliderHeight = 60f;
@@ -63,9 +67,18 @@ public class DebugManager : MonoBehaviour
     private int maxLogEntries = 50;
     
     private bool isDebugEnabled = false;
+    private bool isDebugUnlocked = false;
+    
+    private List<float> tapTimes = new List<float>();
 
     private void Awake()
     {
+        if (!Debug.isDebugBuild && !Application.isEditor)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        
         if (instance == null)
         {
             instance = this;
@@ -82,8 +95,147 @@ public class DebugManager : MonoBehaviour
     
     private void Start()
     {
+        if (!Debug.isDebugBuild && !Application.isEditor) return;
+        
         CreateDebugPanel();
         debugPanel.SetActive(false);
+        
+        if (Application.isEditor)
+        {
+            UnlockDebugMenu();
+        }
+        else
+        {
+            FindAndSetupVersionButton();
+        }
+    }
+    
+    private void FindAndSetupVersionButton()
+    {
+        GameObject versionButton = GameObject.Find("VersionButton");
+        if (versionButton == null)
+        {
+            versionButton = FindVersionButtonByText();
+        }
+        
+        if (versionButton != null)
+        {
+            Button button = versionButton.GetComponent<Button>();
+            if (button != null)
+            {
+                button.onClick.AddListener(OnVersionButtonPressed);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("DebugManager: Version button not found. Debug menu activation may not work.");
+        }
+    }
+    
+    private GameObject FindVersionButtonByText()
+    {
+        TextMeshProUGUI[] allTexts = FindObjectsOfType<TextMeshProUGUI>();
+        foreach (var text in allTexts)
+        {
+            if (text.text.Contains("v") || text.text.ToLower().Contains("version"))
+            {
+                Button button = text.GetComponentInParent<Button>();
+                if (button != null)
+                {
+                    return button.gameObject;
+                }
+            }
+        }
+        
+        Text[] allLegacyTexts = FindObjectsOfType<Text>();
+        foreach (var text in allLegacyTexts)
+        {
+            if (text.text.Contains("v") || text.text.ToLower().Contains("version"))
+            {
+                Button button = text.GetComponentInParent<Button>();
+                if (button != null)
+                {
+                    return button.gameObject;
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    private void OnVersionButtonPressed()
+    {
+        if (!Debug.isDebugBuild && !Application.isEditor) return;
+        
+        float currentTime = Time.unscaledTime;
+        tapTimes.Add(currentTime);
+        
+        tapTimes.RemoveAll(time => currentTime - time > tapTimeWindow);
+        
+        if (tapTimes.Count >= requiredTaps)
+        {
+            UnlockDebugMenu();
+            tapTimes.Clear();
+        }
+    }
+    
+    private void UnlockDebugMenu()
+    {
+        if (isDebugUnlocked) return;
+        
+        isDebugUnlocked = true;
+                
+        CreateDebugToggleButton();
+    }
+    
+    private void CreateDebugToggleButton()
+    {
+        Canvas canvas = FindObjectOfType<Canvas>();
+        if (canvas == null) return;
+        
+        debugButton = new GameObject("DebugToggleButton");
+        debugButton.transform.SetParent(canvas.transform, false);
+        
+        Image buttonImage = debugButton.AddComponent<Image>();
+        buttonImage.color = new Color(0.8f, 0.2f, 0.2f, 0.8f);
+        
+        Button button = debugButton.AddComponent<Button>();
+        button.onClick.AddListener(ToggleDebugPanel);
+        button.targetGraphic = buttonImage;
+        
+        GameObject textObj = new GameObject("Text");
+        textObj.transform.SetParent(debugButton.transform, false);
+        
+        TextMeshProUGUI buttonText = textObj.AddComponent<TextMeshProUGUI>();
+        buttonText.text = "DEBUG";
+        buttonText.fontSize = baseFontSize * 0.8f;
+        buttonText.fontStyle = FontStyles.Bold;
+        buttonText.color = Color.white;
+        buttonText.alignment = TextAlignmentOptions.Center;
+        
+        RectTransform buttonRect = debugButton.GetComponent<RectTransform>();
+        buttonRect.anchorMin = new Vector2(1f, 1f);
+        buttonRect.anchorMax = new Vector2(1f, 1f);
+        buttonRect.pivot = new Vector2(1f, 1f);
+        buttonRect.sizeDelta = new Vector2(100, 50);
+        buttonRect.anchoredPosition = new Vector2(-10, -10);
+        
+        RectTransform textRect = textObj.GetComponent<RectTransform>();
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.sizeDelta = Vector2.zero;
+        textRect.anchoredPosition = Vector2.zero;
+        
+        ColorBlock colors = button.colors;
+        colors.normalColor = new Color(0.8f, 0.2f, 0.2f, 0.8f);
+        colors.highlightedColor = new Color(1f, 0.3f, 0.3f, 0.9f);
+        colors.pressedColor = new Color(0.6f, 0.1f, 0.1f, 0.9f);
+        button.colors = colors;
+    }
+    
+    public static bool IsDebugBuildAndUnlocked()
+    {
+        return (Debug.isDebugBuild || Application.isEditor) && instance != null && instance.isDebugUnlocked;
     }
     
     private void AdjustUIScaling()
@@ -194,7 +346,7 @@ public class DebugManager : MonoBehaviour
         viewport.transform.SetParent(scrollView.transform, false);
         
         Image viewportImage = viewport.AddComponent<Image>();
-        viewportImage.color = new Color(0, 0, 0, 0.1f);
+                viewportImage.color = new Color(0, 0, 0, 0.1f);
         
         viewport.AddComponent<Mask>().showMaskGraphic = false;
         
@@ -302,7 +454,6 @@ public class DebugManager : MonoBehaviour
         GameObject toggleObj = new GameObject("Toggle_" + label, typeof(RectTransform));
         toggleObj.transform.SetParent(parent, false);
         
-        // Create horizontal layout
         HorizontalLayoutGroup layoutGroup = toggleObj.AddComponent<HorizontalLayoutGroup>();
         layoutGroup.childAlignment = TextAnchor.MiddleLeft;
         layoutGroup.childControlWidth = false;
@@ -479,7 +630,7 @@ public class DebugManager : MonoBehaviour
         handleAreaRect.anchoredPosition = Vector2.zero;
         
         RectTransform handleRect = handle.GetComponent<RectTransform>();
-        handleRect.anchorMin = new Vector2(0, 0.5f);
+                handleRect.anchorMin = new Vector2(0, 0.5f);
         handleRect.anchorMax = new Vector2(0, 0.5f);
         handleRect.pivot = new Vector2(0.5f, 0.5f);
         handleRect.sizeDelta = new Vector2(sliderHeight * 0.6f, sliderHeight * 0.6f);
@@ -546,7 +697,7 @@ public class DebugManager : MonoBehaviour
         textObj.transform.SetParent(closeButton.transform, false);
         
         TextMeshProUGUI buttonText = textObj.AddComponent<TextMeshProUGUI>();
-                buttonText.text = "X";
+        buttonText.text = "X";
         buttonText.fontSize = baseFontSize * 1.5f;
         buttonText.fontStyle = FontStyles.Bold;
         buttonText.color = Color.white;
@@ -780,7 +931,7 @@ public class DebugManager : MonoBehaviour
             Mathf.RoundToInt(panelPadding)
         );
         layoutGroup.spacing = elementSpacing;
-        layoutGroup.childAlignment = TextAnchor.UpperLeft;
+                layoutGroup.childAlignment = TextAnchor.UpperLeft;
         layoutGroup.childControlWidth = true;
         layoutGroup.childForceExpandWidth = true;
         
@@ -820,7 +971,7 @@ public class DebugManager : MonoBehaviour
         panelRect.sizeDelta = new Vector2(0, buttonHeight * 2 + elementSpacing + panelPadding * 2);
     }
 
-private void CreateConsole(Transform parent)
+    private void CreateConsole(Transform parent)
     {
         CreateSectionHeader(parent, "CONSOLE");
         
@@ -1003,7 +1154,7 @@ private void CreateConsole(Transform parent)
         return toggle;
     }
     
-        private void CreateLogEntry(string message, string stackTrace, LogType type)
+    private void CreateLogEntry(string message, string stackTrace, LogType type)
     {
         if (consoleContent == null) return;
         
@@ -1059,7 +1210,7 @@ private void CreateConsole(Transform parent)
         messageText.color = textColor;
         messageText.alignment = TextAlignmentOptions.Left;
         
-        if (type == LogType.Error || type == LogType.Exception || type == LogType.Assert)
+                if (type == LogType.Error || type == LogType.Exception || type == LogType.Assert)
         {
             messageText.fontStyle = FontStyles.Bold;
         }
@@ -1246,6 +1397,8 @@ private void CreateConsole(Transform parent)
     
     public void ToggleDebugPanel()
     {
+        if (!isDebugUnlocked) return;
+        
         isDebugEnabled = !isDebugEnabled;
         debugPanel.SetActive(isDebugEnabled);
         
