@@ -1,9 +1,6 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
-using Random = UnityEngine.Random;
 
 public class House : MonoBehaviour
 {
@@ -222,6 +219,11 @@ public class House : MonoBehaviour
         ColourChanger.instance.ChangeColour(color);
         
         uiContainer.SetActive(true);
+        
+        if (RoomTagNotification.instance != null && currentRoom != null)
+        {
+            RoomTagNotification.instance.ShowRoomTag(currentRoom.roomTag);
+        }
         
         yield return null;
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class DebugManager : MonoBehaviour
 {
@@ -193,50 +194,52 @@ public class DebugManager : MonoBehaviour
                 
         CreateDebugToggleButton();
     }
-    
+
     private void CreateDebugToggleButton()
     {
-        Canvas canvas = FindObjectOfType<Canvas>();
-        if (canvas == null) return;
-        
+        Canvas canvas = GetOrCreateMainCanvas();
+
         debugButton = new GameObject("DebugToggleButton");
         debugButton.transform.SetParent(canvas.transform, false);
-        
+
         Image buttonImage = debugButton.AddComponent<Image>();
         buttonImage.color = new Color(0.8f, 0.2f, 0.2f, 0.8f);
-        
+
         Button button = debugButton.AddComponent<Button>();
         button.onClick.AddListener(ToggleDebugPanel);
         button.targetGraphic = buttonImage;
-        
+
         GameObject textObj = new GameObject("Text");
         textObj.transform.SetParent(debugButton.transform, false);
-        
+
         TextMeshProUGUI buttonText = textObj.AddComponent<TextMeshProUGUI>();
         buttonText.text = "DEBUG";
         buttonText.fontSize = baseFontSize * 0.8f;
         buttonText.fontStyle = FontStyles.Bold;
         buttonText.color = Color.white;
         buttonText.alignment = TextAlignmentOptions.Center;
-        
+
         RectTransform buttonRect = debugButton.GetComponent<RectTransform>();
         buttonRect.anchorMin = new Vector2(1f, 1f);
         buttonRect.anchorMax = new Vector2(1f, 1f);
         buttonRect.pivot = new Vector2(1f, 1f);
         buttonRect.sizeDelta = new Vector2(100, 50);
         buttonRect.anchoredPosition = new Vector2(-10, -10);
-        
+
         RectTransform textRect = textObj.GetComponent<RectTransform>();
         textRect.anchorMin = Vector2.zero;
         textRect.anchorMax = Vector2.one;
         textRect.sizeDelta = Vector2.zero;
         textRect.anchoredPosition = Vector2.zero;
-        
+
         ColorBlock colors = button.colors;
         colors.normalColor = new Color(0.8f, 0.2f, 0.2f, 0.8f);
         colors.highlightedColor = new Color(1f, 0.3f, 0.3f, 0.9f);
         colors.pressedColor = new Color(0.6f, 0.1f, 0.1f, 0.9f);
         button.colors = colors;
+
+        debugButton.SetActive(true);
+        Debug.Log("Debug button created");
     }
     
     public static bool IsDebugBuildAndUnlocked()
@@ -269,22 +272,8 @@ public class DebugManager : MonoBehaviour
     
     private void CreateDebugPanel()
     {
-        Canvas canvas = FindObjectOfType<Canvas>();
-        if (canvas == null)
-        {
-            GameObject canvasObj = new GameObject("DebugCanvas");
-            canvas = canvasObj.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            
-            CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080, 1920); 
-            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-            scaler.matchWidthOrHeight = 0.5f;
-            
-            canvasObj.AddComponent<GraphicRaycaster>();
-        }
-        
+        Canvas canvas = GetOrCreateMainCanvas();
+    
         debugPanel = new GameObject("DebugPanel");
         debugPanel.transform.SetParent(canvas.transform, false);
         
@@ -342,7 +331,57 @@ public class DebugManager : MonoBehaviour
         
         CreateCloseButton(debugPanel.transform);
     }
-    
+
+    private Canvas GetOrCreateMainCanvas()
+    {
+        Canvas[] allCanvases = FindObjectsOfType<Canvas>();
+        Canvas targetCanvas = null;
+        
+        foreach (Canvas canvas in allCanvases)
+        {
+            if (canvas.renderMode == RenderMode.ScreenSpaceOverlay && 
+                canvas.transform.parent == null)
+            {
+                if (targetCanvas == null || canvas.sortingOrder >= targetCanvas.sortingOrder)
+                {
+                    targetCanvas = canvas;
+                }
+            }
+        }
+        
+        if (targetCanvas == null)
+        {
+            GameObject canvasObj = new GameObject("DebugCanvas");
+            targetCanvas = canvasObj.AddComponent<Canvas>();
+            targetCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            targetCanvas.sortingOrder = 1000;
+            
+            CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1080, 1920);
+            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            scaler.matchWidthOrHeight = 0.5f;
+            
+            canvasObj.AddComponent<GraphicRaycaster>();
+            
+            if (FindObjectOfType<UnityEngine.EventSystems.EventSystem>() == null)
+            {
+                GameObject eventSystemObj = new GameObject("EventSystem");
+                eventSystemObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
+                eventSystemObj.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+            }
+            
+            Debug.Log("Created new debug canvas");
+        }
+        else
+        {
+            targetCanvas.sortingOrder = Mathf.Max(targetCanvas.sortingOrder, 1000);
+            Debug.Log($"Using existing canvas: {targetCanvas.name} with sorting order {targetCanvas.sortingOrder}");
+        }
+        
+        return targetCanvas;
+    }
+
     private GameObject CreateScrollView(Transform parent)
     {
         GameObject scrollView = new GameObject("ScrollView", typeof(RectTransform));
