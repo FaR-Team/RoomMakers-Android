@@ -10,6 +10,7 @@ public class RoomTagNotification : MonoBehaviour
     
     [SerializeField] private Canvas notificationCanvas;
     [SerializeField] private TextMeshProUGUI tagText;
+    [SerializeField] private CanvasGroup canvasGroup;
     
     [Header("Animation Settings")]
     [SerializeField] private float displayDuration = 1.5f;
@@ -58,12 +59,6 @@ public class RoomTagNotification : MonoBehaviour
         
         if (notificationCanvas != null)
             notificationCanvas.enabled = false;
-            
-        if (tagText != null)
-        {
-            tagText.fontMaterial.SetFloat(ShaderUtilities.ID_OutlineWidth, 0.2f);
-            tagText.fontMaterial.SetColor(ShaderUtilities.ID_OutlineColor, Color.white);
-        }
     }
     
     public void ShowRoomTag(RoomTag tag)
@@ -120,36 +115,30 @@ public class RoomTagNotification : MonoBehaviour
     private IEnumerator FadeIn()
     {
         float elapsedTime = 0f;
-        Color originalColor = tagText.color;
         
         while (elapsedTime < fadeInDuration)
         {
             elapsedTime += Time.unscaledDeltaTime;
             float alpha = Mathf.Clamp01(elapsedTime / fadeInDuration);
-            tagText.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
-            tagText.fontMaterial.SetColor(ShaderUtilities.ID_OutlineColor, new Color(1f, 1f, 1f, alpha));
+            canvasGroup.alpha = alpha;
             yield return null;
         }
         
-        tagText.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f);
-        tagText.fontMaterial.SetColor(ShaderUtilities.ID_OutlineColor, Color.white);
+        canvasGroup.alpha = 1;
     }
     
     private IEnumerator FadeOut()
     {
         float elapsedTime = 0f;
-        Color originalColor = tagText.color;
         
         while (elapsedTime < fadeOutDuration)
         {
             elapsedTime += Time.unscaledDeltaTime;
             float alpha = Mathf.Clamp01(1f - (elapsedTime / fadeOutDuration));
-            tagText.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
-            tagText.fontMaterial.SetColor(ShaderUtilities.ID_OutlineColor, new Color(1f, 1f, 1f, alpha));
+            canvasGroup.alpha = alpha;
             yield return null;
         }
         
-        tagText.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
-        tagText.fontMaterial.SetColor(ShaderUtilities.ID_OutlineColor, new Color(1f, 1f, 1f, 0f));
+        canvasGroup.alpha = 0;
     }
 }
