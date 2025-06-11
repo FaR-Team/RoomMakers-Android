@@ -2,11 +2,16 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 
-public class RestockMachine : MonoBehaviour
+public class RestockMachine : MonoBehaviour, ILookable
 {
     [SerializeField] private float vibrationDuration = 0.5f;
     [SerializeField] private float vibrationAmount = 0.05f;
     [SerializeField] private int vibrationCount = 5;
+    [SerializeField] private TextMeshProUGUI costText;
+    [SerializeField] private GameObject costCanvas;
+    
+    [SerializeField] private Vector3 normalPosition;
+    [SerializeField] private Vector3 topPosition;
     
     private ShopRoom parentShop;
     private Vector3 originalPosition;
@@ -19,7 +24,6 @@ public class RestockMachine : MonoBehaviour
         {
             Debug.LogError("RestockMachine must be a child of a ShopRoom");
         }
-        
     }
 
     public void TryRestock()
@@ -51,6 +55,20 @@ public class RestockMachine : MonoBehaviour
         }
     }
 
+    public void ShowCostText(Transform playerTransform)
+    {
+        costCanvas.gameObject.SetActive(true);
+        costText.text = House.instance.RestockPrice.ToString();
+
+        bool playerBlockingText = playerTransform.transform.up == Vector3.left &&
+                                  playerTransform.position.y > transform.position.y;
+        
+        ((RectTransform)costCanvas.transform).anchoredPosition = playerBlockingText ? topPosition : normalPosition;
+    }
+    public void HideCostText()
+    {
+        costCanvas.gameObject.SetActive(false);
+    }
     private void StartVibration()
     {
         if (!isVibrating)
@@ -80,5 +98,15 @@ public class RestockMachine : MonoBehaviour
         transform.localPosition = startPosition;
         
         isVibrating = false;
+    }
+
+    public void StartLook(Transform playerTransform)
+    {
+        ShowCostText(playerTransform);
+    }
+
+    public void EndLook()
+    {
+        HideCostText();
     }
 }

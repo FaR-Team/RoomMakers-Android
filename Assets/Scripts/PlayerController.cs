@@ -12,6 +12,7 @@ public class PlayerController : MovementController
     [SerializeField] private TextMeshProUGUI costText;
     [SerializeField] private GameObject costCanvas;
     private bool reachedPosition;
+    private ILookable currentLookTarget;
     public Inventory Inventory => inventory;
     [SerializeField] private Interactor interactor;
 
@@ -182,8 +183,9 @@ public class PlayerController : MovementController
 
     public void CheckInFront()
     {
-        var hit = Physics2D.Raycast(transform.position, transform.up, 1f, 1 << 10 | 1 << 13 | 1 << 16);
-
+        var hit = Physics2D.Raycast(transform.position, transform.up, 1f, 1 << 10 | 1 << 13 | 1 << 16); // TODO: Layermask para que sea mas claro
+        if (currentLookTarget != null) ClearLookable();
+        
         if (hit.collider != null)
         {
             Vector3 costPosition = GetCostTextPosition();
@@ -203,10 +205,11 @@ public class PlayerController : MovementController
                     costCanvas.SetActive(true);
                 }
             }
-            else if (hit.collider.TryGetComponent(out RestockMachine machine))
+            else if (hit.collider.TryGetComponent(out ILookable lookable)) // TODO: crear los demas Lookable para door y shop
             {
-                costText.text = House.instance.RestockPrice.ToString();
-                costCanvas.SetActive(true);
+                costCanvas.SetActive(false); // Turn off player's canvas
+                currentLookTarget = lookable;
+                lookable.StartLook(transform);
             }
         }
         else
@@ -255,5 +258,11 @@ public class PlayerController : MovementController
     {
         base.Rotate(dir);
         CheckInFront();
+    }
+
+    void ClearLookable()
+    {
+        currentLookTarget.EndLook();
+        currentLookTarget = null;
     }
 }
