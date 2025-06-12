@@ -57,10 +57,10 @@ public class RoomFurnitures : MonoBehaviour
         }
 
         // 3. Handle Wall Object Placement (Rotation)
-        if (originalData.wallObject && !CheckWallsAndRotate(currentTargetWorldPosition, furnitureData))
+        /*if (originalData.wallObject && !CheckWallsAndRotate(currentTargetWorldPosition, furnitureData))
         {
             return false;
-        }
+        }*/
 
         // 4. Determine Non-Stacked Placement Details
         PlacementDetails placementDetails = DetermineNonStackedPlacementDetails(currentTargetWorldPosition, furnitureData, originalData, potentialOccupiedCells, isItem);
@@ -194,8 +194,10 @@ public class RoomFurnitures : MonoBehaviour
         if (isValidInitialSpot)
         {
             details.CanPlace = true;
-            if (requiresBase)
-                details.Unboxed = CheckKitRequirement(cellsToOccupy, originalData);
+
+            details.Unboxed = (!requiresBase || CheckKitRequirement(cellsToOccupy, originalData)) &&
+                              (!originalData.wallObject || CheckWallsAndRotate(worldPosition, furnitureData));
+            
             return details;
         }
 
@@ -250,6 +252,7 @@ public class RoomFurnitures : MonoBehaviour
 
         FurnitureObjectBase furnitureInstance = Instantiate(furnitureData.prefab, instantiationGridPos, Quaternion.Euler(furnitureData.VectorRotation)).GetComponent<FurnitureObjectBase>();
         furnitureInstance.CopyFurnitureData(furnitureData);
+        Debug.Log("Setting unpacked state: " + unboxed);
         furnitureInstance.SetUnpackedState(unboxed);
 
         OnPlaceFurniture?.Invoke(originalData);

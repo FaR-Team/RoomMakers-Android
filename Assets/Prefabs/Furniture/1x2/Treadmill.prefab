@@ -75,11 +75,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originalData: {fileID: 11400000, guid: a7538e901a8d68e4fac942b52903601a, type: 2}
+  anim: {fileID: 2180489833924142902}
   comboValue: 20
   comboStarContainer: {fileID: 0}
 --- !u!95 &2180489833924142902
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -96,7 +97,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &6084753775012126759
 GameObject:
   m_ObjectHideFlags: 0

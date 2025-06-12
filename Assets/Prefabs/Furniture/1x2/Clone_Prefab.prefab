@@ -159,12 +159,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originalData: {fileID: 11400000, guid: f355e63410dc16c4187cab2fc10f88f7, type: 2}
-  spriteRenderer: {fileID: 0}
+  anim: {fileID: 2682109958329362907}
   comboValue: 20
   comboStarContainer: {fileID: 0}
 --- !u!95 &2682109958329362907
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -181,7 +181,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &6213933820045229497
 GameObject:
   m_ObjectHideFlags: 0

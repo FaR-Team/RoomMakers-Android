@@ -9,7 +9,7 @@ public class MainMenu : MonoBehaviour
 {
     [SerializeField] private Animator blackFade;
     [SerializeField] private SpriteRenderer controles;
-    [SerializeField] private SpriteRenderer credits;
+    [SerializeField] private GameObject credits;
     [SerializeField] private GameObject menuPanel;
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject gameModePanel;
@@ -26,6 +26,7 @@ public class MainMenu : MonoBehaviour
     private int currentButtonIndex = 0;
     private int value = 0;
     bool IsAlreadyChangingScene;
+    bool _fading;
     private bool controlsOpen = false;
     private bool creditsOpen = false;
     private bool gameModeMenuOpen = false;
@@ -62,17 +63,17 @@ public class MainMenu : MonoBehaviour
 
     void Update()
     {
-        if (Input.anyKeyDown && !IsAlreadyChangingScene)
+        if (Input.anyKeyDown && !IsAlreadyChangingScene && !_fading)
         {
             if (controlsOpen)
             {
-                StartCoroutine(CloseControls());
+                CloseControls();
                 return;
             }
             
             if (creditsOpen)
             {
-                StartCoroutine(CloseCredits());
+                CloseCredits();
                 return;
             }
 
@@ -107,7 +108,7 @@ public class MainMenu : MonoBehaviour
 
     private void OnNavigate(InputAction.CallbackContext context)
     {
-        if ((!menuPanel.activeInHierarchy && !gameModePanel.activeInHierarchy) || controlsOpen || creditsOpen) return;
+        if ((!menuPanel.activeInHierarchy && !gameModePanel.activeInHierarchy) || controlsOpen || creditsOpen || _fading) return;
 
         Vector2 input = context.ReadValue<Vector2>();
         
@@ -123,7 +124,7 @@ public class MainMenu : MonoBehaviour
 
     private void OnInteract(InputAction.CallbackContext context)
     {
-        if ((!menuPanel.activeInHierarchy && !gameModePanel.activeInHierarchy) || controlsOpen || creditsOpen) return;
+        if ((!menuPanel.activeInHierarchy && !gameModePanel.activeInHierarchy) || controlsOpen || creditsOpen || _fading) return;
         
         currentButtons[currentButtonIndex].onClick.Invoke();
     }
@@ -294,46 +295,65 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene(sceneIndex);
     }
 
+    #region Controls
     private void ShowControls()
     {
+        StartCoroutine(ShowControlsCoroutine());
+    }
+
+    IEnumerator ShowControlsCoroutine()
+    {
+        yield return null;
         AudioManager.instance.PlaySfx(GlobalSfx.Click);
         ActivateControllerScreen(true);
         menuPanel.SetActive(false);
         controlsOpen = true;
     }
-
-    private IEnumerator CloseControls()
+    private void CloseControls()
     {
         AudioManager.instance.PlaySfx(GlobalSfx.Grab);
         ActivateControllerScreen(false);
-        yield return null;
         menuPanel.SetActive(true);
         controlsOpen = false;
         UpdateButtonSelection();
     }
+    #endregion
 
     private void ShowLeaderboards()
     {
         AudioManager.instance.PlaySfx(GlobalSfx.Error);
     }
 
+    #region Credits
     private void ShowCredits()
     {
+        StartCoroutine(ShowCreditsCoroutine());
+    }
+
+    IEnumerator ShowCreditsCoroutine()
+    {
+        blackFade.SetTrigger("StartBlackFade");
+        _fading = true;
         AudioManager.instance.PlaySfx(GlobalSfx.Click);
+        yield return new WaitForSeconds(1f);
         ActivateCreditsScreen(true);
         menuPanel.SetActive(false);
+        blackFade.SetTrigger("EndBlackFade");
+        yield return new WaitForSeconds(1f);
+        _fading = false;
         creditsOpen = true;
     }
 
-    private IEnumerator CloseCredits()
+    private void CloseCredits()
     {
         AudioManager.instance.PlaySfx(GlobalSfx.Grab);
         ActivateCreditsScreen(false);
-        yield return null;
         menuPanel.SetActive(true);
         creditsOpen = false;
         UpdateButtonSelection();
     }
+    
+    #endregion
 
     private void ActivateControllerScreen(bool setActive)
     {
@@ -342,6 +362,6 @@ public class MainMenu : MonoBehaviour
 
     private void ActivateCreditsScreen(bool setActive)
     {
-        credits.enabled = setActive;
+        credits.SetActive(setActive);
     }
 }

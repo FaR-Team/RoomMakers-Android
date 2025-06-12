@@ -4,6 +4,7 @@ public class FurnitureObjectBase : MonoBehaviour
 {
     public FurnitureOriginalData originalData;
     [SerializeField] protected FurnitureData furnitureData;
+    [SerializeField] private Animator anim;
     protected SpriteRenderer[] spriteRenderers;
     protected bool unpacked;
     protected int currentSpriteIndex = 0;
@@ -32,7 +33,7 @@ public class FurnitureObjectBase : MonoBehaviour
         this.unpacked = unpacked;
         if (!this.unpacked)
         {
-            if(TryGetComponent(out Animator anim)) anim.enabled = false;
+            if(anim) anim.enabled = false;
             UpdateSprites(House.instance.GetSpritesBySize(Data.originalData.typeOfSize));
             
             if (Data.originalData.requiredBase != null)
