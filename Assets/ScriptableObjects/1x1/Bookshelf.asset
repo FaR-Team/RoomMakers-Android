@@ -21,9 +21,10 @@ MonoBehaviour:
   compatibles:
   - {fileID: 11400000, guid: 4ea978be7a2118a4b98219ba08fc9a17, type: 2}
   requiredBase: {fileID: 0}
+  requiredWall: 1
   sprites:
   - {fileID: 887262761, guid: 77e9d006cb8ce7d4aa29cf0584ee3814, type: 3}
-  indicatorSprite: {fileID: 0}
+  indicatorSprite: {fileID: 21300000, guid: ec000d24ace8d5e48a2444ad44dd0593, type: 3}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 1

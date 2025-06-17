@@ -36,7 +36,7 @@ public class FurnitureObjectBase : MonoBehaviour
             if(anim) anim.enabled = false;
             UpdateSprites(House.instance.GetSpritesBySize(Data.originalData.typeOfSize));
             
-            if (Data.originalData.requiredBase != null)
+            if (Data.originalData.requiredBase != null || Data.originalData.wallObject)
             {
                 CreateRequiredBaseIndicator();
             }
@@ -59,7 +59,7 @@ public class FurnitureObjectBase : MonoBehaviour
             Destroy(indicatorInstance);
         }
         
-        if (furnitureData.originalData.requiredBase == null) return;
+        if (furnitureData.originalData.requiredBase == null && !furnitureData.originalData.wallObject) return;
         
         indicatorInstance = Instantiate(House.instance.requiredBaseIndicatorPrefab, transform);
         indicatorInstance.transform.rotation = Quaternion.identity;
@@ -68,9 +68,13 @@ public class FurnitureObjectBase : MonoBehaviour
         indicatorInstance.transform.localPosition = new Vector3(indicatorPosition.x, indicatorPosition.y, 0.1f);
         
         Sprite kitSprite = null;
-        if (furnitureData.originalData.requiredBase.indicatorSprite != null)
+        if (furnitureData.originalData.requiredBase?.indicatorSprite != null)
         {
             kitSprite = furnitureData.originalData.requiredBase.indicatorSprite;
+        }
+        else if (furnitureData.originalData.indicatorSprite != null)
+        {
+            kitSprite = furnitureData.originalData.indicatorSprite;
         }
         
         RequiredBaseIndicator indicator = indicatorInstance.GetComponent<RequiredBaseIndicator>();
@@ -79,6 +83,7 @@ public class FurnitureObjectBase : MonoBehaviour
             indicator.Initialize(kitSprite);
         }
     }
+
     
     private Vector3 CalculateIndicatorPosition()
     {
@@ -121,7 +126,7 @@ public class FurnitureObjectBase : MonoBehaviour
         if (spriteRenderers == null)
             spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
             
-        if (furnitureData.originalData.requiredBase != null && !unpacked)
+        if ((furnitureData.originalData.requiredBase != null || furnitureData.originalData.wallObject) && !unpacked)
         {
             CreateRequiredBaseIndicator();
         }
