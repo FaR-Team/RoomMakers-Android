@@ -26,10 +26,12 @@ public class DoorData : MonoBehaviour
     
     [Header("Shake Settings")]
     [SerializeField] private float shakeDuration = 0.2f;
-    [SerializeField] private float shakeMagnitude = 0.03f;
+    [SerializeField] private float shakeMagnitude = 0.04f;
 
     [Header("Tutorial Settings")]
     [SerializeField] private GameObject lockedTutorialIndicator;
+
+    private bool isShaking = false;
 
     void Start()
     {
@@ -108,11 +110,12 @@ public class DoorData : MonoBehaviour
         else Debug.Log("NO FUNCIONA");
     }
 
-    // Modified to support free doors from debug menu
     public void BuyNextRoom(bool isFree = false)
     {
         if (TutorialHandler.AreDoorsTutorialLocked() && !isFree)
         {
+            if (isShaking) return;
+        
             AudioManager.instance.PlaySfx(GlobalSfx.Error);
             StartCoroutine(ShakeDoorCoroutine());
             return;
@@ -120,7 +123,6 @@ public class DoorData : MonoBehaviour
 
         if (!isUnlocked && (isFree || PlayerController.instance.Inventory.money >= House.instance.DoorPrice))
         {
-            // Only deduct money if it's not a free door
             if (!isFree)
             {
                 PlayerController.instance.Inventory.UpdateMoney(-House.instance.DoorPrice);
@@ -130,6 +132,13 @@ public class DoorData : MonoBehaviour
             AudioManager.instance.PlaySfx(GlobalSfx.Grab);
             UnlockDoor();
             UnlockOtherRoomsDoor();
+        }
+        else if (!isUnlocked && !isFree)
+        {
+            if (isShaking) return;
+        
+            AudioManager.instance.PlaySfx(GlobalSfx.Error);
+            StartCoroutine(ShakeDoorCoroutine());
         }
     }
 
@@ -146,21 +155,31 @@ public class DoorData : MonoBehaviour
 
     private IEnumerator ShakeDoorCoroutine()
     {
+        isShaking = true;
         Vector3 originalPosition = transform.localPosition;
-
         float elapsed = 0f;
 
-        while (elapsed < shakeDuration)
+        try
         {
-            float xOffset = Mathf.Sin(elapsed * (Mathf.PI / shakeDuration) * 10f) * shakeMagnitude;
-            transform.localPosition = originalPosition + new Vector3(xOffset, 0f, 0f);
+            while (elapsed < shakeDuration)
+            {
+                float xOffset = Mathf.Sin(elapsed * (Mathf.PI / shakeDuration) * 10f) * shakeMagnitude;
+                transform.localPosition = originalPosition + new Vector3(xOffset, 0f, 0f);
 
-            elapsed += Time.deltaTime;
-            yield return null;
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
         }
-
-        transform.localPosition = originalPosition;
+        finally
+        {
+            if (transform != null)
+            {
+                transform.localPosition = originalPosition;
+            }
+            isShaking = false;
+        }
     }
+    
     public void CheckNextDoor()
     {
         if (isUnlocked) return;
@@ -180,10 +199,11 @@ public class DoorData : MonoBehaviour
             case DoorType.Right:
                 checkPos = transform.position + Vector3.right;
                 break;
-            default: checkPos = Vector2.zero;
+            default:
+                checkPos = Vector2.zero;
                 break;
-        } 
-        
+        }
+
         var door = Physics2D.OverlapCircle(checkPos, 0.2f, 1 << 10);
         // Si al instanciar esta puerta existe una al lado, desbloqueamos ambas
         if (door)

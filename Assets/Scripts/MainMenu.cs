@@ -30,6 +30,7 @@ public class MainMenu : MonoBehaviour
     private bool controlsOpen = false;
     private bool creditsOpen = false;
     private bool gameModeMenuOpen = false;
+    private HashSet<Button> shakingButtons = new HashSet<Button>();
     
     void Awake()
     {
@@ -63,7 +64,7 @@ public class MainMenu : MonoBehaviour
 
     void Update()
     {
-        if (Input.anyKeyDown && !IsAlreadyChangingScene && !_fading)
+        if (Input.anyKeyDown && !IsAlreadyChangingScene && !_fading && !menuPanel.activeInHierarchy && !gameModePanel.activeInHierarchy)
         {
             if (controlsOpen)
             {
@@ -145,10 +146,12 @@ public class MainMenu : MonoBehaviour
 
     private void UpdateButtonSelection()
     {
+        currentButtonIndex = Mathf.Clamp(currentButtonIndex, 0, currentButtons.Length - 1);
+
         for (int i = 0; i < currentButtons.Length; i++)
         {
             Image buttonImage = currentButtons[i].GetComponent<Image>();
-            
+
             if (i == currentButtonIndex)
             {
                 if (buttonImage != null)
@@ -184,29 +187,41 @@ public class MainMenu : MonoBehaviour
 
     private void ShakeButtonWithError(Button button)
     {
+        if (shakingButtons.Contains(button)) return;
+        
         AudioManager.instance.PlaySfx(GlobalSfx.Error);
         StartCoroutine(ShakeButton(button));
     }
 
     private IEnumerator ShakeButton(Button button)
     {
+        shakingButtons.Add(button);
         Vector3 originalPosition = button.transform.localPosition;
         float shakeDuration = 0.3f;
         float shakeIntensity = 0.05f;
         float elapsed = 0f;
 
-        while (elapsed < shakeDuration)
+        try
         {
-            float x = originalPosition.x + Random.Range(-shakeIntensity, shakeIntensity);
-            float y = originalPosition.y + Random.Range(-shakeIntensity, shakeIntensity);
-            
-            button.transform.localPosition = new Vector3(x, y, originalPosition.z);
-            
-            elapsed += Time.deltaTime;
-            yield return null;
+            while (elapsed < shakeDuration)
+            {
+                float x = originalPosition.x + Random.Range(-shakeIntensity, shakeIntensity);
+                float y = originalPosition.y + Random.Range(-shakeIntensity, shakeIntensity);
+                
+                button.transform.localPosition = new Vector3(x, y, originalPosition.z);
+                
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
         }
-
-        button.transform.localPosition = originalPosition;
+        finally
+        {
+            if (button != null && button.transform != null)
+            {
+                button.transform.localPosition = originalPosition;
+            }
+            shakingButtons.Remove(button);
+        }
     }
 
     private void SetupNavigation()
