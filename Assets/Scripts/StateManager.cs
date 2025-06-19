@@ -5,6 +5,7 @@ public class StateManager : MonoBehaviour
 {
     public static StateManager Instance { get; private set; }
 
+    private GameState _lastGameState;
     private GameState _currentGameState = GameState.Moving;
     public static GameState CurrentGameState => Instance != null ? Instance._currentGameState : GameState.Moving;
 
@@ -59,6 +60,7 @@ public class StateManager : MonoBehaviour
     {
         if (Instance != null)
         {
+            Instance._lastGameState = CurrentGameState;
             Instance._currentGameState = GameState.Pause;
             OnStateChanged?.Invoke(Instance._currentGameState);
         }
@@ -78,6 +80,15 @@ public class StateManager : MonoBehaviour
         {
             Instance._currentGameState = newState;
             OnStateChanged?.Invoke(Instance._currentGameState);
+        }
+    }
+
+    public static void Resume()
+    {
+        if (Instance != null)
+        {
+            Instance._currentGameState = Instance._lastGameState;
+            OnStateChanged?.Invoke(CurrentGameState);
         }
     }
 }

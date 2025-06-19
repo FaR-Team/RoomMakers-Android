@@ -9,6 +9,7 @@ public class TutorialHandler : MonoBehaviour
     [SerializeField] private GameObject tutorialObject;
     [SerializeField] private GameObject bButtonPromptObject; // Prompt for B button interaction
     [SerializeField] private GameObject skipPromptObject; // Prompt for tutorial skip
+    [SerializeField] private ConfirmationScreen confirmationScreen;
     
     [SerializeField] TutorialStepData[] stepsData;
 
@@ -58,9 +59,11 @@ public class TutorialHandler : MonoBehaviour
 
     void Start()
     {
+        confirmationScreen.Initialize(SkipTutorial, Resume);
         Inventory.OnFurniturePickUp += BeginStep;
     }
 
+    
     private void OnDestroy()
     {
         Inventory.OnFurniturePickUp -= BeginStep;
@@ -196,12 +199,12 @@ public class TutorialHandler : MonoBehaviour
 
     void Update()
     {
-        if (_canSkip && PlayerController.instance.playerInput.Movement.Start.WasPressedThisFrame())
+        if (_canSkip && !confirmationScreen.gameObject.activeInHierarchy && PlayerController.instance.playerInput.Movement.Start.WasPressedThisFrame())
         {
-            SkipTutorial();
+            ShowConfirmationScreen();
         }
 
-        if (PlayerController.instance != null && PlayerController.instance.playerInput != null && PlayerController.instance.playerInput.Movement.Rotate.WasPressedThisFrame()) CloseTutorialWindow();
+        if (!confirmationScreen.gameObject.activeInHierarchy && PlayerController.instance != null && PlayerController.instance.playerInput != null && PlayerController.instance.playerInput.Movement.Rotate.WasPressedThisFrame()) CloseTutorialWindow();
 
         if (stepStarted && stepsData[tutorialStep - 1].hasReminder && !tutorialObject.activeSelf)
         {
@@ -270,7 +273,17 @@ public class TutorialHandler : MonoBehaviour
         if (instance == null) return false;
         return instance.tutorialStep <= 6;
     }
+
+    void ShowConfirmationScreen()
+    {
+        confirmationScreen.gameObject.SetActive(true);
+        StateManager.PauseGame();
+    }
     
+    void Resume()
+    {
+        StateManager.Resume();
+    }
     public void SkipTutorial()
     {
         Debug.Log($"Tutorial skip requested. Current step: {tutorialStep}, onTutorial: {onTutorial}, Time.timeScale before skip: {Time.timeScale}");
