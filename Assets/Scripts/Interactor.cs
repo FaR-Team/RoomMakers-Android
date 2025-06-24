@@ -25,7 +25,7 @@ public class Interactor : MonoBehaviour
                 {        
                     topStackedItem.Data.currentStackLevel = 0;
                 
-                    playerInventory.furnitureInventoryWithData = topStackedItem.Data;
+                    playerInventory.SetItemWithData(topStackedItem.Data);
                     playerInventory.EnablePackageUI(true);
                 
                     Destroy(topStackedItem.gameObject);
@@ -43,7 +43,7 @@ public class Interactor : MonoBehaviour
                 {
                     MainRoom.instance.availableTiles += placementData.furnitureData.originalData.size.x *
                                                         placementData.furnitureData.originalData.size.y;
-                    playerInventory.furnitureInventoryWithData = placementData.furnitureData;
+                    playerInventory.SetItemWithData(placementData.furnitureData);
                     playerInventory.EnablePackageUI(true);
                     House.instance.currentRoom.roomFurnitures.RemoveDataInPosition(gridPosition);
                 }
@@ -51,13 +51,13 @@ public class Interactor : MonoBehaviour
                 {
                     topFurnitureData = placementData.GetAndClearFirstObject();
                     
-                    playerInventory.furnitureInventoryWithData = topFurnitureData;
+                    playerInventory.SetItemWithData(topFurnitureData);
                     playerInventory.EnablePackageUI(true);
                 }
             }
             else 
             {
-                playerInventory.furnitureInventoryWithData = topFurnitureData;
+                playerInventory.SetItemWithData(topFurnitureData);
                 playerInventory.EnablePackageUI(true);
                 House.instance.currentRoom.roomFurnitures.RemoveTopObjectInPosition(gridPosition);
             }
@@ -71,7 +71,7 @@ public class Interactor : MonoBehaviour
         if (House.instance.currentRoom.roomFurnitures.KitsInPosition.TryGetValue(gridPosition,
                      out KitObject kit) && !playerInventory.HasItem())
         {
-            playerInventory.furnitureInventoryWithData = kit.Data;
+            playerInventory.SetItemWithData(kit.Data); ;
             playerInventory.EnablePackageUI(true);
             House.instance.currentRoom.roomFurnitures.RemoveKitInPosition(gridPosition);
             

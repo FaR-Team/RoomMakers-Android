@@ -13,20 +13,22 @@ public class Inventory : MonoBehaviour
     [SerializeField] private TextMeshProUGUI text_name;
     [SerializeField] private SpriteRenderer itemImage;
     public Sprite PackageSprite;
-    
-    [Header("Money Animation")]
-    [SerializeField] private float increaseAnimationDuration = 1f;
+
+    [Header("Money Animation")] [SerializeField]
+    private float increaseAnimationDuration = 1f;
+
     [SerializeField] private float decreaseAnimationDuration = 2f;
     [SerializeField] private AnimationCurve increaseAnimationCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     [SerializeField] private AnimationCurve decreaseAnimationCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     [SerializeField] private float shakeIntensity = 5f;
     [SerializeField] private float shakeDuration = 0.5f;
-    
+
     private Coroutine moneyAnimationCoroutine;
     private int displayedMoney;
     private Vector3 originalMoneyTextPosition;
 
-    public static event Action<FurnitureOriginalData> OnFurniturePickUp;
+    public static event Action<FurnitureOriginalData> OnPackagePickUp;
+    public static event Action<FurnitureOriginalData> OnInventoryChanged;
 
     private void Start()
     {
@@ -39,12 +41,12 @@ public class Inventory : MonoBehaviour
     {
         int previousMoney = money;
         money += intMoney;
-        
-        if (money < 0) 
+
+        if (money < 0)
         {
             money = 0;
         }
-        
+
         if (intMoney > 0)
         {
             AnimateMoneyIncrease(previousMoney, money);
@@ -58,61 +60,61 @@ public class Inventory : MonoBehaviour
             UpdateMoneyDisplay(money);
         }
     }
-    
+
     private void AnimateMoneyIncrease(int fromAmount, int toAmount)
     {
         if (moneyAnimationCoroutine != null)
         {
             StopCoroutine(moneyAnimationCoroutine);
         }
-        
+
         moneyAnimationCoroutine = StartCoroutine(AnimateMoneyIncreaseCoroutine(fromAmount, toAmount));
     }
-    
+
     private void AnimateMoneyDecrease(int fromAmount, int toAmount)
     {
         if (moneyAnimationCoroutine != null)
         {
             StopCoroutine(moneyAnimationCoroutine);
         }
-        
+
         moneyAnimationCoroutine = StartCoroutine(AnimateMoneyDecreaseCoroutine(fromAmount, toAmount));
     }
-    
+
     private IEnumerator AnimateMoneyIncreaseCoroutine(int fromAmount, int toAmount)
     {
         float elapsedTime = 0f;
-        
+
         while (elapsedTime < increaseAnimationDuration)
         {
             elapsedTime += Time.deltaTime;
             float progress = elapsedTime / increaseAnimationDuration;
             float curveValue = increaseAnimationCurve.Evaluate(progress);
-            
+
             int currentDisplayMoney = Mathf.RoundToInt(Mathf.Lerp(fromAmount, toAmount, curveValue));
             UpdateMoneyDisplay(currentDisplayMoney);
-            
+
             yield return null;
         }
-        
+
         UpdateMoneyDisplay(toAmount);
         displayedMoney = toAmount;
         moneyAnimationCoroutine = null;
     }
-    
+
     private IEnumerator AnimateMoneyDecreaseCoroutine(int fromAmount, int toAmount)
     {
         float elapsedTime = 0f;
-        
+
         while (elapsedTime < decreaseAnimationDuration)
         {
             elapsedTime += Time.deltaTime;
             float progress = elapsedTime / decreaseAnimationDuration;
             float curveValue = decreaseAnimationCurve.Evaluate(progress);
-            
+
             int currentDisplayMoney = Mathf.RoundToInt(Mathf.Lerp(fromAmount, toAmount, curveValue));
             UpdateMoneyDisplay(currentDisplayMoney);
-            
+
             if (progress < shakeDuration / decreaseAnimationDuration)
             {
                 float shakeProgress = (progress * decreaseAnimationDuration) / shakeDuration;
@@ -127,16 +129,16 @@ public class Inventory : MonoBehaviour
             {
                 moneyText.transform.localPosition = originalMoneyTextPosition;
             }
-            
+
             yield return null;
         }
-        
+
         UpdateMoneyDisplay(toAmount);
         moneyText.transform.localPosition = originalMoneyTextPosition;
         displayedMoney = toAmount;
         moneyAnimationCoroutine = null;
     }
-    
+
     private void UpdateMoneyDisplay(int amount)
     {
         moneyText.text = amount.ToString();
@@ -147,21 +149,22 @@ public class Inventory : MonoBehaviour
         if (!collision.CompareTag("Package")) return;
 
         if (HasItem()) return;
-        
+
         TimerManager.StopTimer();
 
         furnitureInventory = Package._furnitureInPackage;
         Package.package.SetActive(false);
         EnablePackageUI(true);
-        OnFurniturePickUp?.Invoke(furnitureInventory);
-        
+        OnPackagePickUp?.Invoke(furnitureInventory);
+        OnInventoryChanged?.Invoke(furnitureInventory);
+
         UpdatePackageUI();
     }
 
     public void EnablePackageUI(bool enabled)
     {
         packageUI.SetActive(enabled);
-        
+
         if (enabled)
         {
             UpdatePackageUI();
@@ -192,7 +195,9 @@ public class Inventory : MonoBehaviour
 
         if (furnitureInventoryWithData != null)
         {
-            text_name.text = isSpanish ? furnitureInventoryWithData.originalData.es_Name.ToUpper() : furnitureInventoryWithData.originalData.Name.ToUpper();
+            text_name.text = isSpanish
+                ? furnitureInventoryWithData.originalData.es_Name.ToUpper()
+                : furnitureInventoryWithData.originalData.Name.ToUpper();
 
             if (furnitureInventoryWithData.originalData is ItemData itemData && itemImage != null)
             {
@@ -203,6 +208,20 @@ public class Inventory : MonoBehaviour
                 itemImage.sprite = PackageSprite;
             }
         }
+    }
+
+    public void SetItem(FurnitureOriginalData data)
+    {
+        if (furnitureInventory == data) return;
+        furnitureInventory = data;
+        OnInventoryChanged?.Invoke(data);
+    }
+
+    public void SetItemWithData(FurnitureData data)
+    {
+        if(furnitureInventoryWithData == data) return;
+        furnitureInventoryWithData = data;
+        OnInventoryChanged?.Invoke(furnitureInventoryWithData?.originalData);
     }
 
     public bool HasItem()

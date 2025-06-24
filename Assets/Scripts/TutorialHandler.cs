@@ -60,13 +60,13 @@ public class TutorialHandler : MonoBehaviour
     void Start()
     {
         confirmationScreen.Initialize(SkipTutorial, Resume);
-        Inventory.OnFurniturePickUp += BeginStep;
+        Inventory.OnPackagePickUp += BeginStep;
     }
 
     
     private void OnDestroy()
     {
-        Inventory.OnFurniturePickUp -= BeginStep;
+        Inventory.OnPackagePickUp -= BeginStep;
         RoomFurnitures.OnPlaceFurniture -= CompletedStepPlacedFurniture;
         RoomFurnitures.OnPlaceOnTopEvent -= CompletedStepPlacedFurniture;
         RoomFurnitures.OnComboDone -= CompletedStepCombo;

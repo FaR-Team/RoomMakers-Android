@@ -104,8 +104,8 @@ public class FurniturePreview : MonoBehaviour
             movement.AddDoorLayerToMask(); // Resetear layermask de movimiento de sledgehammer // TODO: Ver si es necesario aca o siempre va a funcionar con chequear en SetData arriba
             
             AudioManager.instance.PlaySfx(GlobalSfx.Click);
-            inventory.furnitureInventory = null;
-            inventory.furnitureInventoryWithData = null;
+            inventory.SetItem(null);
+            inventory.SetItemWithData(null);
             inventory.packageUI.SetActive(false);
             if(StateManager.CurrentGameState != GameState.Pause) StateManager.SwitchEditMode();
         }

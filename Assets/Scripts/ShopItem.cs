@@ -20,12 +20,12 @@ public class ShopItem : MonoBehaviour
         if (PlayerController.instance.Inventory.money >= price)
         {
             // Add item to inventory
-            if (PlayerController.instance.Inventory.furnitureInventory == null && PlayerController.instance.Inventory.furnitureInventoryWithData == null)
+            if (!PlayerController.instance.Inventory.HasItem())
             {
                 // Deduct money
                 PlayerController.instance.Inventory.UpdateMoney(-price);
                 
-                PlayerController.instance.Inventory.furnitureInventory = itemData;
+                PlayerController.instance.Inventory.SetItem(itemData);
                 
                 // Show the package UI with the purchased item
                 PlayerController.instance.Inventory.EnablePackageUI(true);

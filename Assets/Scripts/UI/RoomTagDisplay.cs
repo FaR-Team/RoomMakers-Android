@@ -87,4 +87,12 @@ public class RoomTagDisplay : MonoBehaviour
             tagDisplayImage.enabled = false;
         }
     }
+
+    public Sprite GetTagSprite(RoomTag roomTag)
+    {
+        int spriteIndex = (int)roomTag;
+        
+        if (spriteIndex >= 0 && spriteIndex < tagSprites.Length) return tagSprites[spriteIndex];
+        return tagSprites.Length > 0 ? tagSprites[0] : null;
+    }
 }
