@@ -2380,7 +2380,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &642195951
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3445,7 +3445,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 794334765}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3455,7 +3455,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -34, y: 16}
+  m_AnchoredPosition: {x: -32, y: 17}
   m_SizeDelta: {x: 64, y: 8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &794334767
@@ -3516,8 +3516,8 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
-  m_wordSpacing: -12
-  m_lineSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 6.3
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -6424,8 +6424,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 18, y: -8}
-  m_SizeDelta: {x: 90, y: 30}
+  m_AnchoredPosition: {x: 17.888, y: -5.755}
+  m_SizeDelta: {x: 87.766, y: 25.511}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1345910291
 MonoBehaviour:
@@ -6447,8 +6447,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: LA MESA DE COMEDOR ES LA MESA QUE SE USA EN EL COMEDOR SOS PELOTUDO O TE
-    HACES
+  m_text: 15 caracteres o te mato putita
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d2e121c471aaa5b49afcfe6700b8a131, type: 2}
   m_sharedMaterial: {fileID: -46810274029664758, guid: d2e121c471aaa5b49afcfe6700b8a131, type: 2}
@@ -6481,19 +6480,19 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 16
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
-  m_wordSpacing: -12
-  m_lineSpacing: 6
+  m_wordSpacing: 0
+  m_lineSpacing: 6.3
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 1
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1

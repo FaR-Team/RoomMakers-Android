@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
@@ -7,9 +6,9 @@ public class FurnitureInfoMenu : MonoBehaviour
 {
     [Header("UI References")]
     public GameObject menuPanel;
-    public Image furnitureImage;
     public TextMeshProUGUI furnitureName;
-    public TextMeshProUGUI furniturePrice;
+    public TextMeshProUGUI furnitureDescription;
+    public Image tagSprite;
     public Button startButton;
     
     private FurnitureOriginalData currentFurniture;
@@ -45,18 +44,9 @@ public class FurnitureInfoMenu : MonoBehaviour
             furnitureName.text = isSpanish ? currentFurniture.es_Name.ToUpper() : currentFurniture.Name.ToUpper();
         }
 
-        if (furniturePrice != null)
+        if (furnitureDescription != null)
         {
-            furniturePrice.text = "$" + currentFurniture.price.ToString();
-        }
-
-        if (furnitureImage != null && currentFurniture.sprites != null && currentFurniture.sprites.Length > 0)
-        {
-            furnitureImage.sprite = currentFurniture.sprites[0];
-        }
-        else if (furnitureImage != null && currentFurniture is ItemData itemData)
-        {
-            furnitureImage.sprite = itemData.ShopSprite;
+            furnitureDescription.text = isSpanish ? currentFurniture.es_Description.ToUpper() : currentFurniture.Description.ToUpper();
         }
     }
 
