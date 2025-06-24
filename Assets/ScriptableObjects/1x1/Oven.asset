@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Oven
   es_Name: Horno
+  Description: 
+  es_Description: 
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: a2728f189d68dd9419fcab83ed824102, type: 3}
@@ -26,6 +28,10 @@ MonoBehaviour:
   indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
+  isStackReceiver: 0
+  isStackable: 0
+  maxStackLevel: 4
+  stackLevelSprites: []
   wallObject: 0
   furnitureTag: 1
   tagMatchBonusPoints: 20

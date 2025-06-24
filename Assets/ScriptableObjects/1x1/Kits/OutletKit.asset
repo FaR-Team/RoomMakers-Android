@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Outlet Kit
   es_Name: Enchufe
+  Description: 
+  es_Description: 
   price: 0
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 98b2ac79ee18c184da6459ef08ed3542, type: 3}

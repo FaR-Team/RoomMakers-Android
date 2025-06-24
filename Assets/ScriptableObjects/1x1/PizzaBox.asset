@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Pizza Box
   es_Name: Caja de Pizza
+  Description: 
+  es_Description: 
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 863b5608c7c374b4c9ec877e126ba249, type: 3}

@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Sink
   es_Name: Lavamanos
+  Description: 
+  es_Description: 
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: f1a9c4033a66e7640844c33e887ed499, type: 3}
@@ -25,6 +27,10 @@ MonoBehaviour:
   indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
+  isStackReceiver: 0
+  isStackable: 0
+  maxStackLevel: 4
+  stackLevelSprites: []
   wallObject: 0
   furnitureTag: 1
   tagMatchBonusPoints: 20

@@ -15,7 +15,6 @@ public static class FurnitureDataExcelUtility
         if (string.IsNullOrEmpty(filePath))
             filePath = DefaultExportPath;
             
-        // Find all FurnitureOriginalData scriptable objects
         string[] guids = AssetDatabase.FindAssets("t:FurnitureOriginalData");
         List<FurnitureOriginalData> furnitureData = new List<FurnitureOriginalData>();
         
@@ -27,20 +26,16 @@ public static class FurnitureDataExcelUtility
                 furnitureData.Add(data);
         }
         
-        // Create CSV content
         StringBuilder csv = new StringBuilder();
         
-        // Make sure header matches the data we're exporting
-        csv.AppendLine("AssetPath,Name,es_Name,Price,SizeX,SizeY,TypeOfSize,PrefabPath,FurnitureTag,TagMatchBonusPoints,WallObject,HasComboSprite,ComboTriggerFurniturePath,Compatibles,RequiresBase,RequiredBasePath");
+        csv.AppendLine("AssetPath,Name,es_Name,Description,es_Description,Price,SizeX,SizeY,TypeOfSize,PrefabPath,FurnitureTag,TagMatchBonusPoints,WallObject,HasComboSprite,ComboTriggerFurniturePath,Compatibles,RequiresBase,RequiredBasePath,IsStackReceiver,IsStackable,MaxStackLevel");
         
-        // Write data rows
         foreach (FurnitureOriginalData data in furnitureData)
         {
             string assetPath = AssetDatabase.GetAssetPath(data);
             string prefabPath = data.prefab != null ? AssetDatabase.GetAssetPath(data.prefab) : "";
             string comboTriggerPath = data.comboTriggerFurniture != null ? AssetDatabase.GetAssetPath(data.comboTriggerFurniture) : "";
             
-            // Create compatibles list as semicolon-separated paths
             string compatiblesStr = "";
             if (data.compatibles != null && data.compatibles.Length > 0)
             {
@@ -55,15 +50,18 @@ public static class FurnitureDataExcelUtility
                 compatiblesStr = string.Join(";", compatiblePaths);
             }
 
-            // Check if requiredBase is set
             bool requiresBase = data.requiredBase != null;
             string requiredBasePath = requiresBase ? AssetDatabase.GetAssetPath(data.requiredBase) : "";
             
-            // Ensure we're writing the correct number of fields in the correct order
-            csv.AppendLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15}",
+            string description = LimitDescription(data.Description);
+            string esDescription = LimitDescription(data.es_Description);
+            
+            csv.AppendLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20}",
                 assetPath,
                 EscapeCSV(data.Name),
                 EscapeCSV(data.es_Name),
+                EscapeCSV(description),
+                EscapeCSV(esDescription),
                 data.price,
                 data.size.x,
                 data.size.y,
@@ -75,16 +73,17 @@ public static class FurnitureDataExcelUtility
                 data.hasComboSprite,
                 EscapeCSV(comboTriggerPath),
                 EscapeCSV(compatiblesStr),
-                requiresBase.ToString(), // Explicitly convert to string
-                EscapeCSV(requiredBasePath)
+                requiresBase.ToString(),
+                EscapeCSV(requiredBasePath),
+                data.isStackReceiver,
+                data.isStackable,
+                data.maxStackLevel
             ));
         }
         
-        // Write to file
         File.WriteAllText(filePath, csv.ToString());
         Debug.Log($"Exported {furnitureData.Count} furniture items to {filePath}");
         
-        // Open the file
         EditorUtility.RevealInFinder(filePath);
     }
     
@@ -106,7 +105,6 @@ public static class FurnitureDataExcelUtility
             return;
         }
         
-        // Skip header line
         for (int i = 1; i < lines.Length; i++)
         {
             string line = lines[i];
@@ -114,9 +112,9 @@ public static class FurnitureDataExcelUtility
                 continue;
                 
             string[] values = ParseCSVLine(line);
-            if (values.Length < 16) // Make sure we have all fields including RequiresBase and RequiredBasePath
+            if (values.Length < 21)
             {
-                Debug.LogError($"Line {i} has incorrect format: {line}. Expected 16 fields, got {values.Length}");
+                Debug.LogError($"Line {i} has incorrect format: {line}. Expected 21 fields, got {values.Length}");
                 continue;
             }
             
@@ -129,58 +127,52 @@ public static class FurnitureDataExcelUtility
                 continue;
             }
             
-            // Update the data
             data.Name = values[1];
             data.es_Name = values[2];
-            data.price = int.Parse(values[3]);
-            data.size = new Vector2Int(int.Parse(values[4]), int.Parse(values[5]));
+            data.Description = LimitDescription(values[3]);
+            data.es_Description = LimitDescription(values[4]);
+            data.price = int.Parse(values[5]);
+            data.size = new Vector2Int(int.Parse(values[6]), int.Parse(values[7]));
             
-            // Handle TypeOfSize safely
-            if (!string.IsNullOrEmpty(values[6]))
-            {
-                try
-                {
-                    data.typeOfSize = (TypeOfSize)Enum.Parse(typeof(TypeOfSize), values[6]);
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogWarning($"Failed to parse TypeOfSize '{values[6]}' for {data.Name}: {ex.Message}");
-                    // Keep existing value
-                }
-            }
-            
-            // Load prefab
-            string prefabPath = values[7];
-            if (!string.IsNullOrEmpty(prefabPath))
-                data.prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-                
-            // Parse enum
             if (!string.IsNullOrEmpty(values[8]))
             {
                 try
                 {
-                    data.furnitureTag = (RoomTag)Enum.Parse(typeof(RoomTag), values[8]);
+                    data.typeOfSize = (TypeOfSize)Enum.Parse(typeof(TypeOfSize), values[8]);
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogWarning($"Failed to parse RoomTag '{values[8]}' for {data.Name}: {ex.Message}");
-                    // Keep existing value
+                    Debug.LogWarning($"Failed to parse TypeOfSize '{values[8]}' for {data.Name}: {ex.Message}");
                 }
             }
             
-            data.tagMatchBonusPoints = int.Parse(values[9]);
-            data.wallObject = bool.Parse(values[10]);
-            data.hasComboSprite = bool.Parse(values[11]);
+            string prefabPath = values[9];
+            if (!string.IsNullOrEmpty(prefabPath))
+                data.prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+                
+            if (!string.IsNullOrEmpty(values[10]))
+            {
+                try
+                {
+                    data.furnitureTag = (RoomTag)Enum.Parse(typeof(RoomTag), values[10]);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"Failed to parse RoomTag '{values[10]}' for {data.Name}: {ex.Message}");
+                }
+            }
             
-            // Load combo trigger furniture
-            string comboTriggerPath = values[12];
+            data.tagMatchBonusPoints = int.Parse(values[11]);
+            data.wallObject = bool.Parse(values[12]);
+            data.hasComboSprite = bool.Parse(values[13]);
+            
+            string comboTriggerPath = values[14];
             if (!string.IsNullOrEmpty(comboTriggerPath))
                 data.comboTriggerFurniture = AssetDatabase.LoadAssetAtPath<FurnitureOriginalData>(comboTriggerPath);
             else
                 data.comboTriggerFurniture = null;
             
-            // Load compatibles list
-            string compatiblesStr = values[13];
+            string compatiblesStr = values[15];
             List<FurnitureOriginalData> compatiblesList = new List<FurnitureOriginalData>();
             if (!string.IsNullOrEmpty(compatiblesStr))
             {
@@ -199,18 +191,16 @@ public static class FurnitureDataExcelUtility
             }
             data.compatibles = compatiblesList.ToArray();
 
-            // Handle RequiresBase field - index 14
             bool requiresBase = false;
-            if (!string.IsNullOrEmpty(values[14]))
+            if (!string.IsNullOrEmpty(values[16]))
             {
-                requiresBase = bool.Parse(values[14]);
+                requiresBase = bool.Parse(values[16]);
             }
     
-            // Load required base object - index 15
-            data.requiredBase = null; // Default to null
+            data.requiredBase = null;
             if (requiresBase)
             {
-                string requiredBasePath = values[15];
+                string requiredBasePath = values[17];
                 if (!string.IsNullOrEmpty(requiredBasePath))
                 {
                     data.requiredBase = AssetDatabase.LoadAssetAtPath<FurnitureOriginalData>(requiredBasePath);
@@ -220,13 +210,30 @@ public static class FurnitureDataExcelUtility
                     }
                 }
             }
+
+            data.isStackReceiver = bool.Parse(values[18]);
+            data.isStackable = bool.Parse(values[19]);
+            data.maxStackLevel = int.Parse(values[20]);
                 
             EditorUtility.SetDirty(data);
         }
         
         AssetDatabase.SaveAssets();
         Debug.Log($"Imported furniture data from {filePath}");
-    }    private static string EscapeCSV(string value)
+    }
+
+    private static string LimitDescription(string description)
+    {
+        if (string.IsNullOrEmpty(description))
+            return "";
+            
+        if (description.Length > 105)
+            return description.Substring(0, 105);
+            
+        return description;
+    }
+    
+    private static string EscapeCSV(string value)
     {
         if (string.IsNullOrEmpty(value))
             return "";

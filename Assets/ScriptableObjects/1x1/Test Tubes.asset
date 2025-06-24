@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Test Tubes
   es_Name: Tubos Ensayo
+  Description: 
+  es_Description: 
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 2051165407336479176, guid: a80969c4632b60248b0bafa33b67a664, type: 3}
@@ -25,6 +27,10 @@ MonoBehaviour:
   indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
+  isStackReceiver: 0
+  isStackable: 0
+  maxStackLevel: 4
+  stackLevelSprites: []
   wallObject: 0
   furnitureTag: 7
   tagMatchBonusPoints: 50

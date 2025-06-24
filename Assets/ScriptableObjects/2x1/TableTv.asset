@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: TvTable
   es_Name: Mesa TV
+  Description: 
+  es_Description: 
   price: 20
   size: {x: 2, y: 1}
   prefab: {fileID: 6084753773558195295, guid: 0f665ab8c1651364c9db74d580af3e99, type: 3}
@@ -29,6 +31,10 @@ MonoBehaviour:
   indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
+  isStackReceiver: 0
+  isStackable: 0
+  maxStackLevel: 4
+  stackLevelSprites: []
   wallObject: 0
   furnitureTag: 4
   tagMatchBonusPoints: 30

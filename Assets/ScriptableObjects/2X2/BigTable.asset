@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Big Table
   es_Name: Mesa Grande
+  Description: 
+  es_Description: 
   price: 40
   size: {x: 2, y: 2}
   prefab: {fileID: 6084753773558195295, guid: 8b90c481b222158479bbe8c57df82323, type: 3}
@@ -42,6 +44,10 @@ MonoBehaviour:
   indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
+  isStackReceiver: 0
+  isStackable: 0
+  maxStackLevel: 4
+  stackLevelSprites: []
   wallObject: 0
   furnitureTag: 5
   tagMatchBonusPoints: 50

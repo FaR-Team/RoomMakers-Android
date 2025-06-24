@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Computer
   es_Name: Computadora
+  Description: 
+  es_Description: 
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 81505e51d3c821c4582a89010c92fb9e, type: 3}
@@ -25,6 +27,10 @@ MonoBehaviour:
   indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
+  isStackReceiver: 0
+  isStackable: 0
+  maxStackLevel: 4
+  stackLevelSprites: []
   wallObject: 0
   furnitureTag: 6
   tagMatchBonusPoints: 50

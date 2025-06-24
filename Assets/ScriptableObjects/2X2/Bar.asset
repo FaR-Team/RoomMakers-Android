@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Bar
   es_Name: Barra
+  Description: 
+  es_Description: 
   price: 40
   size: {x: 2, y: 2}
   prefab: {fileID: 7771166555523236374, guid: 8d1ebc681578ef14c872f1369e3d45f4, type: 3}

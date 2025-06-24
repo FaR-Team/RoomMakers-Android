@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Book
   es_Name: Libro
+  Description: This is a book. You better read it.
+  es_Description: Es un libro. Leelo flaco.
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 6882a74373e92c34dbec79e97ba6586c, type: 3}

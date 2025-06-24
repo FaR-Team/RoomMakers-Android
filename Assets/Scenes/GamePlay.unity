@@ -2477,9 +2477,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menuPanel: {fileID: 0}
-  furnitureImage: {fileID: 0}
   furnitureName: {fileID: 0}
-  furniturePrice: {fileID: 0}
+  furnitureDescription: {fileID: 0}
+  tagSprite: {fileID: 0}
   startButton: {fileID: 0}
 --- !u!1001 &655842094
 PrefabInstance:
@@ -6447,7 +6447,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 15 caracteres o te mato putita
+  m_text: 105 caracteres o te mato putita
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d2e121c471aaa5b49afcfe6700b8a131, type: 2}
   m_sharedMaterial: {fileID: -46810274029664758, guid: d2e121c471aaa5b49afcfe6700b8a131, type: 2}

@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Cabinet
   es_Name: Gabinete
+  Description: 
+  es_Description: 
   price: 20
   size: {x: 2, y: 1}
   prefab: {fileID: 6110547217177922278, guid: 035c2aa3c45879f49969f9cdb8b279d5, type: 3}
@@ -26,6 +28,10 @@ MonoBehaviour:
   indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
+  isStackReceiver: 0
+  isStackable: 0
+  maxStackLevel: 4
+  stackLevelSprites: []
   wallObject: 0
   furnitureTag: 6
   tagMatchBonusPoints: 50

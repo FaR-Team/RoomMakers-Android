@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Couch
   es_Name: Sillon
+  Description: 
+  es_Description: 
   price: 20
   size: {x: 2, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 88d5892fcfe7aee43958631d0218d1b3, type: 3}
@@ -26,6 +28,10 @@ MonoBehaviour:
   indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
+  isStackReceiver: 0
+  isStackable: 0
+  maxStackLevel: 4
+  stackLevelSprites: []
   wallObject: 0
   furnitureTag: 4
   tagMatchBonusPoints: 30
