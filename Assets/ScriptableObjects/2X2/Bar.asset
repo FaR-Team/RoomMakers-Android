@@ -35,5 +35,5 @@ MonoBehaviour:
   maxStackLevel: 4
   stackLevelSprites: []
   wallObject: 0
-  furnitureTag: 1
+  furnitureTag: 4
   tagMatchBonusPoints: 50

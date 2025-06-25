@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Book
   es_Name: Libro
-  Description: This is a book. You better read it.
-  es_Description: Es un libro. Leelo flaco.
+  Description: A well known novel written by a very renowned writer... not sure who
+    could it be.
+  es_Description: Una novela muy conocida escrita por un autor muy aclamado por la
+    critica... no se quien sea.
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 6882a74373e92c34dbec79e97ba6586c, type: 3}
@@ -26,8 +28,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: a928d1a7e7f313c4c85699c919540426, type: 3}
   - {fileID: 21300000, guid: 228fc567c534e914ab31bbb966bd1400, type: 3}
   indicatorSprite: {fileID: 0}
-  hasComboSprite: 0
-  comboTriggerFurniture: {fileID: 0}
+  hasComboSprite: 1
+  comboTriggerFurniture: {fileID: 11400000, guid: 5a451b65358f0484bbe90e6f153e1db2, type: 2}
   isStackReceiver: 0
   isStackable: 1
   maxStackLevel: 4

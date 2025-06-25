@@ -28,7 +28,7 @@ public static class FurnitureDataExcelUtility
         
         StringBuilder csv = new StringBuilder();
         
-        csv.AppendLine("AssetPath,Name,es_Name,Description,es_Description,Price,SizeX,SizeY,TypeOfSize,PrefabPath,FurnitureTag,TagMatchBonusPoints,WallObject,HasComboSprite,ComboTriggerFurniturePath,Compatibles,RequiresBase,RequiredBasePath,IsStackReceiver,IsStackable,MaxStackLevel");
+        csv.AppendLine("AssetPath,Name,es_Name,Price,SizeX,SizeY,TypeOfSize,PrefabPath,FurnitureTag,TagMatchBonusPoints,WallObject,HasComboSprite,ComboTriggerFurniturePath,Compatibles,RequiresBase,RequiredBasePath,IsWallObject,Description,es_Description,IsStackReceiver,IsStackable,MaxStackLevel");
         
         foreach (FurnitureOriginalData data in furnitureData)
         {
@@ -56,12 +56,10 @@ public static class FurnitureDataExcelUtility
             string description = LimitDescription(data.Description);
             string esDescription = LimitDescription(data.es_Description);
             
-            csv.AppendLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20}",
+            csv.AppendLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21}",
                 assetPath,
                 EscapeCSV(data.Name),
                 EscapeCSV(data.es_Name),
-                EscapeCSV(description),
-                EscapeCSV(esDescription),
                 data.price,
                 data.size.x,
                 data.size.y,
@@ -75,6 +73,9 @@ public static class FurnitureDataExcelUtility
                 EscapeCSV(compatiblesStr),
                 requiresBase.ToString(),
                 EscapeCSV(requiredBasePath),
+                data.wallObject,
+                EscapeCSV(description),
+                EscapeCSV(esDescription),
                 data.isStackReceiver,
                 data.isStackable,
                 data.maxStackLevel
@@ -112,9 +113,9 @@ public static class FurnitureDataExcelUtility
                 continue;
                 
             string[] values = ParseCSVLine(line);
-            if (values.Length < 21)
+            if (values.Length < 22)
             {
-                Debug.LogError($"Line {i} has incorrect format: {line}. Expected 21 fields, got {values.Length}");
+                Debug.LogError($"Line {i} has incorrect format: {line}. Expected 22 fields, got {values.Length}");
                 continue;
             }
             
@@ -129,50 +130,60 @@ public static class FurnitureDataExcelUtility
             
             data.Name = values[1];
             data.es_Name = values[2];
-            data.Description = LimitDescription(values[3]);
-            data.es_Description = LimitDescription(values[4]);
-            data.price = int.Parse(values[5]);
-            data.size = new Vector2Int(int.Parse(values[6]), int.Parse(values[7]));
             
+            if (!string.IsNullOrEmpty(values[3]) && int.TryParse(values[3], out int price))
+                data.price = price;
+            
+            if (!string.IsNullOrEmpty(values[4]) && int.TryParse(values[4], out int sizeX) &&
+                !string.IsNullOrEmpty(values[5]) && int.TryParse(values[5], out int sizeY))
+            {
+                data.size = new Vector2Int(sizeX, sizeY);
+            }
+            
+            if (!string.IsNullOrEmpty(values[6]))
+            {
+                try
+                {
+                    data.typeOfSize = (TypeOfSize)Enum.Parse(typeof(TypeOfSize), values[6]);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"Failed to parse TypeOfSize '{values[6]}' for {data.Name}: {ex.Message}");
+                }
+            }
+            
+            string prefabPath = values[7];
+            if (!string.IsNullOrEmpty(prefabPath))
+                data.prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+                
             if (!string.IsNullOrEmpty(values[8]))
             {
                 try
                 {
-                    data.typeOfSize = (TypeOfSize)Enum.Parse(typeof(TypeOfSize), values[8]);
+                    data.furnitureTag = (RoomTag)Enum.Parse(typeof(RoomTag), values[8]);
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogWarning($"Failed to parse TypeOfSize '{values[8]}' for {data.Name}: {ex.Message}");
+                    Debug.LogWarning($"Failed to parse RoomTag '{values[8]}' for {data.Name}: {ex.Message}");
                 }
             }
             
-            string prefabPath = values[9];
-            if (!string.IsNullOrEmpty(prefabPath))
-                data.prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-                
-            if (!string.IsNullOrEmpty(values[10]))
-            {
-                try
-                {
-                    data.furnitureTag = (RoomTag)Enum.Parse(typeof(RoomTag), values[10]);
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogWarning($"Failed to parse RoomTag '{values[10]}' for {data.Name}: {ex.Message}");
-                }
-            }
+            if (!string.IsNullOrEmpty(values[9]) && int.TryParse(values[9], out int bonusPoints))
+                data.tagMatchBonusPoints = bonusPoints;
             
-            data.tagMatchBonusPoints = int.Parse(values[11]);
-            data.wallObject = bool.Parse(values[12]);
-            data.hasComboSprite = bool.Parse(values[13]);
+            if (!string.IsNullOrEmpty(values[10]) && bool.TryParse(values[10], out bool wallObject))
+                data.wallObject = wallObject;
             
-            string comboTriggerPath = values[14];
+            if (!string.IsNullOrEmpty(values[11]) && bool.TryParse(values[11], out bool hasComboSprite))
+                data.hasComboSprite = hasComboSprite;
+            
+            string comboTriggerPath = values[12];
             if (!string.IsNullOrEmpty(comboTriggerPath))
                 data.comboTriggerFurniture = AssetDatabase.LoadAssetAtPath<FurnitureOriginalData>(comboTriggerPath);
             else
                 data.comboTriggerFurniture = null;
             
-            string compatiblesStr = values[15];
+            string compatiblesStr = values[13];
             List<FurnitureOriginalData> compatiblesList = new List<FurnitureOriginalData>();
             if (!string.IsNullOrEmpty(compatiblesStr))
             {
@@ -192,15 +203,15 @@ public static class FurnitureDataExcelUtility
             data.compatibles = compatiblesList.ToArray();
 
             bool requiresBase = false;
-            if (!string.IsNullOrEmpty(values[16]))
+            if (!string.IsNullOrEmpty(values[14]))
             {
-                requiresBase = bool.Parse(values[16]);
+                bool.TryParse(values[14], out requiresBase);
             }
     
             data.requiredBase = null;
             if (requiresBase)
             {
-                string requiredBasePath = values[17];
+                string requiredBasePath = values[15];
                 if (!string.IsNullOrEmpty(requiredBasePath))
                 {
                     data.requiredBase = AssetDatabase.LoadAssetAtPath<FurnitureOriginalData>(requiredBasePath);
@@ -211,9 +222,17 @@ public static class FurnitureDataExcelUtility
                 }
             }
 
-            data.isStackReceiver = bool.Parse(values[18]);
-            data.isStackable = bool.Parse(values[19]);
-            data.maxStackLevel = int.Parse(values[20]);
+            data.Description = LimitDescription(values[17]);
+            data.es_Description = LimitDescription(values[18]);
+
+            if (!string.IsNullOrEmpty(values[19]) && bool.TryParse(values[19], out bool isStackReceiver))
+                data.isStackReceiver = isStackReceiver;
+            
+            if (!string.IsNullOrEmpty(values[20]) && bool.TryParse(values[20], out bool isStackable))
+                data.isStackable = isStackable;
+            
+            if (!string.IsNullOrEmpty(values[21]) && int.TryParse(values[21], out int maxStackLevel))
+                data.maxStackLevel = maxStackLevel;
                 
             EditorUtility.SetDirty(data);
         }
@@ -227,8 +246,8 @@ public static class FurnitureDataExcelUtility
         if (string.IsNullOrEmpty(description))
             return "";
             
-        if (description.Length > 105)
-            return description.Substring(0, 105);
+        if (description.Length > 110)
+            return description.Substring(0, 110);
             
         return description;
     }

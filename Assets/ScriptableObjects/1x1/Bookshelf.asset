@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Bookshelf
   es_Name: Biblioteca
-  Description: 
-  es_Description: 
+  Description: A wooden board and a couple of nails of dubious quality. I wouldn't
+    place a whole book saga on it.
+  es_Description: "Una tabla y un par de clavos de dudosa calidad. No podr\xEDa una
+    saga completa de libros sobre ella."
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 24d995c1b1d2d894fabbcd024da84f71, type: 3}

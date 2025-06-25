@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Sledgehammer
   m_EditorClassIdentifier: 
   Name: Sledgehammer
-  es_Name: Almadena
+  es_Name: "Alm\xE1dena"
   Description: 
   es_Description: 
   price: 0

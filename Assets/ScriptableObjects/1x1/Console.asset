@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Console
   es_Name: Consola
-  Description: 
-  es_Description: 
+  Description: A cubic console with a huge green X and the first CD reader in history.
+  es_Description: Una consola de juegos con forma cubica, una equis verde enorme
+    y el primer lector de CDs de la historia.
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 1810136082569014617, guid: 57034c9846597974eba328abc56137eb, type: 3}
@@ -29,7 +30,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 4

@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Strange Cube
   es_Name: Cubo Raro
-  Description: 
-  es_Description: 
+  Description: In the event that the strange Cube does speak, F.a.r team urges you
+    to disregard its advice.
+  es_Description: En el caso de que el Cubo Raro hable, F.a.r team te insta a ignorar
+    su consejo.
   price: 100
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 692b54df45b45624eb53086265717971, type: 3}
@@ -29,7 +31,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 7

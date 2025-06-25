@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Fridge
   es_Name: Heladera
-  Description: 
-  es_Description: 
+  Description: Inside there are two bee eggs, an expired milk carton and a vegetable
+    you don't remember buying.
+  es_Description: Adentro hay dos huevos de abeja, un carton de leche vencida y una
+    verdura que no recuerdas haber comprado.
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 9156776624177822006, guid: 9c6cf5d2a447b3a4e944e13b5733a892, type: 3}
@@ -29,7 +31,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 1

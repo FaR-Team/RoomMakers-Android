@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: ChoppingBoard
   es_Name: TablaDeCortar
-  Description: 
-  es_Description: 
+  Description: The board was in discount because the previous owner chopped his finger
+    off with it. It's still bloody.
+  es_Description: "La tabla estaba en descuento porque el anterior due\xF1o se rebano
+    el dedo con ella. Aun tiene sangre."
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5900237983535666234, guid: 890d6a78befa3ec45b28dd536d08233a, type: 3}
@@ -29,7 +31,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 1

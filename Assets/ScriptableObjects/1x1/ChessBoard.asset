@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Chess Board
   es_Name: Ajedrez
-  Description: 
-  es_Description: 
+  Description: A perfect board to play chess. Or checkers. Or curling... it is true,
+    google it.
+  es_Description: Un tablero perfecto para jugar al ajedrez. O a las damas. O al
+    curling... es verdad, googlealo.
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 6148c2560f0f015429b87441d3d4fa6a, type: 3}
@@ -29,7 +31,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 4

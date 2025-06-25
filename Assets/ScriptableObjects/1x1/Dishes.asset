@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Dishes
   es_Name: Platos
-  Description: 
-  es_Description: 
+  Description: Stacking dishes in pixel art is very complicated, do not complain.
+  es_Description: 'Apilar platos en pixel art es muy complicado, no se quejen. '
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: d83266bb1e61ec140aa3ae4b220ed6a9, type: 3}
@@ -29,7 +29,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 1

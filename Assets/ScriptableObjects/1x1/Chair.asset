@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Chair
   es_Name: Silla
-  Description: 
-  es_Description: 
+  Description: At the store you've found the most comfy chair in the world. With
+    unique materials. It was way too expensive.
+  es_Description: En la tienda viste la silla mas comoda que jamas existio. Con materiales
+    unicos. Era cara y compraste esta.
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 23470f95a9f129b45b44a6a8e4b81947, type: 3}
@@ -29,7 +31,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 5
