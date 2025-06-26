@@ -75,6 +75,9 @@ public class DebugManager : MonoBehaviour
     
     private bool isDebugEnabled = false;
     private bool isDebugUnlocked = false;
+
+    private static List<LogEntry> allSessionLogs = new List<LogEntry>();
+    private static bool isCapturingLogs = false;
     
     private List<float> tapTimes = new List<float>();
 
@@ -85,11 +88,17 @@ public class DebugManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        
+
         if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            if (!isCapturingLogs)
+            {
+                Application.logMessageReceived += CaptureAllLogs;
+                isCapturingLogs = true;
+            }
         }
         else
         {
@@ -99,14 +108,14 @@ public class DebugManager : MonoBehaviour
         
         AdjustUIScaling();
     }
-    
+
     private void Start()
     {
         if (!Debug.isDebugBuild && !Application.isEditor) return;
-        
+
         CreateDebugPanel();
         debugPanel.SetActive(false);
-        
+
         if (Application.isEditor)
         {
             UnlockDebugMenu();
@@ -115,6 +124,8 @@ public class DebugManager : MonoBehaviour
         {
             FindAndSetupVersionButton();
         }
+        
+        Application.logMessageReceived += HandleLog;
     }
     
     private void FindAndSetupVersionButton()
@@ -1132,11 +1143,56 @@ public class DebugManager : MonoBehaviour
         Toggle logsToggle = CreateConsoleToggle(controlsObj.transform, "Logs", true, Color.white, ToggleLogMessages);
         Toggle warningsToggle = CreateConsoleToggle(controlsObj.transform, "Warnings", true, new Color(1f, 0.8f, 0.2f), ToggleWarningMessages);
         Toggle errorsToggle = CreateConsoleToggle(controlsObj.transform, "Errors", true, new Color(1f, 0.3f, 0.3f), ToggleErrorMessages);
+        
+        GameObject sessionInfoObj = new GameObject("SessionInfo", typeof(RectTransform));
+        sessionInfoObj.transform.SetParent(controlsObj.transform, false);
+
+        TextMeshProUGUI sessionInfoText = sessionInfoObj.AddComponent<TextMeshProUGUI>();
+        sessionInfoText.text = $"Session: {GetTotalSessionLogs()} logs";
+        sessionInfoText.fontSize = baseFontSize * 0.8f;
+        sessionInfoText.color = new Color(0.7f, 0.7f, 0.7f);
+        sessionInfoText.alignment = TextAlignmentOptions.Center;
+
+        RectTransform sessionInfoRect = sessionInfoObj.GetComponent<RectTransform>();
+        sessionInfoRect.sizeDelta = new Vector2(buttonHeight * 2f, buttonHeight * 0.8f);
 
         GameObject spacerObj = new GameObject("Spacer", typeof(RectTransform));
         spacerObj.transform.SetParent(controlsObj.transform, false);
         LayoutElement spacer = spacerObj.AddComponent<LayoutElement>();
         spacer.flexibleWidth = 1;
+
+        GameObject exportButtonObj = new GameObject("ExportButton", typeof(RectTransform));
+        exportButtonObj.transform.SetParent(controlsObj.transform, false);
+
+        Image exportButtonImage = exportButtonObj.AddComponent<Image>();
+        exportButtonImage.color = new Color(0.2f, 0.4f, 0.2f, 1f);
+
+        Button exportButton = exportButtonObj.AddComponent<Button>();
+        exportButton.onClick.AddListener(ExportAllLogs);
+        exportButton.targetGraphic = exportButtonImage;
+
+        ColorBlock exportColors = exportButton.colors;
+        exportColors.normalColor = new Color(0.2f, 0.4f, 0.2f, 1f);
+        exportColors.highlightedColor = new Color(0.3f, 0.5f, 0.3f, 1f);
+        exportColors.pressedColor = new Color(0.1f, 0.3f, 0.1f, 1f);
+        exportButton.colors = exportColors;
+
+        GameObject exportTextObj = new GameObject("Text", typeof(RectTransform));
+        exportTextObj.transform.SetParent(exportButtonObj.transform, false);
+
+        TextMeshProUGUI exportButtonText = exportTextObj.AddComponent<TextMeshProUGUI>();
+        exportButtonText.text = "Export";
+        exportButtonText.fontSize = baseFontSize * 0.9f;
+        exportButtonText.color = Color.white;
+        exportButtonText.alignment = TextAlignmentOptions.Center;
+
+        RectTransform exportButtonRect = exportButtonObj.GetComponent<RectTransform>();
+        exportButtonRect.sizeDelta = new Vector2(buttonHeight * 1.5f, buttonHeight * 0.8f);
+
+        RectTransform exportTextRect = exportTextObj.GetComponent<RectTransform>();
+        exportTextRect.anchorMin = Vector2.zero;
+        exportTextRect.anchorMax = Vector2.one;
+        exportTextRect.sizeDelta = Vector2.zero;
 
         GameObject clearButtonObj = new GameObject("ClearButton", typeof(RectTransform));
         clearButtonObj.transform.SetParent(controlsObj.transform, false);
@@ -1209,76 +1265,197 @@ public class DebugManager : MonoBehaviour
         Application.logMessageReceived += HandleLog;
     }
     
+    private static void CaptureAllLogs(string logString, string stackTrace, LogType type)
+    {
+        LogEntry entry = new LogEntry
+        {
+            message = logString,
+            stackTrace = stackTrace,
+            type = type,
+            timestamp = System.DateTime.Now
+        };
+        
+        allSessionLogs.Add(entry);
+        
+        if (allSessionLogs.Count > 3500)
+        {
+            allSessionLogs.RemoveAt(0);
+        }
+    }
+
+    private void ExportAllLogs()
+    {
+        try
+        {
+            System.Text.StringBuilder logBuilder = new System.Text.StringBuilder();
+
+            logBuilder.AppendLine("=== DEBUG LOG EXPORT ===");
+            logBuilder.AppendLine($"Export Time: {System.DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+            logBuilder.AppendLine($"Application: {Application.productName} v{Application.version}");
+            logBuilder.AppendLine($"Unity Version: {Application.unityVersion}");
+            logBuilder.AppendLine($"Platform: {Application.platform}");
+            logBuilder.AppendLine($"Device: {SystemInfo.deviceModel}");
+            logBuilder.AppendLine($"OS: {SystemInfo.operatingSystem}");
+            logBuilder.AppendLine("========================\n");
+
+            foreach (LogEntry logEntry in allSessionLogs)
+            {
+                string logTypeString = GetLogTypeString(logEntry.type);
+                logBuilder.AppendLine($"[{logEntry.timestamp:HH:mm:ss.fff}] [{logTypeString}] {logEntry.message}");
+                
+                if ((logEntry.type == LogType.Error || logEntry.type == LogType.Exception || logEntry.type == LogType.Assert) 
+                    && !string.IsNullOrEmpty(logEntry.stackTrace))
+                {
+                    logBuilder.AppendLine($"Stack Trace: {logEntry.stackTrace}");
+                }
+                
+                logBuilder.AppendLine();
+            }
+
+            string fileName = $"CompleteSessionLog_{System.DateTime.Now:yyyyMMdd_HHmmss}.txt";
+            string filePath = System.IO.Path.Combine(Application.persistentDataPath, fileName);
+            
+            System.IO.File.WriteAllText(filePath, logBuilder.ToString());
+            
+            Debug.Log($"Complete session logs exported to: {filePath}");
+            Debug.Log($"Exported {allSessionLogs.Count} log entries from entire application session");
+            
+#if UNITY_ANDROID && !UNITY_EDITOR
+            StartCoroutine(ShareLogFile(filePath));
+#endif
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Failed to export complete session logs: {e.Message}");
+        }
+    }
+    
+    private string GetLogTypeString(LogType type)
+    {
+        switch (type)
+        {
+            case LogType.Error:
+                return "ERROR";
+            case LogType.Assert:
+                return "ASSERT";
+            case LogType.Warning:
+                return "WARNING";
+            case LogType.Log:
+                return "LOG";
+            case LogType.Exception:
+                return "EXCEPTION";
+            default:
+                return "UNKNOWN";
+        }
+    }
+    
+    #if UNITY_ANDROID && !UNITY_EDITOR
+    private IEnumerator ShareLogFile(string filePath)
+    {
+        yield return new WaitForEndOfFrame();
+        
+        try
+        {
+            using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            using (AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+            using (AndroidJavaObject intent = new AndroidJavaObject("android.content.Intent"))
+            {
+                intent.Call<AndroidJavaObject>("setAction", "android.intent.action.SEND");
+                intent.Call<AndroidJavaObject>("setType", "text/plain");
+                intent.Call<AndroidJavaObject>("putExtra", "android.intent.extra.SUBJECT", "Debug Log Export");
+                intent.Call<AndroidJavaObject>("putExtra", "android.intent.extra.TEXT", $"Debug log file: {System.IO.Path.GetFileName(filePath)}");
+                
+                using (AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri"))
+                using (AndroidJavaObject fileObj = new AndroidJavaObject("java.io.File", filePath))
+                using (AndroidJavaObject uri = uriClass.CallStatic<AndroidJavaObject>("fromFile", fileObj))
+                {
+                    intent.Call<AndroidJavaObject>("putExtra", "android.intent.extra.STREAM", uri);
+                    intent.Call<AndroidJavaObject>("addFlags", 1); // FLAG_GRANT_READ_URI_PERMISSION
+                    
+                    using (AndroidJavaObject chooser = intent.CallStatic<AndroidJavaObject>("createChooser", intent, "Share Debug Log"))
+                    {
+                        currentActivity.Call("startActivity", chooser);
+                    }
+                }
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Failed to share log file: {e.Message}");
+        }
+    }
+#endif
+
     private Toggle CreateConsoleToggle(Transform parent, string label, bool isOn, Color textColor, UnityEngine.Events.UnityAction<bool> onValueChanged)
     {
         GameObject toggleObj = new GameObject("Toggle_" + label, typeof(RectTransform));
         toggleObj.transform.SetParent(parent, false);
-        
+
         HorizontalLayoutGroup layoutGroup = toggleObj.AddComponent<HorizontalLayoutGroup>();
         layoutGroup.childAlignment = TextAnchor.MiddleLeft;
         layoutGroup.childControlWidth = false;
         layoutGroup.childForceExpandWidth = false;
-        layoutGroup.spacing = elementSpacing/2;
-        
+        layoutGroup.spacing = elementSpacing / 2;
+
         GameObject toggleControl = new GameObject("ToggleControl", typeof(RectTransform));
         toggleControl.transform.SetParent(toggleObj.transform, false);
-        
+
         Toggle toggle = toggleControl.AddComponent<Toggle>();
         toggle.isOn = isOn;
         toggle.onValueChanged.AddListener(onValueChanged);
-        
+
         GameObject background = new GameObject("Background", typeof(RectTransform));
         background.transform.SetParent(toggleControl.transform, false);
-        
+
         Image backgroundImage = background.AddComponent<Image>();
         backgroundImage.color = new Color(0.15f, 0.15f, 0.15f, 1f);
-        
+
         GameObject checkmark = new GameObject("Checkmark", typeof(RectTransform));
         checkmark.transform.SetParent(background.transform, false);
-        
+
         Image checkmarkImage = checkmark.AddComponent<Image>();
         checkmarkImage.color = textColor;
-        
+
         toggle.targetGraphic = backgroundImage;
         toggle.graphic = checkmarkImage;
-        
+
         ColorBlock colors = toggle.colors;
         colors.normalColor = new Color(0.15f, 0.15f, 0.15f, 1f);
         colors.highlightedColor = new Color(0.25f, 0.25f, 0.25f, 1f);
         colors.pressedColor = new Color(0.1f, 0.1f, 0.1f, 1f);
         toggle.colors = colors;
-        
+
         GameObject labelObj = new GameObject("Label", typeof(RectTransform));
         labelObj.transform.SetParent(toggleObj.transform, false);
-        
+
         TextMeshProUGUI text = labelObj.AddComponent<TextMeshProUGUI>();
         text.text = label;
         text.fontSize = baseFontSize * 0.9f;
         text.color = textColor;
         text.alignment = TextAlignmentOptions.Left;
         text.fontStyle = FontStyles.Bold;
-        
+
         RectTransform toggleObjRect = toggleObj.GetComponent<RectTransform>();
         toggleObjRect.sizeDelta = new Vector2(buttonHeight * 2f, buttonHeight * 0.8f);
-        
+
         RectTransform toggleControlRect = toggleControl.GetComponent<RectTransform>();
         toggleControlRect.sizeDelta = new Vector2(buttonHeight * 0.5f, buttonHeight * 0.5f);
-        
+
         RectTransform backgroundRect = background.GetComponent<RectTransform>();
         backgroundRect.anchorMin = new Vector2(0.5f, 0.5f);
         backgroundRect.anchorMax = new Vector2(0.5f, 0.5f);
         backgroundRect.pivot = new Vector2(0.5f, 0.5f);
         backgroundRect.sizeDelta = new Vector2(buttonHeight * 0.4f, buttonHeight * 0.4f);
-        
+
         RectTransform checkmarkRect = checkmark.GetComponent<RectTransform>();
         checkmarkRect.anchorMin = new Vector2(0.5f, 0.5f);
         checkmarkRect.anchorMax = new Vector2(0.5f, 0.5f);
         checkmarkRect.pivot = new Vector2(0.5f, 0.5f);
         checkmarkRect.sizeDelta = new Vector2(buttonHeight * 0.25f, buttonHeight * 0.25f);
-        
+
         RectTransform labelRect = labelObj.GetComponent<RectTransform>();
         labelRect.sizeDelta = new Vector2(buttonHeight * 1.5f, buttonHeight * 0.8f);
-        
+
         return toggle;
     }
     
@@ -1740,10 +1917,27 @@ public class DebugManager : MonoBehaviour
         Application.logMessageReceived -= HandleLog;
     }
 
+    public static int GetTotalSessionLogs()
+    {
+        return allSessionLogs.Count;
+    }
+
+    public static int GetSessionLogsByType(LogType type)
+    {
+        int count = 0;
+        foreach (var log in allSessionLogs)
+        {
+            if (log.type == type)
+                count++;
+        }
+        return count;
+    }
+
     private struct LogEntry
     {
         public string message;
         public string stackTrace;
         public LogType type;
+        public System.DateTime timestamp;
     }
 }

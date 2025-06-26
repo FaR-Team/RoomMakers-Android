@@ -336,7 +336,7 @@ public class MainMenu : MonoBehaviour
 
     private void ShowLeaderboards()
     {
-        AudioManager.instance.PlaySfx(GlobalSfx.Error);
+        PlayGamesManager.Instance.ShowLeaderboard();
     }
 
     #region Credits
