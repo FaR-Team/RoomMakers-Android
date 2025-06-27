@@ -178,7 +178,7 @@ public class MainMenu : MonoBehaviour
     {
         playButton.onClick.AddListener(ShowGameModeMenu);
         controlsButton.onClick.AddListener(ShowControls);
-        leaderboardsButton.onClick.AddListener(() => ShakeButtonWithError(leaderboardsButton));
+        leaderboardsButton.onClick.AddListener(ShowLeaderboards);
         creditsButton.onClick.AddListener(ShowCredits);
         
         CasualButton.onClick.AddListener(() => LoadScene(2));
