@@ -588,7 +588,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debugPanelPrefab: {fileID: 0}
   uiScaleFactor: 2
-  autoScaleWithScreen: 0
+  autoScaleWithScreen: 1
   requiredTaps: 5
   tapTimeWindow: 3
 --- !u!114 &475884439

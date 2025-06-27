@@ -83,12 +83,6 @@ public class DebugManager : MonoBehaviour
 
     private void Awake()
     {
-        if (!Debug.isDebugBuild && !Application.isEditor)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
         if (instance == null)
         {
             instance = this;
@@ -111,8 +105,6 @@ public class DebugManager : MonoBehaviour
 
     private void Start()
     {
-        if (!Debug.isDebugBuild && !Application.isEditor) return;
-
         CreateDebugPanel();
         debugPanel.SetActive(false);
 
@@ -182,9 +174,7 @@ public class DebugManager : MonoBehaviour
     }
     
     private void OnVersionButtonPressed()
-    {
-        if (!Debug.isDebugBuild && !Application.isEditor) return;
-        
+    {   
         float currentTime = Time.unscaledTime;
         tapTimes.Add(currentTime);
         
@@ -253,25 +243,20 @@ public class DebugManager : MonoBehaviour
         Debug.Log("Debug button created");
     }
     
-    public static bool IsDebugBuildAndUnlocked()
-    {
-        return (Debug.isDebugBuild || Application.isEditor) && instance != null && instance.isDebugUnlocked;
-    }
-    
     private void AdjustUIScaling()
     {
         float scaleFactor = uiScaleFactor;
-        
+
         if (autoScaleWithScreen)
         {
             float screenWidth = Screen.width;
             float screenHeight = Screen.height;
-            
+
             float screenScaleFactor = Mathf.Min(screenWidth, screenHeight) / 1080f;
-            
+
             scaleFactor *= screenScaleFactor;
         }
-        
+
         baseFontSize = Mathf.Max(18f * scaleFactor, 16f);
         buttonHeight = Mathf.Max(80f * scaleFactor, 60f);
         sliderHeight = Mathf.Max(60f * scaleFactor, 40f);
@@ -1704,6 +1689,17 @@ public class DebugManager : MonoBehaviour
     {
         if (!isDebugUnlocked) return;
         
+        if (debugPanel == null)
+        {
+            CreateDebugPanel();
+            debugPanel.SetActive(false);
+        }
+        
+        if (debugButton == null)
+        {
+            CreateDebugToggleButton();
+        }
+        
         isDebugEnabled = !isDebugEnabled;
         debugPanel.SetActive(isDebugEnabled);
         
@@ -1716,6 +1712,11 @@ public class DebugManager : MonoBehaviour
     public void UpdateDebugInfo()
     {
         if (!isDebugEnabled || House.instance == null) return;
+        
+        if (scoreText == null || doorPriceText == null || roomsBuiltText == null)
+        {
+            return;
+        }
 
         scoreText.text = $"Score: {House.instance.Score}";
         doorPriceText.text = $"Door Price: {House.instance.DoorPrice}";
@@ -1910,6 +1911,32 @@ public class DebugManager : MonoBehaviour
         
         if (field != null)
             field.SetValue(House.instance, value);
+    }
+
+    private void OnEnable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        if (!isDebugUnlocked) return;
+        
+        if (debugButton == null)
+        {
+            CreateDebugToggleButton();
+        }
+        
+        if (isDebugEnabled && debugPanel == null)
+        {
+            CreateDebugPanel();
+            debugPanel.SetActive(true);
+        }
     }
 
     private void OnDestroy()
