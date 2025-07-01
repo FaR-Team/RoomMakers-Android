@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Oven
   es_Name: Horno
-  Description: 
-  es_Description: 
+  Description: This magical oven does not require a gas system, since it feeds on
+    people's misfortune.
+  es_Description: Este horno magico no requiere de un sistema de gas, puesto que
+    se alimenta de la desdicha de la gente.
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: a2728f189d68dd9419fcab83ed824102, type: 3}
@@ -30,7 +32,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 1

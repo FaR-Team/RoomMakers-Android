@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Pan
   es_Name: Sarten
-  Description: 
-  es_Description: 
+  Description: A long-haired princess was selling this as a "self-defense weapon".
+    Her chameleon looked at you ugly.
+  es_Description: "Una princesa de pelo largo vend\xEDa esto como un \"arma de defensa
+    personal\". Su camaleon te miraba feo."
   price: 0
   size: {x: 1, y: 1}
   prefab: {fileID: 6540865641507104188, guid: 46a1bd55edd4ba549a761429787e4974, type: 3}
@@ -29,7 +31,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 1

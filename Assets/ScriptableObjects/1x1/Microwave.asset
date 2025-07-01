@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Microwave
   es_Name: Microondas
-  Description: 
-  es_Description: 
+  Description: mmmmmmmmmmmmmmmmmmmmmmmmmmmm BEEP BEEP BEEP BEEP
+  es_Description: mmmmmmmmmmmmmmmmmmmmmmmmmmmm BEEP BEEP BEEP BEEP
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 8709635540505484981, guid: 3a16377f9950dac4fa7aea2b6b3a9a17, type: 3}
@@ -29,7 +29,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 1

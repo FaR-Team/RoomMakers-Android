@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: TeaSet
   es_Name: Set De Te
-  Description: 
-  es_Description: 
+  Description: 'It comes with all kinds of teas: black, strawberry... that''s it.'
+  es_Description: 'Viene con tes de todos los sabores: negro, fresa... eso es todo.'
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 2235978629633901518, guid: 99f46d3728dcb1a419318caca9cb51e4, type: 3}
@@ -29,7 +29,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 1

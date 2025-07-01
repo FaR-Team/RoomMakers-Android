@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Dumbbells
   es_Name: Pesas
-  Description: This dumbbell set ranks from 200g to 4T.
-  es_Description: Este set de pesas va desde 200g a 4T.
+  Description: Tired of never having them available at the gym, you bought this set.
+    Someone's using it.
+  es_Description: Harto de que nunca esten disponibles en el gimnasio, compraste
+    este set. Alguien lo esta usando.
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 59487ea3791dfd343897e808c010cb24, type: 3}

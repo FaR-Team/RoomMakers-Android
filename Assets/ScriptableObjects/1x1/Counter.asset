@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Counter
   m_EditorClassIdentifier: 
   Name: Counter
-  es_Name: Mesada
+  es_Name: Encimera
   Description: This outlined square seems to be a counter. Such disastrous artists.
-  es_Description: Este cuadrado delineado parece ser una mesada. Que artistas nefastos.
+  es_Description: Este cuadrado delineado parece ser una encimera. Que artistas nefastos.
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 8e0250bdc5f9fbc4cab36fb3ee024408, type: 3}

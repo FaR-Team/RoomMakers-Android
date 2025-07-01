@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Piano
   es_Name: Piano
-  Description: 
-  es_Description: 
+  Description: Did you know that the creators of Piano Tiles 2 are following one
+    of our developers on Twitter?
+  es_Description: Sabias que los creadores de piano tiles 2 siguen a uno de nuestros
+    desarrolladores en twitter?
   price: 40
   size: {x: 2, y: 2}
   prefab: {fileID: 6084753773558195295, guid: 27b3ecbe6ebf4c149b62925f67a4f49e, type: 3}
@@ -32,7 +34,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 4

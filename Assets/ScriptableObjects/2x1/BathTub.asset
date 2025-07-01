@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Bathtub
   es_Name: Banera
-  Description: 
-  es_Description: 
+  Description: It washes, scrubs, and deducts taxes. With one use, you'll be completely
+    clean.
+  es_Description: Lava, frota y deduce impuestos. Con un uso vas a estar completamente
+    limpio.
   price: 20
   size: {x: 2, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 234bac2d437868246a215e2b915b80a4, type: 3}
@@ -31,7 +33,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 3

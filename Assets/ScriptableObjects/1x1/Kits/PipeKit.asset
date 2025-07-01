@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PipeKit
   m_EditorClassIdentifier: 
   Name: Pipeline Kit
-  es_Name: "Ca\xF1erias"
+  es_Name: Canerias
   Description: Use it to connect objects to the water supply.
   es_Description: Sirve para conectar objetos a la red de agua.
   price: 0

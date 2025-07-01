@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Big Bed
   es_Name: Cama Grande
-  Description: 
-  es_Description: 
+  Description: Do. Not. Smell. It.
+  es_Description: No. La. Huelas.
   price: 40
   size: {x: 2, y: 2}
   prefab: {fileID: 6084753773558195295, guid: 441e54c1ad27c514fb47f8e56e44aeac, type: 3}
@@ -34,7 +34,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 2

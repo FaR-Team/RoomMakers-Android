@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Sink
   es_Name: Lavamanos
-  Description: 
-  es_Description: 
+  Description: The water looks drinkable, but considering it's 1980, it's probably
+    laced with mercury.
+  es_Description: El agua se ve potable, pero considerando que estamos en 1980, probablemente
+    esta inundada en mercurio.
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: f1a9c4033a66e7640844c33e887ed499, type: 3}
@@ -29,7 +31,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 1

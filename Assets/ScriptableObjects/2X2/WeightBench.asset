@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: WeightBench
   es_Name: Banco Pesas
-  Description: 
-  es_Description: 
+  Description: It comes with a coupon for a shady cryptocurrency online course.
+  es_Description: Viene con un cupon para un curso turbio de criptomonedas.
   price: 40
   size: {x: 2, y: 2}
   prefab: {fileID: 6084753773558195295, guid: d99e28b31de9e394181a949b7940ef4d, type: 3}
@@ -32,7 +32,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 8

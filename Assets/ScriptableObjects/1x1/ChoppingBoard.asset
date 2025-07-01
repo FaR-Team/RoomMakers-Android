@@ -16,8 +16,8 @@ MonoBehaviour:
   es_Name: TablaDeCortar
   Description: The board was in discount because the previous owner chopped his finger
     off with it. It's still bloody.
-  es_Description: "La tabla estaba en descuento porque el anterior due\xF1o se rebano
-    el dedo con ella. Aun tiene sangre."
+  es_Description: La tabla estaba en descuento porque el anterior dueno se rebano
+    el dedo con ella. Aun tiene sangre.
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5900237983535666234, guid: 890d6a78befa3ec45b28dd536d08233a, type: 3}

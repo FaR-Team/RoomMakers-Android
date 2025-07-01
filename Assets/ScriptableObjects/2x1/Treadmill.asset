@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Treadmill
   es_Name: Caminadora
-  Description: 
-  es_Description: 
+  Description: How are you going to walk in... ah... *disconnects from Discord* (Description
+    suggested by a programmer)
+  es_Description: Como vas a caminar en... ah... *se desconecta de Discord* (Descripcion
+    sugerida por un programador)
   price: 20
   size: {x: 2, y: 1}
   prefab: {fileID: 6084753773558195295, guid: 82dc0e77278143043a06a8b223c71d5f, type: 3}
@@ -30,7 +32,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 8

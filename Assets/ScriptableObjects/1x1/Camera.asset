@@ -16,8 +16,8 @@ MonoBehaviour:
   es_Name: Camara
   Description: With the almost latest technology, this camera can be place anywhere
     inside (not suitable for exteriors)
-  es_Description: "Con tecnolog\xEDa de anteultima, esta camara puede colocarse en
-    cualquier interior (No apta para exteriores)."
+  es_Description: Con tecnologia de anteultima, esta camara puede colocarse en cualquier
+    interior (No apta para exteriores).
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 2660710038267410545, guid: 5989ab96dcb88ab4e8b3cbfa7f748728, type: 3}

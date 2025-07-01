@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Lamp
   es_Name: Lampara
-  Description: 
-  es_Description: 
+  Description: The place is integrated with bioluminescence, which renders this lamp
+    useless. But it is cute.
+  es_Description: "El lugar ya viene con bioluminiscencia integrada, lo que vuelve
+    in\xFAtil a esta lampara. Pero es bonita. "
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: dddeeb39e2c05934abcc3d132ad3c42d, type: 3}

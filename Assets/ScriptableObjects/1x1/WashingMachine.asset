@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Wash Mach.
   es_Name: Lavarropas
-  Description: 
-  es_Description: 
+  Description: With its off-centered engine, it's the number one enemy of the downstairs
+    neighbors. Luckily, this is a house.
+  es_Description: Con su motor descentrado, es el enemigo numero uno de los vecinos
+    de abajo. Por suerte esto es una casa.
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 89c5b800cde774b47879870441d13b79, type: 3}
@@ -29,7 +31,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 3

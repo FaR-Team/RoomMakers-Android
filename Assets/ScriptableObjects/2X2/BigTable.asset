@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Big Table
   es_Name: Mesa Grande
-  Description: 
-  es_Description: 
+  Description: I don't understand why you bought a family-sized table if no one loves
+    you...
+  es_Description: No termino de entender por que compraste una mesa tamano familiar
+    si nadie te quiere...
   price: 40
   size: {x: 2, y: 2}
   prefab: {fileID: 6084753773558195295, guid: 8b90c481b222158479bbe8c57df82323, type: 3}
@@ -46,7 +48,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 5

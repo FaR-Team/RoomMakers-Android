@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: DumbbellRack
   es_Name: Porta Pesas
-  Description: 
-  es_Description: 
+  Description: This dumbbell set ranks from 200g to 4T.
+  es_Description: Este set de pesas va desde 200g a 4T.
   price: 20
   size: {x: 2, y: 1}
   prefab: {fileID: 6084753773558195295, guid: f77d3240b3305e943a50f8a542bc698c, type: 3}
@@ -30,7 +30,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 8

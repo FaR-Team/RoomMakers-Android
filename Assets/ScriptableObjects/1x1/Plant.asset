@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Plant
   es_Name: Planta
-  Description: 
-  es_Description: 
+  Description: A very easy plant to care for. It needs sun from 4 to 5, otherwise
+    it will growl. The list keeps going.
+  es_Description: Una planta muy sencilla de cuidar. Necesita sol de 4 a 5, sino
+    grita. Solo bebe agua filtrada, sino grita.
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5954944119824593527, guid: 74d725f5da433624b8841d31ded53166, type: 3}
@@ -29,7 +31,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 4

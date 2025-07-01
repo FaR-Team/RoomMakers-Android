@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Bed
   es_Name: Cama
-  Description: 
-  es_Description: 
+  Description: Apparently, the way it looks makes you want to smell it. Please don't.
+  es_Description: Al parecer, te dan ganas de olerla por como luce. Por favor, no
+    lo hagas.
   price: 20
   size: {x: 2, y: 1}
   prefab: {fileID: 5954944119824593527, guid: e1f68d83fea9e37419f7131258901742, type: 3}
@@ -31,7 +32,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 2

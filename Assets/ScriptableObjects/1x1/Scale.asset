@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Scale
   es_Name: Balanza
-  Description: 
-  es_Description: 
+  Description: It doesn't dial numbers, just very offensive jokes about your weight
+    and... financial position?
+  es_Description: No marca numeros, solo chistes muy ofensivos sobre tu peso y tu...
+    posicion economica?
   price: 10
   size: {x: 1, y: 1}
   prefab: {fileID: 5023798175167903013, guid: a0319cf285a373c4dbef1c1fb9179e92, type: 3}
@@ -29,7 +31,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 0
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 1
   stackLevelSprites: []
   wallObject: 0
   furnitureTag: 3
