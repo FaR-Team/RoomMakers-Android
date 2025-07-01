@@ -45,12 +45,14 @@ public class MainMenu : MonoBehaviour
         controls.Enable();
         controls.Movement.Movement.performed += OnNavigate;
         controls.Movement.Interact.performed += OnInteract;
+        controls.Movement.Rotate.performed += OnBPressed;
     }
 
     void OnDisable()
     {
         controls.Movement.Movement.performed -= OnNavigate;
         controls.Movement.Interact.performed -= OnInteract;
+        controls.Movement.Rotate.performed -= OnBPressed;
         controls.Disable();
     }
     
@@ -64,25 +66,8 @@ public class MainMenu : MonoBehaviour
 
     void Update()
     {
-        if (Input.anyKeyDown && !IsAlreadyChangingScene && !_fading && !menuPanel.activeInHierarchy && !gameModePanel.activeInHierarchy)
+        if (Input.anyKey && !IsAlreadyChangingScene && !_fading && !menuPanel.activeInHierarchy && !gameModePanel.activeInHierarchy)
         {
-            if (controlsOpen)
-            {
-                CloseControls();
-                return;
-            }
-            
-            if (creditsOpen)
-            {
-                CloseCredits();
-                return;
-            }
-
-            /*if (gameModeMenuOpen)
-            {
-                BackToMainMenu();
-                return;
-            }*/
             
             if (value < 2)
             {
@@ -107,12 +92,33 @@ public class MainMenu : MonoBehaviour
         }
     }
 
+    private void OnBPressed(InputAction.CallbackContext context)
+    {
+        if (controlsOpen)
+        {
+            CloseControls();
+            return;
+        }
+        
+        if (creditsOpen)
+        {
+            CloseCredits();
+            return;
+        }
+
+        if (gameModeMenuOpen)
+        {
+            BackToMainMenu();
+            return;
+        }
+    }
+
     private void OnNavigate(InputAction.CallbackContext context)
     {
         if ((!menuPanel.activeInHierarchy && !gameModePanel.activeInHierarchy) || controlsOpen || creditsOpen || _fading) return;
 
         Vector2 input = context.ReadValue<Vector2>();
-        
+
         if (input.y > 0.5f)
         {
             NavigateUp();
@@ -324,6 +330,7 @@ public class MainMenu : MonoBehaviour
         menuPanel.SetActive(false);
         controlsOpen = true;
     }
+
     private void CloseControls()
     {
         AudioManager.instance.PlaySfx(GlobalSfx.Grab);

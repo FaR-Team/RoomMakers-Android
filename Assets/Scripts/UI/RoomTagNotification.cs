@@ -36,7 +36,7 @@ public class RoomTagNotification : MonoBehaviour
     {
         { RoomTag.Bedroom, "Dormitorio" },
         { RoomTag.Kitchen, "Cocina" },
-        { RoomTag.Bathroom, "Baño" },
+        { RoomTag.Bathroom, "Bano" },
         { RoomTag.LivingRoom, "Sala de Estar" },
         { RoomTag.DiningRoom, "Comedor" },
         { RoomTag.Office, "Oficina" },
