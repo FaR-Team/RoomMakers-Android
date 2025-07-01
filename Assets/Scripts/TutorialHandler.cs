@@ -34,6 +34,7 @@ public class TutorialHandler : MonoBehaviour
 
     private GameObject _currentPreviewAnimation;
     public static event Action OnTutorialLockStateUpdated;
+    public static event Action OnTutorialFinished;
 
     public static TutorialHandler instance;
 
@@ -322,6 +323,7 @@ public class TutorialHandler : MonoBehaviour
 
     void FinishTutorial()
     {
+        OnTutorialFinished?.Invoke();
         Destroy(gameObject);
         PlayerPrefs.SetInt("TutorialCompleted", 1);
     }

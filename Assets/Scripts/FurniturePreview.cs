@@ -106,7 +106,7 @@ public class FurniturePreview : MonoBehaviour
             AudioManager.instance.PlaySfx(GlobalSfx.Click);
             inventory.SetItem(null);
             inventory.SetItemWithData(null);
-            inventory.packageUI.SetActive(false);
+            inventory.EnablePackageUI(false);
             if(StateManager.CurrentGameState != GameState.Pause) StateManager.SwitchEditMode();
         }
         else

@@ -10,6 +10,7 @@ public class Inventory : MonoBehaviour
     public int money;
     public TextMeshProUGUI moneyText;
     public GameObject packageUI;
+    [SerializeField] private GameObject startButtonUI;
     [SerializeField] private TextMeshProUGUI text_name;
     [SerializeField] private SpriteRenderer itemImage;
     public Sprite PackageSprite;
@@ -35,6 +36,7 @@ public class Inventory : MonoBehaviour
         displayedMoney = money;
         originalMoneyTextPosition = moneyText.transform.localPosition;
         UpdateMoneyDisplay(money);
+        TutorialHandler.OnTutorialFinished += HandleTutorialFinished;
     }
 
     public void UpdateMoney(int intMoney)
@@ -164,7 +166,7 @@ public class Inventory : MonoBehaviour
     public void EnablePackageUI(bool enabled)
     {
         packageUI.SetActive(enabled);
-
+        
         if (enabled)
         {
             UpdatePackageUI();
@@ -209,6 +211,11 @@ public class Inventory : MonoBehaviour
             }
         }
     }
+    
+    private void HandleTutorialFinished()
+    {
+        startButtonUI.SetActive(true);
+    }
 
     public void SetItem(FurnitureOriginalData data)
     {
@@ -227,5 +234,10 @@ public class Inventory : MonoBehaviour
     public bool HasItem()
     {
         return furnitureInventoryWithData != null || furnitureInventory != null;
+    }
+
+    private void OnDestroy()
+    {
+        TutorialHandler.OnTutorialFinished -= HandleTutorialFinished;
     }
 }
