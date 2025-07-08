@@ -587,6 +587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugPanelPrefab: {fileID: 0}
+  isRelease: 1
   uiScaleFactor: 2
   autoScaleWithScreen: 1
   requiredTaps: 5

@@ -10,6 +10,9 @@ public class DebugManager : MonoBehaviour
     public static DebugManager instance;
 
     [SerializeField] private GameObject debugPanelPrefab;
+
+    [Header("Release Settings")]
+    [SerializeField] private bool isRelease = false;
     
     private GameObject debugPanel;
     private GameObject debugButton;
@@ -105,6 +108,12 @@ public class DebugManager : MonoBehaviour
 
     private void Start()
     {
+        if (isRelease)
+        {
+            Debug.Log("Debug menu disabled in release build");
+            return;
+        }
+        
         CreateDebugPanel();
         debugPanel.SetActive(false);
 
@@ -122,6 +131,7 @@ public class DebugManager : MonoBehaviour
     
     private void FindAndSetupVersionButton()
     {
+        if (isRelease) return;
         GameObject versionButton = GameObject.Find("VersionButton");
         if (versionButton == null)
         {
@@ -175,6 +185,8 @@ public class DebugManager : MonoBehaviour
     
     private void OnVersionButtonPressed()
     {   
+        if (isRelease) return;
+        
         float currentTime = Time.unscaledTime;
         tapTimes.Add(currentTime);
         
