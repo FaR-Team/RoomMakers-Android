@@ -1094,6 +1094,7 @@ MonoBehaviour:
   creditsButton: {fileID: 1066480821}
   CasualButton: {fileID: 937073572}
   RogueButton: {fileID: 1552428996}
+  creditsAutoReturnTime: 35
 --- !u!114 &354332411
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2037,7 +2038,7 @@ PrefabInstance:
     - target: {fileID: 4342737202206940843, guid: b134b40e8d569a44c9e0d0e747ad1276, type: 3}
       propertyPath: m_audioClip
       value: 
-      objectReference: {fileID: 8300000, guid: 2935138c4fd70b641b9ba28ac911c5ad, type: 3}
+      objectReference: {fileID: 8300000, guid: 1558760378d189046bb22cf3002fee8d, type: 3}
     - target: {fileID: 4342737203111764920, guid: b134b40e8d569a44c9e0d0e747ad1276, type: 3}
       propertyPath: m_RootOrder
       value: 0

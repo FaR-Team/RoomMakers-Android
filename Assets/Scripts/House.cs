@@ -105,7 +105,7 @@ public class House : MonoBehaviour
                 return null;
             }
             
-                        Room _room = Instantiate(selectedPrefab, position, Quaternion.identity, houseParent.transform).GetComponent<Room>();
+            Room _room = Instantiate(selectedPrefab, position, Quaternion.identity, houseParent.transform).GetComponent<Room>();
             _room.Init();
             Habitaciones.Add(position, _room);
             _room.cameraVector = new Vector3(position.x, position.y, -3);
@@ -166,6 +166,11 @@ public class House : MonoBehaviour
     public void UpdateScore(int scoreToAdd)
     {
         score += scoreToAdd;
+        
+        if (score > PlayerPrefs.GetInt("HighScore", 0))
+        {
+            PlayGamesManager.Instance.TrySubmitHighScore(score);
+        }
     }
 
     public Room GetRoom(Vector3 position)

@@ -31,6 +31,8 @@ public class MainMenu : MonoBehaviour
     private bool creditsOpen = false;
     private bool gameModeMenuOpen = false;
     private HashSet<Button> shakingButtons = new HashSet<Button>();
+    [SerializeField] private float creditsAutoReturnTime = 100f;
+    private Coroutine creditsAutoReturnCoroutine;
     
     void Awake()
     {
@@ -364,17 +366,47 @@ public class MainMenu : MonoBehaviour
         yield return new WaitForSeconds(1f);
         _fading = false;
         creditsOpen = true;
+        
+        creditsAutoReturnCoroutine = StartCoroutine(AutoReturnFromCredits());
     }
 
     private void CloseCredits()
     {
+        StartCoroutine(CloseCreditsCoroutine());
+    }
+    
+    IEnumerator CloseCreditsCoroutine()
+    {
+        // Stop auto-return timer if it's running
+        if (creditsAutoReturnCoroutine != null)
+        {
+            StopCoroutine(creditsAutoReturnCoroutine);
+            creditsAutoReturnCoroutine = null;
+        }
+        
+        blackFade.SetTrigger("StartBlackFade");
+        _fading = true;
         AudioManager.instance.PlaySfx(GlobalSfx.Grab);
+        yield return new WaitForSeconds(1f);
         ActivateCreditsScreen(false);
         menuPanel.SetActive(true);
         creditsOpen = false;
+        blackFade.SetTrigger("EndBlackFade");
+        yield return new WaitForSeconds(1f);
+        _fading = false;
         UpdateButtonSelection();
     }
     
+    private IEnumerator AutoReturnFromCredits()
+    {
+        yield return new WaitForSeconds(creditsAutoReturnTime);
+        
+        // Only auto-return if credits are still open
+        if (creditsOpen)
+        {
+            CloseCredits();
+        }
+    }
     #endregion
 
     private void ActivateControllerScreen(bool setActive)

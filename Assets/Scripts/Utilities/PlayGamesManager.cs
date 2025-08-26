@@ -34,6 +34,21 @@ public class PlayGamesManager : MonoBehaviour
         else
             Debug.LogWarning($"Play Games sign-in failed: {status}");
     }
+    
+    public void TrySubmitHighScore(int score, string leaderboardId = "CgkI-unR07wTEAIQAQ")
+    {
+        if (IsSignedIn)
+        {
+            long currentHigh = PlayerPrefs.GetInt("HighScore", 0);
+            if (score > currentHigh)
+            {
+                Social.ReportScore(score, leaderboardId, success => {
+                    Debug.Log(success ? "Highscore submitted" : "Failed to submit highscore");
+                });
+                PlayerPrefs.SetInt("HighScore", score);
+            }
+        }
+    }
 
     public void ShowLeaderboard(string leaderboardId = "CgkI-unR07wTEAIQAQ")
     {

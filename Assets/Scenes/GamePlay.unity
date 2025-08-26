@@ -1236,6 +1236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugPanelPrefab: {fileID: 0}
+  isRelease: 0
   uiScaleFactor: 2
   autoScaleWithScreen: 0
   requiredTaps: 5
@@ -4835,7 +4836,7 @@ MonoBehaviour:
   currentDifficultyLevel: 0
   baseShopProbability: 0.15
   allowShopsInCorners: 0
-  showDebugInfo: 1
+  showDebugInfo: 0
 --- !u!1 &996624849
 GameObject:
   m_ObjectHideFlags: 0
