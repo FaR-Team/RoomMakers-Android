@@ -14,10 +14,13 @@ public class GBRender : MonoBehaviour
         {
             this.renderTexture = new RenderTexture(resolutionX, resolutionY, 24);
             this.renderTexture.enableRandomWrite = true;
-            this.renderTexture.Create();
             this.renderTexture.filterMode = FilterMode.Point;
+            this.renderTexture.wrapMode = TextureWrapMode.Clamp;
+            this.renderTexture.antiAliasing = 1;
+            this.renderTexture.useMipMap = false;
+            this.renderTexture.Create();
 
-            if (this.Renderer == null)
+            if (this.Renderer != null)
             {
                 this.Renderer.mainTexture = this.renderTexture;
             }
