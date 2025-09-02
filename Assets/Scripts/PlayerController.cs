@@ -227,7 +227,7 @@ public class PlayerController : MovementController
         else if (transform.up == Vector3.down)
             offset = new Vector3(0, 1, 0);
         else if (transform.up == Vector3.left)
-            offset = new Vector3(0.6f, 1, 0);
+            offset = new Vector3(0.61f, 1, 0);
         else if (transform.up == Vector3.right)
             offset = new Vector3(-1, 1, 0);
 

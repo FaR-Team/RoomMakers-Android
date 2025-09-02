@@ -8,6 +8,8 @@ public class KitObject : FurnitureObjectBase
     private int[] originalSortingOrders;
     private bool[] originalEnabledStates;
     private const string HIGHLIGHT_SORTING_LAYER_NAME = "Preview";
+    
+    private bool hasFurnitureAbove = false;
 
     [Tooltip("How quickly the kit object blinks when highlighted (seconds per half-blink).")]
     [SerializeField] private float blinkInterval = 0.4f;
@@ -90,6 +92,8 @@ public class KitObject : FurnitureObjectBase
             return;
         }
 
+        hasFurnitureAbove = CheckForFurnitureAbove();
+
         bool shouldHighlight = false;
         GameState currentGameState = StateManager.CurrentGameState;
 
@@ -134,6 +138,21 @@ public class KitObject : FurnitureObjectBase
             }
             RevertToOriginalState();
         }
+        
+        UpdateVisibility();
+    }
+    
+    private bool CheckForFurnitureAbove()
+    {
+        Vector2 kitPosition = GridManager.PositionToCellCenter(transform.position);
+        
+        RoomFurnitures roomFurnitures = FindObjectOfType<RoomFurnitures>();
+        if (roomFurnitures != null && roomFurnitures.PlacementDatasInPosition.TryGetValue(kitPosition, out PlacementData placementData))
+        {
+            return placementData.instantiatedFurniture != null;
+        }
+        
+        return false;
     }
 
     private void RevertToOriginalState()
@@ -148,10 +167,38 @@ public class KitObject : FurnitureObjectBase
             {
                 if (i < originalSortingLayerIDs.Length) sr.sortingLayerID = originalSortingLayerIDs[i];
                 if (i < originalSortingOrders.Length) sr.sortingOrder = originalSortingOrders[i];
-                if (i < originalEnabledStates.Length) sr.enabled = originalEnabledStates[i];
-                else sr.enabled = true;
             }
         }
+        
+        UpdateVisibility();
+    }
+
+    private void UpdateVisibility()
+    {
+        if (hasFurnitureAbove && blinkingCoroutine == null)
+        {
+            foreach (SpriteRenderer sr in this.spriteRenderers)
+            {
+                if (sr != null) sr.enabled = false;
+            }
+        }
+        else if (!hasFurnitureAbove && blinkingCoroutine == null)
+        {
+            for (int i = 0; i < this.spriteRenderers.Length; i++)
+            {
+                SpriteRenderer sr = this.spriteRenderers[i];
+                if (sr != null)
+                {
+                    if (i < originalEnabledStates.Length) sr.enabled = originalEnabledStates[i];
+                    else sr.enabled = true;
+                }
+            }
+        }
+    }
+
+    public void OnFurnitureAboveChanged()
+    {
+        UpdateHighlightState();
     }
 
     private IEnumerator BlinkEffectCoroutine()

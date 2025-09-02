@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PizzaBox
   m_EditorClassIdentifier: 
   Name: Pizza Box
-  es_Name: Caja de Pizza
+  es_Name: CajaDePizza
   Description: It has a note. "Well I didn't win, here's your pizza". The box is
     empty.
   es_Description: "Tiene una nota. \"No gane, aqui esta la pizza\". Est\xE1 vac\xEDa."

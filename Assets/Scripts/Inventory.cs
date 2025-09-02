@@ -23,8 +23,13 @@ public class Inventory : MonoBehaviour
     [SerializeField] private AnimationCurve decreaseAnimationCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     [SerializeField] private float shakeIntensity = 5f;
     [SerializeField] private float shakeDuration = 0.5f;
+    
+    [Header("Insufficient Funds Shake")]
+    [SerializeField] private float insufficientFundsShakeDuration = 0.2f;
+    [SerializeField] private float insufficientFundsShakeIntensity = 0.04f;
 
     private Coroutine moneyAnimationCoroutine;
+    private Coroutine insufficientFundsShakeCoroutine;
     private int displayedMoney;
     private Vector3 originalMoneyTextPosition;
 
@@ -144,6 +149,40 @@ public class Inventory : MonoBehaviour
     private void UpdateMoneyDisplay(int amount)
     {
         moneyText.text = amount.ToString();
+    }
+
+    public void ShakeMoneyForInsufficientFunds()
+    {
+        if (insufficientFundsShakeCoroutine != null)
+        {
+            StopCoroutine(insufficientFundsShakeCoroutine);
+        }
+        
+        insufficientFundsShakeCoroutine = StartCoroutine(ShakeMoneyCoroutine());
+    }
+
+    private IEnumerator ShakeMoneyCoroutine()
+    {
+        float elapsedTime = 0f;
+        
+        while (elapsedTime < insufficientFundsShakeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float progress = elapsedTime / insufficientFundsShakeDuration;
+            
+            Vector3 shakeOffset = new Vector3(
+                UnityEngine.Random.Range(-insufficientFundsShakeIntensity, insufficientFundsShakeIntensity) * (1 - progress),
+                UnityEngine.Random.Range(-insufficientFundsShakeIntensity, insufficientFundsShakeIntensity) * (1 - progress),
+                0
+            );
+            
+            moneyText.transform.localPosition = originalMoneyTextPosition + shakeOffset;
+            
+            yield return null;
+        }
+        
+        moneyText.transform.localPosition = originalMoneyTextPosition;
+        insufficientFundsShakeCoroutine = null;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

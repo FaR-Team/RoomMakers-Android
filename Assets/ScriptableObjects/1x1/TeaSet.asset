@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6582f407bbc7b741a5cf2ee76b2b532, type: 3}
   m_Name: TeaSet
   m_EditorClassIdentifier: 
-  Name: TeaSet
+  Name: Tea Set
   es_Name: Set De Te
   Description: 'It comes with all kinds of teas: black, strawberry... that''s it.'
   es_Description: 'Viene con tes de todos los sabores: negro, fresa... eso es todo.'

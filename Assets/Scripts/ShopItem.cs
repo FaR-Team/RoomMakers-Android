@@ -43,6 +43,11 @@ public class ShopItem : MonoBehaviour
         {
             // Not enough money
             Debug.Log("Not enough money to purchase item");
+            
+            if (PlayerController.instance != null && PlayerController.instance.Inventory != null)
+            {
+                PlayerController.instance.Inventory.ShakeMoneyForInsufficientFunds();
+            }
         }
     }
 

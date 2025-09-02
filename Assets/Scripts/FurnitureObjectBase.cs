@@ -44,6 +44,8 @@ public class FurnitureObjectBase : MonoBehaviour
         else
         {
             UpdateSprites(originalData.sprites);
+            if(anim) anim.enabled = true;
+            
             if (indicatorInstance != null)
             {
                 Destroy(indicatorInstance);

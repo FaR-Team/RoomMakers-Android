@@ -139,6 +139,11 @@ public class DoorData : MonoBehaviour
         
             AudioManager.instance.PlaySfx(GlobalSfx.Error);
             StartCoroutine(ShakeDoorCoroutine());
+            
+            if (PlayerController.instance != null && PlayerController.instance.Inventory != null)
+            {
+                PlayerController.instance.Inventory.ShakeMoneyForInsufficientFunds();
+            }
         }
     }
 
@@ -155,6 +160,7 @@ public class DoorData : MonoBehaviour
 
     private IEnumerator ShakeDoorCoroutine()
     {
+        shakeMagnitude = 0.04f;
         isShaking = true;
         Vector3 originalPosition = transform.localPosition;
         float elapsed = 0f;

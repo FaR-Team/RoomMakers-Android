@@ -167,7 +167,7 @@ public class House : MonoBehaviour
     {
         score += scoreToAdd;
         
-        if (score > PlayerPrefs.GetInt("HighScore", 0))
+        if (score > PlayerPrefs.GetInt("HighScore", 0) && PlayGamesManager.Instance != null)
         {
             PlayGamesManager.Instance.TrySubmitHighScore(score);
         }

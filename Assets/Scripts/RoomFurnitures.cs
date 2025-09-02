@@ -93,7 +93,8 @@ public class RoomFurnitures : MonoBehaviour
         {
             if (PlacementDatasInPosition.TryGetValue(cell, out var existingData) &&
                 existingData.instantiatedFurniture is BottomFurnitureObject bottomObj &&
-                bottomObj.Data.originalData.isStackReceiver)
+                bottomObj.Data.originalData.isStackReceiver &&
+                bottomObj.IsUnpacked)
             {
                 bool isSameObjectBeingRestacked = furnitureData.instanceID != 0 &&
                                    existingData.stackedItems != null &&
@@ -247,6 +248,11 @@ public class RoomFurnitures : MonoBehaviour
             foreach (var cell in cellsEffectivelyOccupiedByNewItem)
             {
                 PlacementDatasInPosition[cell] = newPlacementEntry;
+                
+                if (KitsInPosition.TryGetValue(cell, out KitObject kit))
+                {
+                    kit.OnFurnitureAboveChanged();
+                }
             }
         }
 
@@ -268,6 +274,7 @@ public class RoomFurnitures : MonoBehaviour
             if (furnitureInstance is KitObject placedKit)
             {
                 UpdateOverlyingFurnitureOnKitPlacement(instantiationGridPos, placedKit);
+                placedKit.OnFurnitureAboveChanged();
             }
         }
     }
@@ -517,6 +524,11 @@ public class RoomFurnitures : MonoBehaviour
         foreach (var pos in positions)
         {
             PlacementDatasInPosition.Remove(pos);
+            
+            if (KitsInPosition.TryGetValue(pos, out KitObject kit))
+            {
+                kit.OnFurnitureAboveChanged();
+            }
         }
     }
 
@@ -527,6 +539,11 @@ public class RoomFurnitures : MonoBehaviour
         foreach (var tile in data.occupiedPositions)
         {
             PlacementDatasInPosition.Remove(tile);
+            
+            if (KitsInPosition.TryGetValue(tile, out KitObject kit))
+            {
+                kit.OnFurnitureAboveChanged();
+            }
         }
     }
 
@@ -539,6 +556,14 @@ public class RoomFurnitures : MonoBehaviour
     public void RemoveTopObjectInPosition(Vector2 pos)
     {
         PlacementDatasInPosition[pos].ClearTopObject(pos);
+        
+        if (PlacementDatasInPosition.TryGetValue(pos, out PlacementData data) && data.instantiatedFurniture == null)
+        {
+            if (KitsInPosition.TryGetValue(pos, out KitObject kit))
+            {
+                kit.OnFurnitureAboveChanged();
+            }
+        }
     }
 
     public void RemoveKitInPosition(Vector2 pos)

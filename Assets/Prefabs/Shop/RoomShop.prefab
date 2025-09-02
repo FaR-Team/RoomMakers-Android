@@ -642,7 +642,7 @@ MonoBehaviour:
   spawnPoint: {x: 0, y: 0, z: 0}
   openDoor: {fileID: 21300000, guid: 79d0ebe8a31e84a4c9068efbdb27a0fa, type: 3}
   shakeDuration: 0.2
-  shakeMagnitude: 0.03
+  shakeMagnitude: 0.04
   lockedTutorialIndicator: {fileID: 0}
 --- !u!61 &5748501361348794200
 BoxCollider2D:
@@ -773,7 +773,7 @@ MonoBehaviour:
   spawnPoint: {x: 0, y: 0, z: 0}
   openDoor: {fileID: 21300000, guid: 79d0ebe8a31e84a4c9068efbdb27a0fa, type: 3}
   shakeDuration: 0.2
-  shakeMagnitude: 0.03
+  shakeMagnitude: 0.04
   lockedTutorialIndicator: {fileID: 0}
 --- !u!61 &5748501361412697536
 BoxCollider2D:
@@ -1340,7 +1340,7 @@ MonoBehaviour:
   spawnPoint: {x: 0, y: 0, z: 0}
   openDoor: {fileID: 21300000, guid: 79d0ebe8a31e84a4c9068efbdb27a0fa, type: 3}
   shakeDuration: 0.2
-  shakeMagnitude: 0.03
+  shakeMagnitude: 0.04
   lockedTutorialIndicator: {fileID: 0}
 --- !u!61 &5748501362297983719
 BoxCollider2D:
@@ -1471,7 +1471,7 @@ MonoBehaviour:
   spawnPoint: {x: 0, y: 0, z: 0}
   openDoor: {fileID: 21300000, guid: 79d0ebe8a31e84a4c9068efbdb27a0fa, type: 3}
   shakeDuration: 0.2
-  shakeMagnitude: 0.03
+  shakeMagnitude: 0.04
   lockedTutorialIndicator: {fileID: 0}
 --- !u!61 &5748501363029740192
 BoxCollider2D:
