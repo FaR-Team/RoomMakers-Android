@@ -1,13 +1,24 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.InputSystem.Layouts;
+using UnityEngine.InputSystem.OnScreen;
 using CandyCoded.HapticFeedback;
 
-public class VirtualButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class VirtualButton : OnScreenControl, IPointerDownHandler, IPointerUpHandler
 {
+    [InputControl(layout = "Button")]
+    [SerializeField] private string buttonControlPath;
+    
     private bool pressed = false;
     public Sprite sprite;
     private Image image;
+
+    protected override string controlPathInternal
+    {
+        get => buttonControlPath;
+        set => buttonControlPath = value;
+    }
 
     void Start()
     {
@@ -19,7 +30,7 @@ public class VirtualButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
         if (pressed)
         {
             image.sprite = sprite;
-            image.color = new Color(image.color.r, image.color.g, image.color.b, 100f);
+            image.color = new Color(image.color.r, image.color.g, image.color.b, 1f);
 
         }
         else
@@ -32,11 +43,13 @@ public class VirtualButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     public void OnPointerDown(PointerEventData pointerEventData)
     {
         pressed = true;
+        SendValueToControl(1.0f);
         HapticFeedback.LightFeedback();
     }
 
     public void OnPointerUp(PointerEventData pointerEventData)
     {
         pressed = false;
+        SendValueToControl(0.0f);
     }
 }

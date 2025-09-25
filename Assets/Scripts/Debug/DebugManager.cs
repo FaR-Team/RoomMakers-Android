@@ -376,7 +376,23 @@ public class DebugManager : MonoBehaviour
             {
                 GameObject eventSystemObj = new GameObject("EventSystem");
                 eventSystemObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
-                eventSystemObj.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+                
+                try
+                {
+                    var inputSystemModule = System.Type.GetType("UnityEngine.InputSystem.UI.InputSystemUIInputModule, Unity.InputSystem");
+                    if (inputSystemModule != null)
+                    {
+                        eventSystemObj.AddComponent(inputSystemModule);
+                    }
+                    else
+                    {
+                        eventSystemObj.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+                    }
+                }
+                catch
+                {
+                    eventSystemObj.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+                }
             }
             
             Debug.Log("Created new debug canvas");
@@ -1367,7 +1383,7 @@ public class DebugManager : MonoBehaviour
                 using (AndroidJavaObject uri = uriClass.CallStatic<AndroidJavaObject>("fromFile", fileObj))
                 {
                     intent.Call<AndroidJavaObject>("putExtra", "android.intent.extra.STREAM", uri);
-                    intent.Call<AndroidJavaObject>("addFlags", 1); // FLAG_GRANT_READ_URI_PERMISSION
+                    intent.Call<AndroidJavaObject>("addFlags", 1);
                     
                     using (AndroidJavaObject chooser = intent.CallStatic<AndroidJavaObject>("createChooser", intent, "Share Debug Log"))
                     {

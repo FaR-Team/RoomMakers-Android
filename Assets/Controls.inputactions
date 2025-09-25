@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "Controls",
     "maps": [
         {
@@ -18,7 +19,7 @@
                     "name": "SwitchMode",
                     "type": "Button",
                     "id": "a32debce-b772-4ffd-a771-e9efff6f6dde",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -27,7 +28,7 @@
                     "name": "Start",
                     "type": "Button",
                     "id": "9c3acec5-e486-48cd-bbfd-acdce18ccd40",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -36,7 +37,7 @@
                     "name": "Interact",
                     "type": "Button",
                     "id": "acf827f1-8765-4d82-8cbf-f5931f3b089e",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -45,7 +46,7 @@
                     "name": "Rotate",
                     "type": "Button",
                     "id": "eadd830b-f0bc-41f8-b022-f0a2839cb5c8",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
