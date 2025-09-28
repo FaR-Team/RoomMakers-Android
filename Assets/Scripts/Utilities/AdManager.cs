@@ -27,9 +27,15 @@ public class AdManager : MonoBehaviour
 
             SceneManager.sceneLoaded += OnSceneLoaded;
 
-            // Initialize the Google Mobile Ads SDK.
             MobileAds.Initialize((InitializationStatus initStatus) =>
             {
+                var requestConfiguration = new RequestConfiguration
+                {
+                    MaxAdContentRating = MaxAdContentRating.G,
+                    TagForChildDirectedTreatment = TagForChildDirectedTreatment.True
+                };
+                MobileAds.SetRequestConfiguration(requestConfiguration);
+                
                 LoadAd();
             });
         }
