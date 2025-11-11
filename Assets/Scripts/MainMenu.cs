@@ -19,6 +19,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button CasualButton;
     [SerializeField] private Button RogueButton;
+    [SerializeField] private Button ClassicButton;
     private Controls controls;
     private Button[] menuButtons;
     private Button[] gameModeButtons;
@@ -33,12 +34,12 @@ public class MainMenu : MonoBehaviour
     private HashSet<Button> shakingButtons = new HashSet<Button>();
     [SerializeField] private float creditsAutoReturnTime = 100f;
     private Coroutine creditsAutoReturnCoroutine;
-    
+
     void Awake()
     {
         controls = new Controls();
         menuButtons = new Button[] { playButton, controlsButton, leaderboardsButton, creditsButton };
-        gameModeButtons = new Button[] { CasualButton, RogueButton };
+        gameModeButtons = new Button[] { CasualButton, RogueButton, ClassicButton };
         currentButtons = menuButtons;
     }
 
@@ -57,7 +58,7 @@ public class MainMenu : MonoBehaviour
         controls.Movement.Rotate.performed -= OnBPressed;
         controls.Disable();
     }
-    
+
     void Start()
     {
         menuPanel.SetActive(false);
@@ -70,7 +71,7 @@ public class MainMenu : MonoBehaviour
     {
         if (Input.anyKey && !IsAlreadyChangingScene && !_fading && !menuPanel.activeInHierarchy && !gameModePanel.activeInHierarchy)
         {
-            
+
             if (value < 2)
             {
                 value++;
@@ -101,7 +102,7 @@ public class MainMenu : MonoBehaviour
             CloseControls();
             return;
         }
-        
+
         if (creditsOpen)
         {
             CloseCredits();
@@ -134,7 +135,7 @@ public class MainMenu : MonoBehaviour
     private void OnInteract(InputAction.CallbackContext context)
     {
         if ((!menuPanel.activeInHierarchy && !gameModePanel.activeInHierarchy) || controlsOpen || creditsOpen || _fading) return;
-        
+
         currentButtons[currentButtonIndex].onClick.Invoke();
     }
 
@@ -188,7 +189,8 @@ public class MainMenu : MonoBehaviour
         controlsButton.onClick.AddListener(ShowControls);
         leaderboardsButton.onClick.AddListener(ShowLeaderboards);
         creditsButton.onClick.AddListener(ShowCredits);
-        
+
+        //ClassicButton.onClick.AddListener();
         CasualButton.onClick.AddListener(() => LoadScene(2));
         RogueButton.onClick.AddListener(() => ShakeButtonWithError(RogueButton));
     }
@@ -196,7 +198,7 @@ public class MainMenu : MonoBehaviour
     private void ShakeButtonWithError(Button button)
     {
         if (shakingButtons.Contains(button)) return;
-        
+
         AudioManager.instance.PlaySfx(GlobalSfx.Error);
         StartCoroutine(ShakeButton(button));
     }
@@ -215,9 +217,9 @@ public class MainMenu : MonoBehaviour
             {
                 float x = originalPosition.x + Random.Range(-shakeIntensity, shakeIntensity);
                 float y = originalPosition.y + Random.Range(-shakeIntensity, shakeIntensity);
-                
+
                 button.transform.localPosition = new Vector3(x, y, originalPosition.z);
-                
+
                 elapsed += Time.deltaTime;
                 yield return null;
             }
@@ -244,10 +246,10 @@ public class MainMenu : MonoBehaviour
         {
             Navigation nav = new Navigation();
             nav.mode = Navigation.Mode.Explicit;
-            
+
             nav.selectOnUp = buttons[(i - 1 + buttons.Length) % buttons.Length];
             nav.selectOnDown = buttons[(i + 1) % buttons.Length];
-            
+
             buttons[i].navigation = nav;
         }
     }
@@ -366,7 +368,7 @@ public class MainMenu : MonoBehaviour
         yield return new WaitForSeconds(1f);
         _fading = false;
         creditsOpen = true;
-        
+
         creditsAutoReturnCoroutine = StartCoroutine(AutoReturnFromCredits());
     }
 
@@ -374,7 +376,7 @@ public class MainMenu : MonoBehaviour
     {
         StartCoroutine(CloseCreditsCoroutine());
     }
-    
+
     IEnumerator CloseCreditsCoroutine()
     {
         // Stop auto-return timer if it's running
@@ -383,7 +385,7 @@ public class MainMenu : MonoBehaviour
             StopCoroutine(creditsAutoReturnCoroutine);
             creditsAutoReturnCoroutine = null;
         }
-        
+
         blackFade.SetTrigger("StartBlackFade");
         _fading = true;
         AudioManager.instance.PlaySfx(GlobalSfx.Grab);
@@ -396,11 +398,11 @@ public class MainMenu : MonoBehaviour
         _fading = false;
         UpdateButtonSelection();
     }
-    
+
     private IEnumerator AutoReturnFromCredits()
     {
         yield return new WaitForSeconds(creditsAutoReturnTime);
-        
+
         // Only auto-return if credits are still open
         if (creditsOpen)
         {

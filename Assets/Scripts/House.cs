@@ -13,7 +13,6 @@ public class House : MonoBehaviour
     public Dictionary<Vector3, Room> Habitaciones = new Dictionary<Vector3, Room>();
 
     public Room currentRoom;
-
     public GameObject comboStarSprite;
     [Header("Box Sprites")] 
     public Sprite[] one_one_sprites;
@@ -325,6 +324,7 @@ public class House : MonoBehaviour
     {
         return roomGenerator;
     }
+
 }
 
 public enum DifficultyLevel
@@ -334,3 +334,4 @@ public enum DifficultyLevel
     Hard,
     Extreme
 }
+
