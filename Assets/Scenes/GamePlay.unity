@@ -5501,7 +5501,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 362e1c7703f438b4ca20eeda40138b7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomGenerator: {fileID: 0}
+  roomGenerator: {fileID: 943811827}
   houseParent: {fileID: 943811823}
   currentRoom: {fileID: 0}
   comboStarSprite: {fileID: 3817393959942364799, guid: f66ce8377de79f94081daa738e46cf17, type: 3}
