@@ -7457,8 +7457,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 17e9769dd9c79a44194bbbc7356d3a9f, type: 2}
   - {fileID: 11400000, guid: 5d78d91289e356a4da0b246fa9177e46, type: 2}
   - {fileID: 11400000, guid: 733fd517e1f4d6b4681477fa636f927a, type: 2}
-  - {fileID: 11400000, guid: dadec6abf8f8e914e806e483f6c61e0a, type: 2}
-  - {fileID: 11400000, guid: 48a20645606504b4889906c3cf64760c, type: 2}
   onePercent:
   - {fileID: 11400000, guid: c9a8abdc44c79de41a95d4026f078a8a, type: 2}
   - {fileID: 11400000, guid: 03e12326fc5b8dd45aed3687ec969955, type: 2}
