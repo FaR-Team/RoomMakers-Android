@@ -198,7 +198,7 @@ public class RoomFurnitures : MonoBehaviour
 
             details.Unboxed = (!requiresBase || CheckKitRequirement(cellsToOccupy, originalData)) &&
                               (!originalData.wallObject || CheckWallsAndRotate(worldPosition, furnitureData));
-            
+
             return details;
         }
 
@@ -248,7 +248,7 @@ public class RoomFurnitures : MonoBehaviour
             foreach (var cell in cellsEffectivelyOccupiedByNewItem)
             {
                 PlacementDatasInPosition[cell] = newPlacementEntry;
-                
+
                 if (KitsInPosition.TryGetValue(cell, out KitObject kit))
                 {
                     kit.OnFurnitureAboveChanged();
@@ -377,6 +377,8 @@ public class RoomFurnitures : MonoBehaviour
 
     private int HandleStackedTagBonus(FurnitureData furnitureData, FurnitureOriginalData originalData, Vector2 popupPosition)
     {
+        if (House.instance.classicMode) return 0;
+
         int tagBonus = 0;
         Room currentRoom = GetComponent<Room>();
         RoomTag furnitureTag = originalData.furnitureTag;
@@ -396,6 +398,7 @@ public class RoomFurnitures : MonoBehaviour
             ComboPopUp.Create(matchPrefab, tagBonus, popupPosition, new Vector2(0f, 1.5f));
         }
         return tagBonus;
+
     }
 
     private void HandleStackedComboPoints(BottomFurnitureObject stackReceiver, List<Vector2> positionsForComboCheck, FurnitureObjectBase newStackedItem, Vector2 popupPosition, int existingTagBonus)
@@ -524,7 +527,7 @@ public class RoomFurnitures : MonoBehaviour
         foreach (var pos in positions)
         {
             PlacementDatasInPosition.Remove(pos);
-            
+
             if (KitsInPosition.TryGetValue(pos, out KitObject kit))
             {
                 kit.OnFurnitureAboveChanged();
@@ -539,7 +542,7 @@ public class RoomFurnitures : MonoBehaviour
         foreach (var tile in data.occupiedPositions)
         {
             PlacementDatasInPosition.Remove(tile);
-            
+
             if (KitsInPosition.TryGetValue(tile, out KitObject kit))
             {
                 kit.OnFurnitureAboveChanged();
@@ -556,7 +559,7 @@ public class RoomFurnitures : MonoBehaviour
     public void RemoveTopObjectInPosition(Vector2 pos)
     {
         PlacementDatasInPosition[pos].ClearTopObject(pos);
-        
+
         if (PlacementDatasInPosition.TryGetValue(pos, out PlacementData data) && data.instantiatedFurniture == null)
         {
             if (KitsInPosition.TryGetValue(pos, out KitObject kit))
@@ -570,7 +573,7 @@ public class RoomFurnitures : MonoBehaviour
     {
         if (!KitsInPosition.TryGetValue(pos, out KitObject kitToRemove)) return;
 
-        FurnitureOriginalData removedKitOriginalData = kitToRemove.Data.originalData; 
+        FurnitureOriginalData removedKitOriginalData = kitToRemove.Data.originalData;
 
         Destroy(kitToRemove.gameObject);
         KitsInPosition.Remove(pos);
@@ -582,14 +585,14 @@ public class RoomFurnitures : MonoBehaviour
         if (PlacementDatasInPosition.TryGetValue(placedKitCell, out PlacementData affectedData) &&
             affectedData.instantiatedFurniture != null)
         {
-            var topFurnitures  = affectedData.topPlacementDatas?.Where(f => f.furnitureOnTopData?.originalData.requiredBase).ToArray();
-            
+            var topFurnitures = affectedData.topPlacementDatas?.Where(f => f.furnitureOnTopData?.originalData.requiredBase).ToArray();
+
             if (topFurnitures == null || topFurnitures.Length == 0) // If checking Base Object, not top objects
             {
                 FurnitureObjectBase furniture = affectedData.instantiatedFurniture;
                 FurnitureData furnitureData = furniture.Data;
                 FurnitureOriginalData originalFurnitureData = furnitureData.originalData;
-                
+
                 if (!furniture.IsUnpacked &&
                     originalFurnitureData.requiredBase != null &&
                     originalFurnitureData.requiredBase == placedKit.Data.originalData)
@@ -614,7 +617,7 @@ public class RoomFurnitures : MonoBehaviour
                     FurnitureObjectBase furniture = topFurnitures[i].instantiatedFurnitureOnTop;
                     FurnitureData furnitureData = furniture.Data;
                     FurnitureOriginalData originalFurnitureData = furnitureData.originalData;
-                    
+
                     bool nowUnboxed = CheckKitRequirement(affectedData.occupiedPositions, originalFurnitureData);
 
                     if (nowUnboxed)
@@ -643,9 +646,9 @@ public class RoomFurnitures : MonoBehaviour
             FurnitureData furnitureData = furniture.Data;
             FurnitureOriginalData originalFurnitureData = furnitureData.originalData;
 
-            if (furniture.IsUnpacked && 
+            if (furniture.IsUnpacked &&
                 originalFurnitureData.requiredBase != null &&
-                originalFurnitureData.requiredBase == removedKitType) 
+                originalFurnitureData.requiredBase == removedKitType)
             {
                 bool stillUnboxed = CheckKitRequirement(affectedData.occupiedPositions, originalFurnitureData);
 
