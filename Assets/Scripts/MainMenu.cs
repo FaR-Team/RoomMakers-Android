@@ -18,8 +18,8 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button leaderboardsButton;
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button CasualButton;
-    [SerializeField] private Button RogueButton;
     [SerializeField] private Button ClassicButton;
+    [SerializeField] private Button RogueButton;
     private Controls controls;
     private Button[] menuButtons;
     private Button[] gameModeButtons;
@@ -39,7 +39,7 @@ public class MainMenu : MonoBehaviour
     {
         controls = new Controls();
         menuButtons = new Button[] { playButton, controlsButton, leaderboardsButton, creditsButton };
-        gameModeButtons = new Button[] { CasualButton, RogueButton, ClassicButton };
+        gameModeButtons = new Button[] { CasualButton, ClassicButton, RogueButton };
         currentButtons = menuButtons;
     }
 
@@ -190,8 +190,8 @@ public class MainMenu : MonoBehaviour
         leaderboardsButton.onClick.AddListener(ShowLeaderboards);
         creditsButton.onClick.AddListener(ShowCredits);
 
-        //ClassicButton.onClick.AddListener();
         CasualButton.onClick.AddListener(() => LoadScene(2));
+        ClassicButton.onClick.AddListener(() => LoadScene(3));
         RogueButton.onClick.AddListener(() => ShakeButtonWithError(RogueButton));
     }
 
