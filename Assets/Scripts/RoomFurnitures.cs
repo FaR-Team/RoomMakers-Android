@@ -335,6 +335,8 @@ public class RoomFurnitures : MonoBehaviour
     #region Wall Objects
     private bool CheckWallsAndRotate(Vector2 position, FurnitureData data)
     {
+        if (House.instance.classicMode) return true;
+        
         bool isWallUp = Physics2D.Raycast(position, Vector2.up, 1f, wallsLayerMask);
         bool isWallLeft = Physics2D.Raycast(position, Vector2.left, 1f, wallsLayerMask);
         bool isWallBottom = Physics2D.Raycast(position, Vector2.down, 1f, wallsLayerMask);

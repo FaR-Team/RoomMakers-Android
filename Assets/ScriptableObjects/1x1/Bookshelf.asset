@@ -32,7 +32,7 @@ MonoBehaviour:
   comboTriggerFurniture: {fileID: 0}
   isStackReceiver: 1
   isStackable: 0
-  maxStackLevel: 4
+  maxStackLevel: 3
   stackLevelSprites: []
   wallObject: 1
   furnitureTag: 6
