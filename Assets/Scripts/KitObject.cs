@@ -97,20 +97,27 @@ public class KitObject : FurnitureObjectBase
         bool shouldHighlight = false;
         GameState currentGameState = StateManager.CurrentGameState;
 
-        FurnitureOriginalData heldItemOriginalData = null;
-        if (EditingManager.Instance != null)
+        if (House.instance != null && House.instance.classicMode)
         {
-            heldItemOriginalData = EditingManager.Instance.CurrentlyHeldFurnitureOriginalData;
+            shouldHighlight = false;
         }
-
-        if (currentGameState == GameState.Editing &&
-            heldItemOriginalData != null &&
-            heldItemOriginalData.requiredBase != null)
+        else
         {
-
-            if (heldItemOriginalData.requiredBase == this.furnitureData.originalData)
+            FurnitureOriginalData heldItemOriginalData = null;
+            if (EditingManager.Instance != null)
             {
-                shouldHighlight = true;
+                heldItemOriginalData = EditingManager.Instance.CurrentlyHeldFurnitureOriginalData;
+            }
+
+            if (currentGameState == GameState.Editing &&
+                heldItemOriginalData != null &&
+                heldItemOriginalData.requiredBase != null)
+            {
+
+                if (heldItemOriginalData.requiredBase == this.furnitureData.originalData)
+                {
+                    shouldHighlight = true;
+                }
             }
         }
 

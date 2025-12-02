@@ -226,7 +226,7 @@ public class House : MonoBehaviour
 
         uiContainer.SetActive(true);
 
-        if (RoomTagNotification.instance != null && currentRoom != null)
+        if (RoomTagNotification.instance != null && currentRoom != null && !classicMode)
         {
             RoomTagNotification.instance.ShowRoomTag(currentRoom.roomTag);
         }

@@ -3259,7 +3259,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &706063718
 Transform:
   m_ObjectHideFlags: 0
@@ -5531,6 +5531,7 @@ MonoBehaviour:
   maxDoorPrice: 0
   roomHeight: 9
   roomWidth: 10
+  classicMode: 1
   roomTransitionTime: 0.3
   uiContainer: {fileID: 1487510578}
   baseRestockPrice: 100

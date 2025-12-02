@@ -186,7 +186,7 @@ public class RoomFurnitures : MonoBehaviour
     private PlacementDetails DetermineNonStackedPlacementDetails(Vector2 worldPosition, FurnitureData furnitureData, FurnitureOriginalData originalData, List<Vector2> cellsToOccupy, bool isItem)
     {
         PlacementDetails details = new PlacementDetails { CanPlace = false, FinalWorldPosition = worldPosition, Unboxed = true, PlaceOnTop = false };
-        bool requiresBase = originalData.requiredBase != null;
+        bool requiresBase = originalData.requiredBase != null && !House.instance.classicMode;
 
         bool isValidInitialSpot = !cellsToOccupy.Any(cell =>
             (PlacementDatasInPosition.ContainsKey(cell) && !isItem) ||
@@ -231,7 +231,8 @@ public class RoomFurnitures : MonoBehaviour
                 details.CanPlace = true;
                 details.PlaceOnTop = true;
                 details.FinalWorldPosition = validBottomCell;
-                if (requiresBase)
+                bool requiresBaseForPlaceOnTop = originalData.requiredBase != null && !House.instance.classicMode;
+                if (requiresBaseForPlaceOnTop)
                     details.Unboxed = CheckKitRequirementForUnderlyingObject(validBottomCell, originalData);
             }
         }
@@ -281,13 +282,13 @@ public class RoomFurnitures : MonoBehaviour
 
     private bool CheckKitRequirement(List<Vector2> cellsToCheck, FurnitureOriginalData originalData)
     {
-        if (originalData.requiredBase == null) return true;
+        if (originalData.requiredBase == null || House.instance.classicMode) return true;
         return cellsToCheck.Any(cell => KitsInPosition.TryGetValue(cell, out KitObject kit) && originalData.requiredBase == kit.Data.originalData);
     }
 
     private bool CheckKitRequirementForUnderlyingObject(Vector2 baseFurniturePositionKey, FurnitureOriginalData itemToPlaceOriginalData)
     {
-        if (itemToPlaceOriginalData.requiredBase == null) return true;
+        if (itemToPlaceOriginalData.requiredBase == null || House.instance.classicMode) return true;
         if (!PlacementDatasInPosition.TryGetValue(baseFurniturePositionKey, out var basePlacementData)) return false;
         return basePlacementData.occupiedPositions.Any(cellOfBase => KitsInPosition.TryGetValue(cellOfBase, out KitObject kit) && itemToPlaceOriginalData.requiredBase == kit.Data.originalData);
     }
@@ -300,6 +301,7 @@ public class RoomFurnitures : MonoBehaviour
         switch (itemData.type)
         {
             case ItemType.Tagger:
+                if (House.instance.classicMode) { placed = false; break; }
                 if (currentRoom.roomTag is RoomTag.Shop) { placed = false; break; }
                 TagSelectionUI.instance.ShowTagSelection(currentRoom, ChangedTagCallback);
                 placed = true;
@@ -423,6 +425,8 @@ public class RoomFurnitures : MonoBehaviour
 
     private int ProcessTagLogicForNonStacked(FurnitureData data, FurnitureOriginalData originalData, Room currentRoom, Vector2 finalPos, bool placeOnTop)
     {
+        if (House.instance.classicMode) return 0;
+        
         int tagBonus = 0;
         RoomTag furnitureTag = originalData.furnitureTag;
 
@@ -582,6 +586,8 @@ public class RoomFurnitures : MonoBehaviour
 
     private void UpdateOverlyingFurnitureOnKitPlacement(Vector2 placedKitCell, KitObject placedKit)
     {
+        if (House.instance.classicMode) return; // Skip kit logic in classic mode
+        
         if (PlacementDatasInPosition.TryGetValue(placedKitCell, out PlacementData affectedData) &&
             affectedData.instantiatedFurniture != null)
         {
@@ -639,6 +645,8 @@ public class RoomFurnitures : MonoBehaviour
 
     private void UpdateOverlyingFurnitureOnKitRemoval(Vector2 removedKitCell, FurnitureOriginalData removedKitType)
     {
+        if (House.instance.classicMode) return; // Skip kit logic in classic mode
+        
         if (PlacementDatasInPosition.TryGetValue(removedKitCell, out PlacementData affectedData) &&
             affectedData.instantiatedFurniture != null)
         {
