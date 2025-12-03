@@ -47,6 +47,14 @@ public class TutorialHandler : MonoBehaviour
             return;
         }
 
+        if (House.instance != null && House.instance.classicMode) //TODO: Tutorial para modo clásico, puse que se saltee rn
+        {
+            tutorialStep = 7;
+            OnTutorialFinished?.Invoke();
+            Destroy(gameObject);
+            return;
+        }
+
         tutorialStep = 0;
         OnTutorialLockStateUpdated?.Invoke();
 
@@ -96,6 +104,8 @@ public class TutorialHandler : MonoBehaviour
     private void BeginStep(FurnitureOriginalData obj)
     {
         if (stepStarted) return;
+        
+        if (House.instance != null && House.instance.classicMode) return;
         
         tutorialStep++;
         stepStarted = true;
@@ -272,6 +282,7 @@ public class TutorialHandler : MonoBehaviour
     public static bool AreDoorsTutorialLocked()
     {
         if (instance == null) return false;
+        if (House.instance != null && House.instance.classicMode) return false; //TODO: Sí deberían de bloquearse, pero hay que rehacerlo.
         return instance.tutorialStep <= 6;
     }
 
