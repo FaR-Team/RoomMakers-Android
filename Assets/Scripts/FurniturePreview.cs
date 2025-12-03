@@ -173,12 +173,18 @@ public class FurnitureData
         comboDone = false;
         localTileCombos = new();
         hasReceivedTagBonus = false;
+        firstTimePlaced = false;
         currentStackLevel = 0;
     }
 
     public FurnitureData()
     {
         // Create empty data
+        comboDone = false;
+        hasReceivedTagBonus = false;
+        firstTimePlaced = false;
+        currentStackLevel = 0;
+        localTileCombos = new();
     }
         
     public FurnitureOriginalData originalData;

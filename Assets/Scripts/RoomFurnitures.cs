@@ -9,7 +9,6 @@ public class RoomFurnitures : MonoBehaviour
     public Dictionary<Vector2, PlacementData> PlacementDatasInPosition = new();
     public Dictionary<Vector2, KitObject> KitsInPosition = new();
 
-    // TODO: que no se tenga que asignar aca la referencia al prefab
     [SerializeField] protected ComboPopUp popUpPrefab;
     [SerializeField] protected ComboPopUp matchPrefab;
 
@@ -163,7 +162,15 @@ public class RoomFurnitures : MonoBehaviour
 
         int tagBonus = HandleStackedTagBonus(furnitureData, originalData, finalInstantiatePos);
         HandleStackedComboPoints(stackReceiver, potentialOccupiedCells, stackedItemInstance, finalInstantiatePos, tagBonus);
-        ApplyFirstTimePlacementBonus(furnitureData, originalData, true);
+        
+        if (!furnitureData.firstTimePlaced)
+        {
+            furnitureData.firstTimePlaced = true;
+            PlayerController.instance.Inventory.UpdateMoney(originalData.price);
+            House.instance.UpdateScore(originalData.price);
+        }
+        
+        stackedItemInstance.Data.firstTimePlaced = furnitureData.firstTimePlaced;
 
         AudioManager.instance.PlaySfx(GlobalSfx.Click);
 
@@ -259,7 +266,6 @@ public class RoomFurnitures : MonoBehaviour
 
         FurnitureObjectBase furnitureInstance = Instantiate(furnitureData.prefab, instantiationGridPos, Quaternion.Euler(furnitureData.VectorRotation)).GetComponent<FurnitureObjectBase>();
         furnitureInstance.CopyFurnitureData(furnitureData);
-        Debug.Log("Setting unpacked state: " + unboxed);
         furnitureInstance.SetUnpackedState(unboxed);
 
         OnPlaceFurniture?.Invoke(originalData);
@@ -268,6 +274,9 @@ public class RoomFurnitures : MonoBehaviour
         if (!isItem)
         {
             GivePoints(furnitureData, cellsEffectivelyOccupiedByNewItem, placeOnTop, instantiationGridPos, furnitureInstance, unboxed);
+            
+            furnitureInstance.Data.firstTimePlaced = furnitureData.firstTimePlaced;
+            furnitureInstance.Data.hasReceivedTagBonus = furnitureData.hasReceivedTagBonus;
         }
         else
         {
@@ -369,16 +378,6 @@ public class RoomFurnitures : MonoBehaviour
 
     #endregion
 
-    private void ApplyFirstTimePlacementBonus(FurnitureData furnitureData, FurnitureOriginalData originalData, bool isUnboxed)
-    {
-        if (!furnitureData.firstTimePlaced && isUnboxed)
-        {
-            PlayerController.instance.Inventory.UpdateMoney(originalData.price);
-            House.instance.UpdateScore(originalData.price);
-            furnitureData.firstTimePlaced = true;
-        }
-    }
-
     private int HandleStackedTagBonus(FurnitureData furnitureData, FurnitureOriginalData originalData, Vector2 popupPosition)
     {
         if (House.instance.classicMode) return 0;
@@ -460,7 +459,7 @@ public class RoomFurnitures : MonoBehaviour
 
         topObject.CheckAndUpdateSprite(bottomObject);
 
-        if (!topObject.ComboDone)
+        if (!data.comboDone)
         {
             int comboPointsFromBase = bottomObject.MakeCombo(positionToOccupy.ToArray());
             if (comboPointsFromBase > 0)
@@ -490,7 +489,16 @@ public class RoomFurnitures : MonoBehaviour
 
     protected virtual void GivePoints(FurnitureData data, List<Vector2> positionToOccupy, bool placeOnTop, Vector2 finalPos, FurnitureObjectBase furnitureObject, bool unboxed)
     {
-        ApplyFirstTimePlacementBonus(data, data.originalData, unboxed);
+        if (!data.firstTimePlaced)
+        {
+            data.firstTimePlaced = true;
+            if (unboxed)
+            {
+                PlayerController.instance.Inventory.UpdateMoney(data.originalData.price);
+                House.instance.UpdateScore(data.originalData.price);
+            }
+        }
+        
         Room currentRoom = GetComponent<Room>();
         int tagBonus = 0;
 
@@ -559,7 +567,6 @@ public class RoomFurnitures : MonoBehaviour
     public void ChangedTagCallback()
     {
         OnItemUse?.Invoke(ItemType.Tagger);
-        Debug.Log("Changed tag");
     }
 
     public void RemoveTopObjectInPosition(Vector2 pos)
@@ -588,14 +595,14 @@ public class RoomFurnitures : MonoBehaviour
 
     private void UpdateOverlyingFurnitureOnKitPlacement(Vector2 placedKitCell, KitObject placedKit)
     {
-        if (House.instance.classicMode) return; // Skip kit logic in classic mode
+        if (House.instance.classicMode) return;
         
         if (PlacementDatasInPosition.TryGetValue(placedKitCell, out PlacementData affectedData) &&
             affectedData.instantiatedFurniture != null)
         {
             var topFurnitures = affectedData.topPlacementDatas?.Where(f => f.furnitureOnTopData?.originalData.requiredBase).ToArray();
 
-            if (topFurnitures == null || topFurnitures.Length == 0) // If checking Base Object, not top objects
+            if (topFurnitures == null || topFurnitures.Length == 0)
             {
                 FurnitureObjectBase furniture = affectedData.instantiatedFurniture;
                 FurnitureData furnitureData = furniture.Data;
@@ -607,10 +614,15 @@ public class RoomFurnitures : MonoBehaviour
                 {
                     if (CheckKitRequirement(affectedData.occupiedPositions, originalFurnitureData))
                     {
-                        Debug.Log($"Kit placed under {originalFurnitureData.Name}. Updating its state to unboxed.");
                         furniture.SetUnpackedState(true);
 
-                        ApplyFirstTimePlacementBonus(furnitureData, originalFurnitureData, true);
+                        if (!furnitureData.firstTimePlaced)
+                        {
+                            furnitureData.firstTimePlaced = true;
+                            furniture.Data.firstTimePlaced = true;
+                            PlayerController.instance.Inventory.UpdateMoney(originalFurnitureData.price);
+                            House.instance.UpdateScore(originalFurnitureData.price);
+                        }
 
                         Room currentRoom = GetComponent<Room>();
                         Vector2 furnitureAnchorPos = GridManager.PositionToCellCenter(affectedData.occupiedPositions.First());
@@ -630,10 +642,15 @@ public class RoomFurnitures : MonoBehaviour
 
                     if (nowUnboxed)
                     {
-                        Debug.Log($"Kit placed under {originalFurnitureData.Name}. Updating its state to unboxed.");
                         furniture.SetUnpackedState(true);
 
-                        ApplyFirstTimePlacementBonus(furnitureData, originalFurnitureData, true);
+                        if (!furnitureData.firstTimePlaced)
+                        {
+                            furnitureData.firstTimePlaced = true;
+                            furniture.Data.firstTimePlaced = true;
+                            PlayerController.instance.Inventory.UpdateMoney(originalFurnitureData.price);
+                            House.instance.UpdateScore(originalFurnitureData.price);
+                        }
 
                         Room currentRoom = GetComponent<Room>();
                         Vector2 furnitureAnchorPos = GridManager.PositionToCellCenter(affectedData.occupiedPositions.First());
@@ -647,7 +664,7 @@ public class RoomFurnitures : MonoBehaviour
 
     private void UpdateOverlyingFurnitureOnKitRemoval(Vector2 removedKitCell, FurnitureOriginalData removedKitType)
     {
-        if (House.instance.classicMode) return; // Skip kit logic in classic mode
+        if (House.instance.classicMode) return;
         
         if (PlacementDatasInPosition.TryGetValue(removedKitCell, out PlacementData affectedData) &&
             affectedData.instantiatedFurniture != null)
@@ -664,7 +681,6 @@ public class RoomFurnitures : MonoBehaviour
 
                 if (!stillUnboxed)
                 {
-                    Debug.Log($"Kit removed from under {originalFurnitureData.Name}. Updating its state to boxed.");
                     furniture.SetUnpackedState(false);
                 }
             }
