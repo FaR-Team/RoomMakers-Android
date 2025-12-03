@@ -30,6 +30,7 @@ public class MainMenuLocalizationManager : MonoBehaviour
     [SerializeField] private Button leaderboardsButton;
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button casualButton;
+    [SerializeField] private Button classicButton;
     [SerializeField] private Button rogueButton;
     
     [Header("Button Sprites")]
@@ -43,6 +44,8 @@ public class MainMenuLocalizationManager : MonoBehaviour
     [SerializeField] private Sprite creditsBtnES;
     [SerializeField] private Sprite casualEN;
     [SerializeField] private Sprite casualES;
+    [SerializeField] private Sprite classicEN;
+    [SerializeField] private Sprite classicES;
     [SerializeField] private Sprite rogueEN;
     [SerializeField] private Sprite rogueES;
 
@@ -145,6 +148,7 @@ public class MainMenuLocalizationManager : MonoBehaviour
         UpdateButtonSprite(leaderboardsButton, leaderboardsEN, leaderboardsES);
         UpdateButtonSprite(creditsButton, creditsBtnEN, creditsBtnES);
         UpdateButtonSprite(casualButton, casualEN, casualES);
+        UpdateButtonSprite(classicButton, classicEN, classicES);
         UpdateButtonSprite(rogueButton, rogueEN, rogueES);
     }
 
