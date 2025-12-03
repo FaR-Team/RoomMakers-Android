@@ -90,7 +90,6 @@ public class Interactor : MonoBehaviour
         else if(interactable.TryGetComponent(out ShopItem shopItemData))
         {
             // Comprar si hay guita
-            this.Log(shopItemData.name);
             shopItemData.TryPurchase();
             PlayerController.instance.CheckInFront();
         }

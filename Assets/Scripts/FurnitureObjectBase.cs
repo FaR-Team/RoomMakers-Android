@@ -9,18 +9,18 @@ public class FurnitureObjectBase : MonoBehaviour
     protected bool unpacked;
     protected int currentSpriteIndex = 0;
     protected bool hasReceivedTagBonus = false;
-    
+
     private GameObject indicatorInstance;
 
     public FurnitureData Data => furnitureData;
     public bool IsUnpacked => unpacked;
     public bool HasReceivedTagBonus => hasReceivedTagBonus;
-    
+
     public void MarkTagBonusReceived()
     {
         hasReceivedTagBonus = true;
     }
-    
+
     protected virtual void Awake()
     {
         furnitureData = new FurnitureData();
@@ -33,9 +33,9 @@ public class FurnitureObjectBase : MonoBehaviour
         this.unpacked = unpacked;
         if (!this.unpacked)
         {
-            if(anim) anim.enabled = false;
+            if (anim) anim.enabled = false;
             UpdateSprites(House.instance.GetSpritesBySize(Data.originalData.typeOfSize));
-            
+
             if (Data.originalData.requiredBase != null || Data.originalData.wallObject)
             {
                 CreateRequiredBaseIndicator();
@@ -44,8 +44,8 @@ public class FurnitureObjectBase : MonoBehaviour
         else
         {
             UpdateSprites(originalData.sprites);
-            if(anim) anim.enabled = true;
-            
+            if (anim) anim.enabled = true;
+
             if (indicatorInstance != null)
             {
                 Destroy(indicatorInstance);
@@ -53,22 +53,22 @@ public class FurnitureObjectBase : MonoBehaviour
             }
         }
     }
-    
+
     private void CreateRequiredBaseIndicator()
     {
         if (indicatorInstance != null)
         {
             Destroy(indicatorInstance);
         }
-        
+
         if (furnitureData.originalData.requiredBase == null && !furnitureData.originalData.wallObject) return;
-        
+
         indicatorInstance = Instantiate(House.instance.requiredBaseIndicatorPrefab, transform);
         indicatorInstance.transform.rotation = Quaternion.identity;
-        
+
         Vector3 indicatorPosition = CalculateIndicatorPosition();
         indicatorInstance.transform.localPosition = new Vector3(indicatorPosition.x, indicatorPosition.y, 0.1f);
-        
+
         Sprite kitSprite = null;
         if (furnitureData.originalData.requiredBase?.indicatorSprite != null)
         {
@@ -78,7 +78,7 @@ public class FurnitureObjectBase : MonoBehaviour
         {
             kitSprite = furnitureData.originalData.indicatorSprite;
         }
-        
+
         RequiredBaseIndicator indicator = indicatorInstance.GetComponent<RequiredBaseIndicator>();
         if (indicator != null)
         {
@@ -86,11 +86,11 @@ public class FurnitureObjectBase : MonoBehaviour
         }
     }
 
-    
+
     private Vector3 CalculateIndicatorPosition()
     {
         Vector3 position = Vector3.zero;
-        
+
         switch (furnitureData.originalData.typeOfSize)
         {
             case TypeOfSize.one_one:
@@ -109,14 +109,14 @@ public class FurnitureObjectBase : MonoBehaviour
         //TODO: añadir rotación al indicador choto este
         return position;
     }
-    
+
     public virtual void CopyFurnitureData(FurnitureData newData)
     {
         if (furnitureData == null)
         {
             furnitureData = new FurnitureData();
         }
-        
+
         furnitureData.size = newData.size;
         furnitureData.prefab = newData.prefab;
         furnitureData.originalData = newData.originalData;
@@ -124,16 +124,16 @@ public class FurnitureObjectBase : MonoBehaviour
         furnitureData.rotationStep = newData.rotationStep;
         furnitureData.hasReceivedTagBonus = newData.hasReceivedTagBonus;
         furnitureData.firstTimePlaced = newData.firstTimePlaced;
-        
+
         if (spriteRenderers == null)
             spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
-            
+
         if ((furnitureData.originalData.requiredBase != null || furnitureData.originalData.wallObject) && !unpacked)
         {
             CreateRequiredBaseIndicator();
         }
     }
-    
+
     public virtual void UpdateSprites(Sprite[] sprites)
     {
         for (int i = 0; i < spriteRenderers.Length; i++)
@@ -141,7 +141,7 @@ public class FurnitureObjectBase : MonoBehaviour
             spriteRenderers[i].sprite = sprites[i]; // No agregué null checks porque hay que asegurarnos que nunca sea null alguno
         }
     }
-    
+
     private void OnDestroy()
     {
         if (indicatorInstance != null)

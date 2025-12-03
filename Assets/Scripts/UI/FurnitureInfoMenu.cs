@@ -60,8 +60,15 @@ public class FurnitureInfoMenu : MonoBehaviour
             furnitureDescription.text = isSpanish ? currentFurniture.es_Description.ToUpper() : currentFurniture.Description.ToUpper();
         }
 
-        infoSprites[(int)currentFurniture.typeOfSize]?.UpdateSprites(currentFurniture.sprites);
-        tagSprite.sprite = tagDisplay.GetTagSprite(currentFurniture.furnitureTag);
+        if (infoSprites != null && (int)currentFurniture.typeOfSize < infoSprites.Length)
+        {
+            infoSprites[(int)currentFurniture.typeOfSize]?.UpdateSprites(currentFurniture.sprites);
+        }
+        
+        if (tagSprite != null && tagDisplay != null)
+        {
+            tagSprite.sprite = tagDisplay.GetTagSprite(currentFurniture.furnitureTag);
+        }
     }
 
     public void ToggleMenu(InputAction.CallbackContext ctx)

@@ -20,7 +20,7 @@ public class PackagesGenerator : MonoBehaviour
     [Header("Spawn Probability Configuration")]
     [SerializeField] private SpawnProbabilityConfig spawnConfig;
     [SerializeField] private bool useTagBasedProbabilities = true;
-    
+
     private Dictionary<FurnitureOriginalData, float> furnitureSpawnChances = new Dictionary<FurnitureOriginalData, float>();
 
     private void OnEnable()
@@ -42,12 +42,12 @@ public class PackagesGenerator : MonoBehaviour
         {
             CalculateFurnitureSpawnChances();
         }
-        HandleTutorialStateUpdate(); 
+        HandleTutorialStateUpdate();
     }
 
     private void HandleTutorialStateUpdate()
     {
-        if (!TutorialHandler.AreDoorsTutorialLocked()) 
+        if (!TutorialHandler.AreDoorsTutorialLocked())
         {
             if (tutorialObjects.Count > 0)
             {
@@ -60,7 +60,7 @@ public class PackagesGenerator : MonoBehaviour
     private void CalculateFurnitureSpawnChances()
     {
         furnitureSpawnChances.Clear();
-        
+
         foreach (var furniture in allFurnitures)
         {
             if (furniture != null)
@@ -78,7 +78,7 @@ public class PackagesGenerator : MonoBehaviour
             // Debug.Log("[PackagesGenerator] Package already active, skipping generation.");
             return;
         }
-        
+
         if (TutorialHandler.instance != null)
         {
             if (!TutorialHandler.instance.CanSpawnPackage() || tutorialObjects.Count == 0) return;
@@ -89,20 +89,20 @@ public class PackagesGenerator : MonoBehaviour
             tutorialObjects.RemoveAt(0);
 
             packageGO.SetActive(true);
-            
+
             return;
         }
 
-        
+
         if (TutorialHandler.AreDoorsTutorialLocked()) //TODO: Creo que este if ya está al pedo, probar
         {
-            
+
             Debug.Log("[PackagesGenerator] Tutorial is active and controlling flow (doors locked), but no specific tutorial items in queue. Waiting.");
             return;
         }
-        else 
+        else
         {
-           
+
             if (tutorialObjects.Count > 0)
             {
                 Debug.LogWarning("[PackagesGenerator] Tutorial not locking doors, but stale tutorial objects found. Clearing them now.");
@@ -117,7 +117,7 @@ public class PackagesGenerator : MonoBehaviour
             if (regularPackageData == null)
             {
                 Debug.LogWarning("[PackagesGenerator] GetRandomFurniture returned null. Skipping package generation for this cycle.");
-                packageGO.SetActive(false); 
+                packageGO.SetActive(false);
                 TimerManager.StopTimer();
                 return;
             }
@@ -184,17 +184,17 @@ public class PackagesGenerator : MonoBehaviour
         // Calculate total probability weight
         float totalWeight = 0f;
         Dictionary<FurnitureOriginalData, float> availableFurniture = new Dictionary<FurnitureOriginalData, float>();
-        
+
         foreach (var furniture in possibleFurnitures)
         {
             if (furniture == null) continue;
 
-            float weight = furnitureSpawnChances.ContainsKey(furniture) ? 
+            float weight = furnitureSpawnChances.ContainsKey(furniture) ?
                 furnitureSpawnChances[furniture] : spawnConfig.defaultTagProbability;
             availableFurniture[furniture] = weight;
             totalWeight += weight;
         }
-        
+
         if (totalWeight <= 0f || availableFurniture.Count == 0)
         {
             if (possibleFurnitures.Count > 0 && possibleFurnitures[0] != null)
@@ -210,17 +210,18 @@ public class PackagesGenerator : MonoBehaviour
             {
                 deletedFurnitures.Clear();
                 SetPossibleFurnitures();
-                if (possibleFurnitures.Count > 0 && possibleFurnitures[0] != null) {
+                if (possibleFurnitures.Count > 0 && possibleFurnitures[0] != null)
+                {
                     // Try one more time after reset
                     return GetRandomFurniture();
                 }
                 return null;
             }
         }
-        
+
         float randomValue = Random.Range(0f, totalWeight);
         float currentWeight = 0f;
-        
+
         foreach (var kvp in availableFurniture)
         {
             currentWeight += kvp.Value;
@@ -233,8 +234,9 @@ public class PackagesGenerator : MonoBehaviour
                 return selectedFurniture;
             }
         }
-        
-        if (possibleFurnitures.Count > 0) {
+
+        if (possibleFurnitures.Count > 0)
+        {
             int index2 = GetRandomValueIn(possibleFurnitures);
             FurnitureOriginalData fallbackFurniture2 = possibleFurnitures[index2];
             possibleFurnitures.RemoveAt(index2);
@@ -257,7 +259,7 @@ public class PackagesGenerator : MonoBehaviour
 
         foreach (var f in allFurnitures)
         {
-            if (f == null) continue; 
+            if (f == null) continue;
             possibleFurnitures.Add(f);
         }
 

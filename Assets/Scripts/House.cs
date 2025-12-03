@@ -8,35 +8,34 @@ public class House : MonoBehaviour
 
     [Header("Room Generation")]
     [SerializeField] private RoomGenerator roomGenerator;
-    
+
     [SerializeField] private GameObject houseParent;
     public Dictionary<Vector3, Room> Habitaciones = new Dictionary<Vector3, Room>();
 
     public Room currentRoom;
-
     public GameObject comboStarSprite;
-    [Header("Box Sprites")] 
+    [Header("Box Sprites")]
     public Sprite[] one_one_sprites;
     public Sprite[] two_two_sprites;
     public Sprite[] two_one_sprites;
     public Sprite[] three_one_sprites;
 
     private int availableSpaces;
-    
+
     [Header("Difficulty Settings")]
     [SerializeField] private bool useDifficultySystem = false;
     [SerializeField] private int roomsPerDifficultyTier = 5;
     [SerializeField] private float difficultyMultiplier = 1.2f;
     [SerializeField] private int maxDifficultyTier = 10;
     [SerializeField] private bool showDifficultyDebug = false;
-    
+
     [Header("Door Price Settings")]
     [Tooltip("Precio inicial")] public int baseDoorPrice = 100;
     [Tooltip("Controla qué tan rápido suben los precios")] public float priceGrowthFactor = 1.2f;
     [Tooltip("Cantidad a añadir para el crecimiento lineal")] public int priceAdditive = 200;
-    [SerializeField] [Tooltip("Usar o no el precio exponencial")] private bool useExponentialGrowth = true;
-    [SerializeField] [Tooltip("Cap opcional en los precios (0 significa ilimitado)")] private int maxDoorPrice = 0;
-    
+    [SerializeField][Tooltip("Usar o no el precio exponencial")] private bool useExponentialGrowth = true;
+    [SerializeField][Tooltip("Cap opcional en los precios (0 significa ilimitado)")] private int maxDoorPrice = 0;
+
     private int doorPrice;
     private int roomsBuilt = 0;
     private int score = 0;
@@ -48,6 +47,8 @@ public class House : MonoBehaviour
     public int Score => score;
     public int CurrentDifficultyTier => currentDifficultyTier;
 
+    public bool classicMode = false;
+
     [SerializeField] private float roomTransitionTime = .3f;
     private Camera _mainCam;
 
@@ -55,7 +56,7 @@ public class House : MonoBehaviour
 
     [Header("Restock Settings")]
     [Tooltip("Base price for restocking shops")] public int baseRestockPrice = 100;
-    [SerializeField] [Tooltip("Cap optional for restock prices (0 means unlimited)")] private int maxRestockPrice = 0;
+    [SerializeField][Tooltip("Cap optional for restock prices (0 means unlimited)")] private int maxRestockPrice = 0;
     private int restockPrice;
     private int timesRestocked = 0;
     public int RestockPrice => restockPrice;
@@ -77,7 +78,7 @@ public class House : MonoBehaviour
         restockPrice = baseRestockPrice;
         timesRestocked = 0;
         currentDifficultyTier = 0;
-        
+
         if (roomGenerator == null)
         {
             roomGenerator = GetComponent<RoomGenerator>();
@@ -87,7 +88,7 @@ public class House : MonoBehaviour
             }
         }
     }
-    
+
     public Room SpawnRoom(Vector3 position)
     {
         if (!Habitaciones.TryGetValue(position, out Room room))
@@ -96,15 +97,15 @@ public class House : MonoBehaviour
             roomsBuilt++;
             CalculateNextDoorPrice();
             UpdateDifficultyTier();
-        
+
             GameObject selectedPrefab = roomGenerator.GenerateRoom(position, currentDifficultyTier);
-            
+
             if (selectedPrefab == null)
             {
                 Debug.LogError($"Failed to generate room at position {position}");
                 return null;
             }
-            
+
             Room _room = Instantiate(selectedPrefab, position, Quaternion.identity, houseParent.transform).GetComponent<Room>();
             _room.Init();
             Habitaciones.Add(position, _room);
@@ -119,13 +120,13 @@ public class House : MonoBehaviour
         }
         else return GetRoom(position);
     }
-    
+
     private void UpdateDifficultyTier()
     {
         if (!useDifficultySystem) return;
-        
+
         int newTier = Mathf.Min(roomsBuilt / roomsPerDifficultyTier, maxDifficultyTier);
-        
+
         if (newTier > currentDifficultyTier)
         {
             currentDifficultyTier = newTier;
@@ -139,12 +140,12 @@ public class House : MonoBehaviour
     private void CalculateNextDoorPrice()
     {
         float difficultyPriceMultiplier = 1f;
-        
+
         if (useDifficultySystem)
         {
             difficultyPriceMultiplier = Mathf.Pow(difficultyMultiplier, currentDifficultyTier);
         }
-        
+
         if (useExponentialGrowth)
         {
             doorPrice = Mathf.RoundToInt(baseDoorPrice * Mathf.Pow(priceGrowthFactor, roomsBuilt) * difficultyPriceMultiplier);
@@ -166,7 +167,7 @@ public class House : MonoBehaviour
     public void UpdateScore(int scoreToAdd)
     {
         score += scoreToAdd;
-        
+
         if (score > PlayerPrefs.GetInt("HighScore", 0) && PlayGamesManager.Instance != null)
         {
             PlayGamesManager.Instance.TrySubmitHighScore(score);
@@ -194,7 +195,7 @@ public class House : MonoBehaviour
         {
             shopRoom.UpdatePrices();
         }
-        
+
         StopAllCoroutines();
         StartCoroutine(MoveCamNextRoom(position, color));
     }
@@ -202,7 +203,7 @@ public class House : MonoBehaviour
     IEnumerator MoveCamNextRoom(Vector3 position, int color)
     {
         uiContainer.SetActive(false);
-        
+
         Vector3 initialCameraPos = _mainCam.transform.position;
         position.z = initialCameraPos.z;
 
@@ -213,23 +214,23 @@ public class House : MonoBehaviour
         {
             elapsedTime = Time.unscaledTime - startTime;
             float normalizedTime = Mathf.Clamp01(elapsedTime / roomTransitionTime);
-            
+
             float t = Mathf.SmoothStep(0f, 1f, normalizedTime);
             _mainCam.transform.position = Vector3.Lerp(initialCameraPos, position, t);
-            
+
             yield return null;
         }
-        
+
         _mainCam.transform.position = position;
         ColourChanger.instance.ChangeColour(color);
-        
+
         uiContainer.SetActive(true);
-        
-        if (RoomTagNotification.instance != null && currentRoom != null)
+
+        if (RoomTagNotification.instance != null && currentRoom != null && !classicMode)
         {
             RoomTagNotification.instance.ShowRoomTag(currentRoom.roomTag);
         }
-        
+
         yield return null;
     }
 
@@ -237,9 +238,9 @@ public class House : MonoBehaviour
     {
         timesRestocked++;
         restockPrice += Mathf.RoundToInt(baseRestockPrice * Mathf.Pow(priceGrowthFactor, timesRestocked));
-        
+
         restockPrice = Mathf.RoundToInt(restockPrice / 5f) * 5;
-        
+
         if (maxRestockPrice > 0 && restockPrice > maxRestockPrice)
         {
             restockPrice = maxRestockPrice;
@@ -258,7 +259,7 @@ public class House : MonoBehaviour
             _ => null
         };
     }
-    
+
     public void SetDifficultySystem(bool enabled)
     {
         useDifficultySystem = enabled;
@@ -266,13 +267,13 @@ public class House : MonoBehaviour
         {
             roomGenerator.SetDifficultySystem(enabled);
         }
-        
+
         if (showDifficultyDebug)
         {
             Debug.Log($"Difficulty system {(enabled ? "enabled" : "disabled")}");
         }
     }
-    
+
     public void SetDifficultyTier(int tier)
     {
         currentDifficultyTier = Mathf.Clamp(tier, 0, maxDifficultyTier);
@@ -281,7 +282,7 @@ public class House : MonoBehaviour
             Debug.Log($"Difficulty tier manually set to {currentDifficultyTier}");
         }
     }
-    
+
     public void ResetDifficulty()
     {
         currentDifficultyTier = 0;
@@ -290,7 +291,7 @@ public class House : MonoBehaviour
             Debug.Log("Difficulty reset to tier 0");
         }
     }
-    
+
     public void SetShopSpawnProbability(float probability)
     {
         if (roomGenerator != null)
@@ -298,7 +299,7 @@ public class House : MonoBehaviour
             roomGenerator.SetShopProbability(probability);
         }
     }
-    
+
     public void SetAllowShopsInCorners(bool allow)
     {
         if (roomGenerator != null)
@@ -306,25 +307,26 @@ public class House : MonoBehaviour
             roomGenerator.SetAllowShopsInCorners(allow);
         }
     }
-    
+
     public string GetDifficultyInfo()
     {
         if (!useDifficultySystem) return "Difficulty: Disabled";
-        
+
         string baseInfo = $"Tier: {currentDifficultyTier}/{maxDifficultyTier}";
-        
+
         if (roomGenerator != null)
         {
             baseInfo += " | " + roomGenerator.GetGenerationInfo();
         }
-        
+
         return baseInfo;
     }
-    
+
     public RoomGenerator GetRoomGenerator()
     {
         return roomGenerator;
     }
+
 }
 
 public enum DifficultyLevel
@@ -334,3 +336,4 @@ public enum DifficultyLevel
     Hard,
     Extreme
 }
+
