@@ -47,7 +47,6 @@ public class OrientationManager : MonoBehaviour
         {
             scaler.localPosition = landScalerPos;
             scaler.localScale = landScalerScale;
-            Debug.Log("Applied Landscape scaler position and rotation");
         }
     }
 
@@ -60,7 +59,6 @@ public class OrientationManager : MonoBehaviour
         {
             scaler.localPosition = portScalerPos;
             scaler.localScale = portScalerScale;
-            Debug.Log("Applied Portrait scaler position and rotation");
         }
     }
 }
