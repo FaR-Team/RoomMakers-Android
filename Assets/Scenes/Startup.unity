@@ -365,7 +365,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -931.6324, z: -120.116974}
-  m_LocalScale: {x: 769.03613, y: 692.13257, z: 0.64506304}
+  m_LocalScale: {x: 801.7241, y: 723.0135, z: 0.6450631}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1895809182}
@@ -2154,7 +2154,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 1080}
+  m_SizeDelta: {x: 0, y: 3414}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1332359365
 MonoBehaviour:
