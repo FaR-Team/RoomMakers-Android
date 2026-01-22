@@ -21,7 +21,7 @@ public class VirtualDPad : OnScreenControl, IPointerDownHandler, IPointerUpHandl
     [SerializeField] private bool forceIntValue = true;
     [SerializeField] private Image[] directionImages;
 
-    private Vector2 Harry;
+    private Vector2 lastDirection;
 
     private Vector3 startPos;
 
@@ -42,7 +42,7 @@ public class VirtualDPad : OnScreenControl, IPointerDownHandler, IPointerUpHandl
         handle.anchorMax = center;
         handle.pivot = center;
         handle.anchoredPosition = Vector2.zero;
-        Harry = Vector2.zero;
+        lastDirection = Vector2.zero;
     }
 
     private void Start()
@@ -86,7 +86,7 @@ public class VirtualDPad : OnScreenControl, IPointerDownHandler, IPointerUpHandl
     public void OnPointerUp(PointerEventData eventData)
     {
         handle.anchoredPosition = startPos;
-        Harry = Vector2.zero;
+        lastDirection = Vector2.zero;
         SendValueToControl(Vector2.zero);
 
         foreach (var image in directionImages)
@@ -97,22 +97,28 @@ public class VirtualDPad : OnScreenControl, IPointerDownHandler, IPointerUpHandl
 
     private Vector2 SanitizePosition(Vector2 pos)
     {
+        if (Mathf.Abs(pos.x) > Mathf.Abs(pos.y))
+        {
+            pos.y = 0;
+        }
+        else
+        {
+            pos.x = 0;
+        }
+
         pos = Vector2.ClampMagnitude(pos, movementRange);
 
-        float minMovementRange = this.moveThreshold > movementRange ? movementRange : this.moveThreshold;
-        if (pos.x < minMovementRange && pos.x > (minMovementRange * -1)) pos.x = 0;
-        if (pos.y < minMovementRange && pos.y > (minMovementRange * -1)) pos.y = 0;
+        if (pos.magnitude < moveThreshold)
+        {
+            return Vector2.zero;
+        }
 
         pos = new Vector2(pos.x / movementRange, pos.y / movementRange);
-        pos.Normalize();
 
         if (forceIntValue)
         {
-            if (pos.x < 0) pos.x = -1;
-            else if (pos.x > 0) pos.x = 1;
-
-            if (pos.y < 0) pos.y = -1;
-            else if (pos.y > 0) pos.y = 1;
+            if (pos.x != 0) pos.x = Mathf.Sign(pos.x);
+            if (pos.y != 0) pos.y = Mathf.Sign(pos.y);
         }
 
         return pos;
@@ -120,50 +126,20 @@ public class VirtualDPad : OnScreenControl, IPointerDownHandler, IPointerUpHandl
 
     private void ToggleDirectionImages(Vector2 direction)
     {
-        Vector2 Louis = Vector2.zero;
+        if (direction == lastDirection) return;
+        lastDirection = direction;
 
-        if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
-        {
-            Louis.x = direction.x > 0 ? 1 : -1;
-        }
-        else
-        {
-            Louis.y = direction.y > 0 ? 1 : -1;
-        }
-
-        if (Louis == Harry) return;
-        else Harry = Louis;
-
-        // Turn off all images
         foreach (var image in directionImages)
         {
             image.gameObject.SetActive(false);
         }
 
-        // Turn on the appropriate image based on the direction
-            // Horizontal direction
-        if (Harry.x == 1)
-        {
-            // Right image
-            directionImages[0].gameObject.SetActive(true);
-        }
-        else if (Harry.x == -1)
-        {
-            // Left image
-            directionImages[1].gameObject.SetActive(true);
-        }
-        // Vertical direction
-        else if (Harry.y == 1)
-        {
-            // Up image
-            directionImages[2].gameObject.SetActive(true);
-        }
-        else if (Harry.y == -1)
-        {
-            // Down image
-            directionImages[3].gameObject.SetActive(true);
-        }
+        if (direction.x > 0.1f) directionImages[0].gameObject.SetActive(true);
+        else if (direction.x < -0.1f) directionImages[1].gameObject.SetActive(true);
+        else if (direction.y > 0.1f) directionImages[2].gameObject.SetActive(true);
+        else if (direction.y < -0.1f) directionImages[3].gameObject.SetActive(true);
 
-        HapticFeedback.LightFeedback();
+        if (direction != Vector2.zero)
+            HapticFeedback.LightFeedback();
     }
 }

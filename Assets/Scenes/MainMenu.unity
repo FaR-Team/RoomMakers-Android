@@ -1658,8 +1658,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93554bce9e975a142977c67b09ffeb90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugMode: 1
-  forceSpanish: 1
+  debugMode: 0
+  forceSpanish: 0
   controlsScreenRenderer: {fileID: 2076005581}
   controlsEN: {fileID: 21300000, guid: 514d0f37cf5e1da4699d528992ef56eb, type: 3}
   controlsES: {fileID: 21300000, guid: 5dac13803081dec44929f6e4d8efea7b, type: 3}
