@@ -5262,8 +5262,8 @@ MonoBehaviour:
   landscapeScaler: {fileID: 2007374479}
   portScalerPos: {x: 0, y: -783.3632, z: -187.00002}
   portScalerScale: {x: 1197.28, y: 1077.5521, z: 1}
-  landScalerPos: {x: 0, y: -858.59, z: -120.116974}
-  landScalerScale: {x: 726.0527, y: 654.7712, z: 0.5841782}
+  landScalerPos: {x: 0, y: -867, z: -120.116974}
+  landScalerScale: {x: 732.5, y: 660.5856, z: 0.5893657}
 --- !u!114 &901961829
 MonoBehaviour:
   m_ObjectHideFlags: 0
