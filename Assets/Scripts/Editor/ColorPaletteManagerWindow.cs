@@ -230,6 +230,13 @@ public class ColorPaletteManagerWindow : EditorWindow
         {
             ImportPalette();
         }
+        
+        GUILayout.Space(5);
+        
+        if (GUILayout.Button("📦 Bulk Import", GUILayout.Height(30), GUILayout.Width(150)))
+        {
+            ImportPalettesFromFolder();
+        }
         GUI.backgroundColor = Color.white;
         
         GUILayout.FlexibleSpace();
@@ -456,24 +463,135 @@ public class ColorPaletteManagerWindow : EditorWindow
         if (string.IsNullOrEmpty(jsonPath))
             return;
 
-        string json = File.ReadAllText(jsonPath);
-        ColorPaletteData data = JsonUtility.FromJson<ColorPaletteData>(json);
+        if (ImportPaletteInternal(jsonPath))
+        {
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            EditorUtility.DisplayDialog("Import Complete", "Imported color palette successfully.", "OK");
+        }
+    }
 
-        ColorPalette palette = ScriptableObject.CreateInstance<ColorPalette>();
-        palette.Darkest = HexToColor(data.darkestHex);
-        palette.Dark = HexToColor(data.darkHex);
-        palette.Light = HexToColor(data.lightHex);
-        palette.Lightest = HexToColor(data.lightestHex);
+    public static void ImportPalettesFromFolder()
+    {
+        string folderPath = EditorUtility.OpenFolderPanel("Import Palettes from Folder", "", "");
+        if (string.IsNullOrEmpty(folderPath))
+            return;
 
-        string assetPath = $"Assets/palettes/{data.name}.asset";
-        
-        Directory.CreateDirectory(Path.GetDirectoryName(assetPath));
-        
-        AssetDatabase.CreateAsset(palette, assetPath);
+        string[] files = Directory.GetFiles(folderPath, "*.json");
+        if (files.Length == 0)
+        {
+            EditorUtility.DisplayDialog("No Files Found", "No JSON files were found in the selected folder.", "OK");
+            return;
+        }
+
+        int successCount = 0;
+        foreach (string file in files)
+        {
+            if (ImportPaletteInternal(file))
+            {
+                successCount++;
+            }
+        }
+
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        
-        EditorUtility.DisplayDialog("Import Complete", $"Imported color palette '{data.name}' to {assetPath}", "OK");
+
+        EditorUtility.DisplayDialog("Bulk Import Complete", $"Successfully imported {successCount} out of {files.Length} palettes.", "OK");
+    }
+
+    private static bool ImportPaletteInternal(string jsonPath)
+    {
+        try
+        {
+            string json = File.ReadAllText(jsonPath);
+            ColorPaletteData data = JsonUtility.FromJson<ColorPaletteData>(json);
+
+            if (data == null || string.IsNullOrEmpty(data.name))
+            {
+                Debug.LogWarning($"Skipped {jsonPath}: Invalid palette data.");
+                return false;
+            }
+
+            string assetPath = $"Assets/Palettes/{data.name}.asset";
+            
+            // Search for existing asset by name to avoid duplicates/missed updates
+            string[] guids = AssetDatabase.FindAssets($"t:ColorPalette {data.name}");
+            ColorPalette existingPalette = null;
+
+            if (guids.Length > 0)
+            {
+                string foundPath = AssetDatabase.GUIDToAssetPath(guids[0]);
+                existingPalette = AssetDatabase.LoadAssetAtPath<ColorPalette>(foundPath);
+                
+                // Ensure we loaded the right name match (FindAssets is a broad search)
+                if (existingPalette != null && existingPalette.name != data.name)
+                {
+                    // If the name strictly doesn't match, keep searching or fallback to null
+                    // But usually for "Forest" it finds "Forest", but might find "ForestFire"
+                    // Let's do a strict name check on the loaded asset
+                    bool exactMatchFound = false;
+                    foreach(var g in guids)
+                    {
+                        var p = AssetDatabase.GUIDToAssetPath(g);
+                        var a = AssetDatabase.LoadAssetAtPath<ColorPalette>(p);
+                        if(a != null && a.name == data.name)
+                        {
+                            existingPalette = a;
+                            assetPath = p; // Update assetPath to the actual existing one
+                            exactMatchFound = true;
+                            break;
+                        }
+                    }
+                    if(!exactMatchFound) existingPalette = null;
+                }
+                else if (existingPalette != null)
+                {
+                     assetPath = foundPath;
+                }
+            }
+
+            Color newDarkest = HexToColor(data.darkestHex);
+            Color newDark = HexToColor(data.darkHex);
+            Color newLight = HexToColor(data.lightHex);
+            Color newLightest = HexToColor(data.lightestHex);
+
+            if (existingPalette != null)
+            {
+                if (existingPalette.Darkest == newDarkest &&
+                    existingPalette.Dark == newDark &&
+                    existingPalette.Light == newLight &&
+                    existingPalette.Lightest == newLightest)
+                {
+                    Debug.Log($"Message: Skipped '{data.name}' as it checks out with the imported one.");
+                    return true;
+                }
+
+                Undo.RecordObject(existingPalette, "Update Color Palette");
+                existingPalette.Darkest = newDarkest;
+                existingPalette.Dark = newDark;
+                existingPalette.Light = newLight;
+                existingPalette.Lightest = newLightest;
+                EditorUtility.SetDirty(existingPalette);
+                Debug.Log($"Updated '{data.name}' with new colors.");
+                return true;
+            }
+
+            ColorPalette palette = ScriptableObject.CreateInstance<ColorPalette>();
+            palette.Darkest = newDarkest;
+            palette.Dark = newDark;
+            palette.Light = newLight;
+            palette.Lightest = newLightest;
+            
+            Directory.CreateDirectory(Path.GetDirectoryName(assetPath));
+            
+            AssetDatabase.CreateAsset(palette, assetPath);
+            return true;
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Failed to import {jsonPath}: {ex.Message}");
+            return false;
+        }
     }
     
     public static void CreatePaletteTemplate()

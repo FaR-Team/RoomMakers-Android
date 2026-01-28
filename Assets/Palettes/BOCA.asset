@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22b81de0497758f408919b3ef798e8d9, type: 3}
   m_Name: BOCA
   m_EditorClassIdentifier: 
-  Darkest: {r: 0, g: 0.04259319, b: 0.4056604, a: 0}
-  Dark: {r: 0, g: 0.11251116, b: 1, a: 0}
-  Light: {r: 0.509434, g: 0.48011342, b: 0, a: 0}
-  Lightest: {r: 1, g: 0.96941197, b: 0, a: 0}
+  Darkest: {r: 0, g: 0.043137256, b: 0.40392157, a: 0}
+  Dark: {r: 0, g: 0.11372549, b: 1, a: 0}
+  Light: {r: 0.50980395, g: 0.47843137, b: 0, a: 0}
+  Lightest: {r: 1, g: 0.96862745, b: 0, a: 0}

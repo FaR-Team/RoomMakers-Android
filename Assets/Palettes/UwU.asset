@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 22b81de0497758f408919b3ef798e8d9, type: 3}
-  m_Name: SGB_C4
+  m_Name: UwU
   m_EditorClassIdentifier: 
-  Darkest: {r: 0.03137255, g: 0, b: 0, a: 1}
-  Dark: {r: 0.44705883, g: 0.48235294, b: 0.7529412, a: 1}
-  Light: {r: 0.84705883, g: 0.627451, b: 0.8156863, a: 1}
-  Lightest: {r: 0.972549, g: 0.8784314, b: 0.8784314, a: 1}
+  Darkest: {r: 0.5411765, g: 0.22352941, b: 0.85882354, a: 1}
+  Dark: {r: 0.7137255, g: 0.3254902, b: 0.89411765, a: 1}
+  Light: {r: 0.8235294, g: 0.6039216, b: 0.35686275, a: 1}
+  Lightest: {r: 0.9647059, g: 0.78431374, b: 0.39607844, a: 1}
