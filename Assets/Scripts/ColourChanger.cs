@@ -8,7 +8,7 @@ public class ColourChanger : MonoBehaviour
   public static ColourChanger instance;
   public Material mat;
   public Color Darkest, Dark, Light, Lightest;
-  public ColorPalette[] colorPalettes;
+  public PalettesDatabase palettesDatabase;
   private MeshRenderer renderer;
   public int num;
 
@@ -26,9 +26,17 @@ public class ColourChanger : MonoBehaviour
   {
     num = n;
 
-    renderer.material.SetColor("_Darkest", colorPalettes[num].Darkest);
-    renderer.material.SetColor("_Dark", colorPalettes[num].Dark);
-    renderer.material.SetColor("_Light", colorPalettes[num].Light);
-    renderer.material.SetColor("_Lightest", colorPalettes[num].Lightest);
+    if (palettesDatabase != null && palettesDatabase.palettes != null && num >= 0 && num < palettesDatabase.palettes.Count)
+    {
+        ColorPalette palette = palettesDatabase.palettes[num];
+        renderer.material.SetColor("_Darkest", palette.Darkest);
+        renderer.material.SetColor("_Dark", palette.Dark);
+        renderer.material.SetColor("_Light", palette.Light);
+        renderer.material.SetColor("_Lightest", palette.Lightest);
+    }
+    else
+    {
+        Debug.LogWarning($"[ColourChanger] Palette index {num} out of bounds or database missing!");
+    }
   }
 }

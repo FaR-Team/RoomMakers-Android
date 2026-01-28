@@ -18,7 +18,14 @@ public class Room : MonoBehaviour
     
     public void Init()
     {
-        paletteNum = Random.Range(1, ColourChanger.instance.colorPalettes.Length);
+        if (ColourChanger.instance.palettesDatabase != null && ColourChanger.instance.palettesDatabase.palettes != null)
+        {
+            paletteNum = Random.Range(1, ColourChanger.instance.palettesDatabase.palettes.Count);
+        }
+        else
+        {
+            paletteNum = 0; // Fallback
+        }
         cameraVector = new Vector3(transform.position.x, transform.position.y, -3);
         UpdateAdjacentRoomsDoors();
     }

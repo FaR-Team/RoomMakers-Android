@@ -389,7 +389,6 @@ public class ColorPaletteManagerWindow : EditorWindow
         EditorGUILayout.Space(5);
     }
     
-    // Utility Methods
     private static string HexToRGBA(string hex)
     {
         if (hex.StartsWith("#"))
@@ -514,7 +513,6 @@ public class ColorPaletteManagerWindow : EditorWindow
 
             string assetPath = $"Assets/Palettes/{data.name}.asset";
             
-            // Search for existing asset by name to avoid duplicates/missed updates
             string[] guids = AssetDatabase.FindAssets($"t:ColorPalette {data.name}");
             ColorPalette existingPalette = null;
 
@@ -523,12 +521,8 @@ public class ColorPaletteManagerWindow : EditorWindow
                 string foundPath = AssetDatabase.GUIDToAssetPath(guids[0]);
                 existingPalette = AssetDatabase.LoadAssetAtPath<ColorPalette>(foundPath);
                 
-                // Ensure we loaded the right name match (FindAssets is a broad search)
                 if (existingPalette != null && existingPalette.name != data.name)
                 {
-                    // If the name strictly doesn't match, keep searching or fallback to null
-                    // But usually for "Forest" it finds "Forest", but might find "ForestFire"
-                    // Let's do a strict name check on the loaded asset
                     bool exactMatchFound = false;
                     foreach(var g in guids)
                     {
@@ -537,7 +531,7 @@ public class ColorPaletteManagerWindow : EditorWindow
                         if(a != null && a.name == data.name)
                         {
                             existingPalette = a;
-                            assetPath = p; // Update assetPath to the actual existing one
+                            assetPath = p;
                             exactMatchFound = true;
                             break;
                         }
@@ -585,6 +579,18 @@ public class ColorPaletteManagerWindow : EditorWindow
             Directory.CreateDirectory(Path.GetDirectoryName(assetPath));
             
             AssetDatabase.CreateAsset(palette, assetPath);
+
+           string[] dbGuids = AssetDatabase.FindAssets("t:PalettesDatabase");
+           foreach(string dbGuid in dbGuids)
+           {
+               string dbPath = AssetDatabase.GUIDToAssetPath(dbGuid);
+               PalettesDatabase db = AssetDatabase.LoadAssetAtPath<PalettesDatabase>(dbPath);
+               if(db != null)
+               {
+                   db.RefreshPalettes();
+               }
+           }
+
             return true;
         }
         catch (System.Exception ex)
