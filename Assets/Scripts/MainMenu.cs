@@ -49,6 +49,10 @@ public class MainMenu : MonoBehaviour
         controls.Movement.Movement.performed += OnNavigate;
         controls.Movement.Interact.performed += OnInteract;
         controls.Movement.Rotate.performed += OnBPressed;
+
+        controls.Movement.Movement.performed += CheckKonamiDirection;
+        controls.Movement.Interact.performed += CheckKonamiA;
+        controls.Movement.Rotate.performed += CheckKonamiB;
     }
 
     void OnDisable()
@@ -56,7 +60,62 @@ public class MainMenu : MonoBehaviour
         controls.Movement.Movement.performed -= OnNavigate;
         controls.Movement.Interact.performed -= OnInteract;
         controls.Movement.Rotate.performed -= OnBPressed;
+
+        controls.Movement.Movement.performed -= CheckKonamiDirection;
+        controls.Movement.Interact.performed -= CheckKonamiA;
+        controls.Movement.Rotate.performed -= CheckKonamiB;
         controls.Disable();
+    }
+
+    private List<string> inputSequence = new List<string>();
+    private readonly string[] konamiCode = { "Up", "Up", "Down", "Down", "Left", "Right", "Left", "Right", "B", "A" };
+
+    private void CheckKonamiDirection(InputAction.CallbackContext context)
+    {
+        Vector2 input = context.ReadValue<Vector2>();
+        if (input.y > 0.5f) AddInputToSequence("Up");
+        else if (input.y < -0.5f) AddInputToSequence("Down");
+        else if (input.x > 0.5f) AddInputToSequence("Right");
+        else if (input.x < -0.5f) AddInputToSequence("Left");
+    }
+
+    private void CheckKonamiA(InputAction.CallbackContext context) => AddInputToSequence("A");
+    private void CheckKonamiB(InputAction.CallbackContext context) => AddInputToSequence("B");
+
+    private void AddInputToSequence(string input)
+    {
+        inputSequence.Add(input);
+        
+        if (inputSequence.Count > konamiCode.Length)
+        {
+            inputSequence.RemoveAt(0);
+        }
+
+        if (inputSequence.Count == konamiCode.Length)
+        {
+            bool match = true;
+            for (int i = 0; i < konamiCode.Length; i++)
+            {
+                if (inputSequence[i] != konamiCode[i])
+                {
+                    match = false;
+                    break;
+                }
+            }
+
+            if (match)
+            {
+                ActivateRainbowMode();
+                inputSequence.Clear();
+            }
+        }
+    }
+
+    private void ActivateRainbowMode()
+    {
+        Debug.Log("Easter Egg Activated: Rainbow Mode!");
+        ColourChanger.GlobalRainbowMode = !ColourChanger.GlobalRainbowMode;
+        AudioManager.instance.PlaySfx(GlobalSfx.Click);
     }
 
     void Start()

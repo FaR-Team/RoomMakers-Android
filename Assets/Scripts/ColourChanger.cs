@@ -20,6 +20,30 @@ public class ColourChanger : MonoBehaviour
     }
     
     renderer = this.gameObject.GetComponent<MeshRenderer>();
+    GlobalRainbowMode = false;
+  }
+
+  public static bool GlobalRainbowMode = false;
+  private float rainbowTimer = 0f;
+  private float rainbowInterval = 0.3f;
+
+  void Update()
+  {
+      if (GlobalRainbowMode)
+      {
+          rainbowTimer += Time.deltaTime;
+          if (rainbowTimer >= rainbowInterval)
+          {
+              rainbowTimer = 0f;
+              
+               if (palettesDatabase != null && palettesDatabase.palettes != null && palettesDatabase.palettes.Count > 0)
+               {
+                   num++;
+                   if (num >= palettesDatabase.palettes.Count) num = 0;
+                   ChangeColour(num);
+               }
+          }
+      }
   }
 
   public void ChangeColour(int n)
