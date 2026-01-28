@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6582f407bbc7b741a5cf2ee76b2b532, type: 3}
   m_Name: ChoppingBoard
   m_EditorClassIdentifier: 
-  Name: ChoppingBoard
-  es_Name: TablaDeCortar
+  Name: Chop Board
+  es_Name: Tabla Cortar
   Description: The board was in discount because the previous owner chopped his finger
     off with it. It's still bloody.
   es_Description: La tabla estaba en descuento porque el anterior dueno se rebano

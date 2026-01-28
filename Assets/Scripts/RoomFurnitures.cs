@@ -171,7 +171,7 @@ public class RoomFurnitures : MonoBehaviour
         }
         
         stackedItemInstance.Data.firstTimePlaced = furnitureData.firstTimePlaced;
-
+        
         AudioManager.instance.PlaySfx(GlobalSfx.Click);
 
         basePlacementData.stackedItems = basePlacementData.stackedItems ?? new List<FurnitureObjectBase>();
@@ -491,9 +491,9 @@ public class RoomFurnitures : MonoBehaviour
     {
         if (!data.firstTimePlaced)
         {
-            data.firstTimePlaced = true;
             if (unboxed)
             {
+                data.firstTimePlaced = true;
                 PlayerController.instance.Inventory.UpdateMoney(data.originalData.price);
                 House.instance.UpdateScore(data.originalData.price);
             }
@@ -620,6 +620,7 @@ public class RoomFurnitures : MonoBehaviour
                         {
                             furnitureData.firstTimePlaced = true;
                             furniture.Data.firstTimePlaced = true;
+                            affectedData.furnitureData.firstTimePlaced = true;
                             PlayerController.instance.Inventory.UpdateMoney(originalFurnitureData.price);
                             House.instance.UpdateScore(originalFurnitureData.price);
                         }
@@ -648,6 +649,7 @@ public class RoomFurnitures : MonoBehaviour
                         {
                             furnitureData.firstTimePlaced = true;
                             furniture.Data.firstTimePlaced = true;
+                            topFurnitures[i].furnitureOnTopData.firstTimePlaced = true;
                             PlayerController.instance.Inventory.UpdateMoney(originalFurnitureData.price);
                             House.instance.UpdateScore(originalFurnitureData.price);
                         }
