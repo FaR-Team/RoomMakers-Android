@@ -17,7 +17,11 @@ public class AdManager : MonoBehaviour
     private string _adUnitId = "unused";
 #endif
 
-    BannerView _bannerView;
+    private BannerView _bannerView;
+    private bool _isInitialized = false;
+    private int _retryCount = 0;
+    private const int MaxRetryCount = 3;
+
     void Awake()
     {
         if (Instance == null)
@@ -27,8 +31,14 @@ public class AdManager : MonoBehaviour
 
             SceneManager.sceneLoaded += OnSceneLoaded;
 
+            MobileAds.RaiseAdEventsOnUnityMainThread = true;
+
+            Debug.Log("AdManager: Initializing MobileAds SDK...");
             MobileAds.Initialize((InitializationStatus initStatus) =>
             {
+                _isInitialized = true;
+                Debug.Log("AdManager: MobileAds SDK Initialized.");
+
                 var requestConfiguration = new RequestConfiguration
                 {
                     MaxAdContentRating = MaxAdContentRating.G,
@@ -49,6 +59,12 @@ public class AdManager : MonoBehaviour
 
     public void LoadAd()
     {
+        if (!_isInitialized)
+        {
+            Debug.LogWarning("AdManager: Attempted to load ad before initialization. Deferring.");
+            return;
+        }
+
         if(_bannerView == null)
         {
             CreateBannerView();
@@ -56,13 +72,13 @@ public class AdManager : MonoBehaviour
 
         var adRequest = new AdRequest();
 
-        Debug.Log("Loading banner ad.");
+        Debug.Log("AdManager: Loading banner ad...");
         _bannerView.LoadAd(adRequest);
     }
 
     public void CreateBannerView()
     {
-        Debug.Log("Creating banner view");
+        Debug.Log("AdManager: Creating banner view");
 
         if (_bannerView != null)
         {
@@ -78,7 +94,7 @@ public class AdManager : MonoBehaviour
     {
         if (_bannerView != null)
         {
-            Debug.Log("Destroying banner view.");
+            Debug.Log("AdManager: Destroying banner view.");
             _bannerView.Destroy();
             _bannerView = null;
         }
@@ -93,64 +109,77 @@ public class AdManager : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("AdManager: Scene '" + scene.name + "' loaded. Checking banner status.");
+        
+        _retryCount = 0;
+
         if (_bannerView != null)
         {
-            Debug.Log("AdManager: BannerView exists. Attempting Hide() then Show().");
+            Debug.Log("AdManager: BannerView exists. Destroying and reloading for new scene.");
             DestroyAd();
             LoadAd();
         }
         else
         {
-            Debug.LogWarning("AdManager: BannerView is null after scene load. Ad might need to be reloaded if it was expected to persist.");
+            Debug.Log("AdManager: BannerView is null. Attempting to load.");
             LoadAd();
         }
     }
 
-    /// <summary>
-    /// listen to events the banner view may raise.
-    /// </summary>
     private void ListenToAdEvents()
     {
-        // Raised when an ad is loaded into the banner view.
         _bannerView.OnBannerAdLoaded += () =>
         {
-            Debug.Log("Banner view loaded an ad with response : "
-                + _bannerView.GetResponseInfo());
+            _retryCount = 0;
+            Debug.Log("AdManager: Banner view loaded successfully. Response: " + _bannerView.GetResponseInfo());
         };
-        // Raised when an ad fails to load into the banner view.
+
         _bannerView.OnBannerAdLoadFailed += (LoadAdError error) =>
         {
-            Debug.LogError("Banner view failed to load an ad with error : "
-                + error);
+            Debug.LogError(string.Format("AdManager: Banner view failed to load with error: {0}\nCode: {1}\nDomain: {2}", 
+                error.GetMessage(), error.GetCode(), error.GetDomain()));
 
-            LoadAd();
+            if (_retryCount < MaxRetryCount)
+            {
+                _retryCount++;
+                float delay = 5f * Mathf.Pow(2, _retryCount - 1);
+                Debug.Log(string.Format("AdManager: Retrying in {0} seconds... (Attempt {1}/{2})", delay, _retryCount, MaxRetryCount));
+                StartCoroutine(RetryLoadAd(delay));
+            }
+            else
+            {
+                Debug.LogError("AdManager: Max retry attempts reached. Stopping ad load requests.");
+            }
         };
-        // Raised when the ad is estimated to have earned money.
+
         _bannerView.OnAdPaid += (AdValue adValue) =>
         {
-            Debug.Log(String.Format("Banner view paid {0} {1}.",
-                adValue.Value,
-                adValue.CurrencyCode));
+            Debug.Log(String.Format("AdManager: Banner view paid {0} {1}.", adValue.Value, adValue.CurrencyCode));
         };
-        // Raised when an impression is recorded for an ad.
+
         _bannerView.OnAdImpressionRecorded += () =>
         {
-            Debug.Log("Banner view recorded an impression.");
+            Debug.Log("AdManager: Banner view recorded an impression.");
         };
-        // Raised when a click is recorded for an ad.
+
         _bannerView.OnAdClicked += () =>
         {
-            Debug.Log("Banner view was clicked.");
+            Debug.Log("AdManager: Banner view was clicked.");
         };
-        // Raised when an ad opened full screen content.
+
         _bannerView.OnAdFullScreenContentOpened += () =>
         {
-            Debug.Log("Banner view full screen content opened.");
+            Debug.Log("AdManager: Banner view full screen content opened.");
         };
-        // Raised when the ad closed full screen content.
+
         _bannerView.OnAdFullScreenContentClosed += () =>
         {
-            Debug.Log("Banner view full screen content closed.");
+            Debug.Log("AdManager: Banner view full screen content closed.");
         };
+    }
+
+    private IEnumerator RetryLoadAd(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        LoadAd();
     }
 }

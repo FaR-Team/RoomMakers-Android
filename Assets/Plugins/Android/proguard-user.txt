@@ -1,0 +1,13 @@
+# Google Mobile Ads ProGuard rules
+-keep class com.google.android.gms.ads.** { *; }
+-keep class com.google.unity.ads.** { *; }
+
+# For Mediation and Initialization
+-keep class com.google.android.gms.ads.initialization.** { *; }
+-keep class com.google.android.gms.ads.mediation.** { *; }
+-keep class com.google.android.gms.ads.rewarded.** { *; }
+
+# Prevent stripping of native methods
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
