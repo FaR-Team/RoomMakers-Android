@@ -27,6 +27,11 @@ public class PlayGamesManager : MonoBehaviour
         PlayGamesPlatform.Instance.Authenticate(SignInCallback);
     }
 
+    public void ManualSignIn()
+    {
+        PlayGamesPlatform.Instance.ManuallyAuthenticate(SignInCallback);
+    }
+
     private void SignInCallback(SignInStatus status)
     {
         if (status == SignInStatus.Success)
@@ -35,36 +40,40 @@ public class PlayGamesManager : MonoBehaviour
             Debug.LogWarning($"Play Games sign-in failed: {status}");
     }
     
-    public void TrySubmitHighScore(int score, string leaderboardId = "CgkI-unR07wTEAIQAQ")
+    public void TrySubmitHighScore(int score, string leaderboardId)
     {
         if (IsSignedIn)
         {
-            long currentHigh = PlayerPrefs.GetInt("HighScore", 0);
+            string prefKey = leaderboardId == GPGSIds.leaderboard_highscore ? "HighScore" : "HighScore_" + leaderboardId;
+            long currentHigh = PlayerPrefs.GetInt(prefKey, 0);
             if (score > currentHigh)
             {
                 Social.ReportScore(score, leaderboardId, success => {
                     Debug.Log(success ? "Highscore submitted" : "Failed to submit highscore");
                 });
-                PlayerPrefs.SetInt("HighScore", score);
+                PlayerPrefs.SetInt(prefKey, score);
             }
         }
     }
 
-    public void ShowLeaderboard(string leaderboardId = "CgkI-unR07wTEAIQAQ")
+    public void ShowLeaderboard(string leaderboardId = null)
     {
         if (IsSignedIn)
         {
             AudioManager.instance.PlaySfx(GlobalSfx.Click);
-            PlayGamesPlatform.Instance.ShowLeaderboardUI(leaderboardId);
+            if (string.IsNullOrEmpty(leaderboardId))
+                PlayGamesPlatform.Instance.ShowLeaderboardUI();
+            else
+                PlayGamesPlatform.Instance.ShowLeaderboardUI(leaderboardId);
         }
         else
         {
             AudioManager.instance.PlaySfx(GlobalSfx.Error);
-            SignIn();
+            ManualSignIn();
         }
     }
 
-    public void SubmitScore(long score, string leaderboardId = "CgkI-unR07wTEAIQAQ")
+    public void SubmitScore(long score, string leaderboardId)
     {
         if (IsSignedIn)
             Social.ReportScore(score, leaderboardId, success => {

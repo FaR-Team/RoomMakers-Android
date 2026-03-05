@@ -168,9 +168,12 @@ public class House : MonoBehaviour
     {
         score += scoreToAdd;
 
-        if (score > PlayerPrefs.GetInt("HighScore", 0) && PlayGamesManager.Instance != null)
+        string leaderboardId = classicMode ? GPGSIds.leaderboard_classic_highscore : GPGSIds.leaderboard_highscore;
+        string prefKey = classicMode ? "HighScore_" + leaderboardId : "HighScore";
+
+        if (score > PlayerPrefs.GetInt(prefKey, 0) && PlayGamesManager.Instance != null)
         {
-            PlayGamesManager.Instance.TrySubmitHighScore(score);
+            PlayGamesManager.Instance.TrySubmitHighScore(score, leaderboardId);
         }
     }
 

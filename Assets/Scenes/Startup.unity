@@ -1109,7 +1109,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debugPanelPrefab: {fileID: 0}
   isRelease: 1
-  uiScaleFactor: 2
+  uiScaleFactor: 0.5
   autoScaleWithScreen: 1
   requiredTaps: 5
   tapTimeWindow: 3
@@ -2988,8 +2988,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -576, y: 1642}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: 0.91266, y: -811}
+  m_SizeDelta: {x: 301.08, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1246094725
 MonoBehaviour:
