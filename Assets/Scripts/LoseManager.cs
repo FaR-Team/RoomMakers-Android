@@ -66,7 +66,7 @@ public class LoseManager : MonoBehaviour
         scoreText.text = House.instance.Score.ToString();
         highScoreText.text = GetHighScore();
 
-        string leaderboardId = House.instance.classicMode ? GPGSIds.leaderboard_classic_highscore : GPGSIds.leaderboard_highscore;
+        string leaderboardId = House.instance.classicMode ? GPGSIds.leaderboard_highscoreclassic : GPGSIds.leaderboard_highscore;
         PlayGamesManager.Instance.SubmitScore(House.instance.Score, leaderboardId);
 
         AudioManager.instance.ResetMusicPitch();
@@ -75,7 +75,7 @@ public class LoseManager : MonoBehaviour
 
     public string GetHighScore()
     {
-        string leaderboardId = House.instance.classicMode ? GPGSIds.leaderboard_classic_highscore : GPGSIds.leaderboard_highscore;
+        string leaderboardId = House.instance.classicMode ? GPGSIds.leaderboard_highscoreclassic : GPGSIds.leaderboard_highscore;
         string prefKey = House.instance.classicMode ? "HighScore_" + leaderboardId : "HighScore";
 
         if (PlayerPrefs.HasKey(prefKey) && PlayerPrefs.GetInt(prefKey) > House.instance.Score)
