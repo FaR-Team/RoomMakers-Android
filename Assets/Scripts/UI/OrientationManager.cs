@@ -23,6 +23,12 @@ public class OrientationManager : MonoBehaviour
 
     void CheckOrientation()
     {
+#if !UNITY_ANDROID && !UNITY_IOS
+        if (!landscapeRoot.activeSelf) 
+        {
+            ApplyLandscape();
+        }
+#else
         if (Screen.width > Screen.height)
         {
             if (!landscapeRoot.activeSelf) 
@@ -37,6 +43,7 @@ public class OrientationManager : MonoBehaviour
                 ApplyPortrait();
             }
         }
+#endif
     }
 
     void ApplyLandscape()
