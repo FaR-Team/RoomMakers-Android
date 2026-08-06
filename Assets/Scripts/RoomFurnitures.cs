@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +37,6 @@ public class RoomFurnitures : MonoBehaviour
 
     public bool PlaceFurniture(Vector2 worldPosition, FurnitureData furnitureData, bool isItem = false)
     {
-        // 1. Initial Setup
         if (furnitureData.instanceID == 0)
             furnitureData.instanceID = System.DateTime.Now.GetHashCode() ^ furnitureData.GetHashCode();
 
@@ -46,22 +45,19 @@ public class RoomFurnitures : MonoBehaviour
         List<Vector2> potentialOccupiedCells = CalculatePositions(worldPosition, furnitureData.size);
         Vector2 currentTargetWorldPosition = worldPosition;
 
-        // 2. Try Stacking Placement
         if (originalData.isStackable)
         {
             if (TryProcessStackedPlacement(ref currentTargetWorldPosition, furnitureData, originalData, potentialOccupiedCells))
             {
                 return true;
             }
+
+            if (IsStackLimitReachedAtPosition(potentialOccupiedCells, originalData))
+            {
+                return false;
+            }
         }
 
-        // 3. Handle Wall Object Placement (Rotation)
-        /*if (originalData.wallObject && !CheckWallsAndRotate(currentTargetWorldPosition, furnitureData))
-        {
-            return false;
-        }*/
-
-        // 4. Determine Non-Stacked Placement Details
         PlacementDetails placementDetails = DetermineNonStackedPlacementDetails(currentTargetWorldPosition, furnitureData, originalData, potentialOccupiedCells, isItem);
 
         if (!placementDetails.CanPlace)
@@ -69,7 +65,6 @@ public class RoomFurnitures : MonoBehaviour
             return false;
         }
 
-        // 5. Finalize and Instantiate Non-Stacked Placement
         FinalizeAndInstantiateNonStacked(
             placementDetails.FinalWorldPosition,
             furnitureData,
@@ -85,34 +80,60 @@ public class RoomFurnitures : MonoBehaviour
 
     private bool TryProcessStackedPlacement(ref Vector2 positionForStacking, FurnitureData furnitureData, FurnitureOriginalData originalData, List<Vector2> potentialOccupiedCells)
     {
-        BottomFurnitureObject stackReceiver = null;
+        FurnitureObjectBase stackReceiver = null;
         Vector2 actualStackingCell = Vector2.zero;
+        PlacementData basePlacementData = null;
 
         foreach (var cell in potentialOccupiedCells)
         {
             if (PlacementDatasInPosition.TryGetValue(cell, out var existingData) &&
-                existingData.instantiatedFurniture is BottomFurnitureObject bottomObj &&
-                bottomObj.Data.originalData.isStackReceiver &&
-                bottomObj.IsUnpacked)
+                existingData.instantiatedFurniture is FurnitureObjectBase baseObj &&
+                baseObj.IsUnpacked)
             {
-                bool isSameObjectBeingRestacked = furnitureData.instanceID != 0 &&
-                                   existingData.stackedItems != null &&
-                                   existingData.stackedItems.Any(item => item.Data.instanceID == furnitureData.instanceID);
+                FurnitureObjectBase receiverCandidate = null;
 
-                if (bottomObj.Data.currentStackLevel < bottomObj.Data.originalData.maxStackLevel || isSameObjectBeingRestacked)
+                if (baseObj.Data.originalData.isStackReceiver)
                 {
-                    stackReceiver = bottomObj;
-                    actualStackingCell = cell;
-                    positionForStacking = cell;
-                    break;
+                    receiverCandidate = baseObj;
+                }
+                else if (existingData.stackedItems != null && existingData.stackedItems.Count > 0)
+                {
+                    var topItem = existingData.stackedItems[existingData.stackedItems.Count - 1];
+                    if (topItem != null && topItem.Data.originalData.isStackReceiver)
+                    {
+                        receiverCandidate = topItem;
+                    }
+                }
+
+                if (receiverCandidate != null)
+                {
+                    bool isSameObjectBeingRestacked = furnitureData.instanceID != 0 &&
+                                       existingData.stackedItems != null &&
+                                       existingData.stackedItems.Any(item => item.Data.instanceID == furnitureData.instanceID);
+
+                    bool baseIsSameStackable = baseObj.Data.originalData.isStackable &&
+                                               baseObj.Data.originalData == originalData;
+
+                    int existingTotalCount = (baseIsSameStackable ? 1 : 0) +
+                                             (existingData.stackedItems != null ? existingData.stackedItems.Count : 0);
+
+                    int maxAllowed = Mathf.Min(receiverCandidate.Data.originalData.maxStackLevel, originalData.maxStackLevel);
+
+                    if (existingTotalCount < maxAllowed || isSameObjectBeingRestacked)
+                    {
+                        stackReceiver = receiverCandidate;
+                        actualStackingCell = cell;
+                        positionForStacking = cell;
+                        basePlacementData = existingData;
+                        break;
+                    }
                 }
             }
         }
 
-        if (stackReceiver == null) return false;
+        if (stackReceiver == null || basePlacementData == null) return false;
 
         Vector2 finalInstantiatePos = GridManager.PositionToCellCenter(actualStackingCell);
-        PlacementData basePlacementData = PlacementDatasInPosition[actualStackingCell];
 
         bool isSameObject = false;
         int existingStackIndex = -1;
@@ -129,18 +150,30 @@ public class RoomFurnitures : MonoBehaviour
             }
         }
 
-        if (!isSameObject && stackReceiver.Data.currentStackLevel >= stackReceiver.Data.originalData.maxStackLevel)
+        FurnitureObjectBase baseFurniture = basePlacementData.instantiatedFurniture;
+        bool baseIsSameType = baseFurniture != null &&
+                              baseFurniture.Data.originalData.isStackable &&
+                              baseFurniture.Data.originalData == originalData;
+
+        int currentTotalCount = (baseIsSameType ? 1 : 0) +
+                                (basePlacementData.stackedItems != null ? basePlacementData.stackedItems.Count : 0);
+
+        int maxStackAllowed = Mathf.Min(stackReceiver.Data.originalData.maxStackLevel, originalData.maxStackLevel);
+
+        if (!isSameObject && currentTotalCount >= maxStackAllowed)
         {
             return false;
         }
 
-        if (!isSameObject) stackReceiver.Data.currentStackLevel++;
+        if (!isSameObject)
+        {
+            stackReceiver.Data.currentStackLevel++;
+            currentTotalCount++;
+        }
 
         FurnitureObjectBase stackedItemInstance = Instantiate(furnitureData.prefab, finalInstantiatePos, stackReceiver.transform.rotation).GetComponent<FurnitureObjectBase>();
 
-        furnitureData.currentStackLevel = isSameObject && existingStackIndex >= 0 ?
-            basePlacementData.stackedItems[existingStackIndex].Data.currentStackLevel :
-            stackReceiver.Data.currentStackLevel;
+        furnitureData.currentStackLevel = currentTotalCount;
 
         furnitureData.rotationStep = stackReceiver.Data.rotationStep;
         furnitureData.VectorRotation = stackReceiver.Data.VectorRotation;
@@ -149,19 +182,22 @@ public class RoomFurnitures : MonoBehaviour
         stackedItemInstance.SetUnpackedState(true);
 
         if (stackedItemInstance is TopFurnitureObject topObj && originalData.stackLevelSprites != null &&
-            originalData.stackLevelSprites.Length > furnitureData.currentStackLevel - 1)
+            originalData.stackLevelSprites.Length > currentTotalCount - 1)
         {
             SpriteRenderer spriteRenderer = topObj.GetComponentInChildren<SpriteRenderer>();
             if (spriteRenderer != null)
             {
-                spriteRenderer.sprite = originalData.stackLevelSprites[furnitureData.currentStackLevel - 1];
+                spriteRenderer.sprite = originalData.stackLevelSprites[currentTotalCount - 1];
                 if (spriteRenderer.transform != stackedItemInstance.transform)
                     spriteRenderer.transform.rotation = stackReceiver.transform.rotation;
             }
         }
 
         int tagBonus = HandleStackedTagBonus(furnitureData, originalData, finalInstantiatePos);
-        HandleStackedComboPoints(stackReceiver, potentialOccupiedCells, stackedItemInstance, finalInstantiatePos, tagBonus);
+        if (stackReceiver is BottomFurnitureObject bottomObjReceiver)
+        {
+            HandleStackedComboPoints(bottomObjReceiver, potentialOccupiedCells, stackedItemInstance, finalInstantiatePos, tagBonus);
+        }
         
         if (!furnitureData.firstTimePlaced)
         {
@@ -186,8 +222,64 @@ public class RoomFurnitures : MonoBehaviour
             basePlacementData.stackedItems.Add(stackedItemInstance);
         }
 
+        if (baseIsSameType && baseFurniture != null)
+        {
+            SpriteRenderer baseSr = baseFurniture.GetComponentInChildren<SpriteRenderer>();
+            if (baseSr != null)
+            {
+                baseSr.enabled = (basePlacementData.stackedItems.Count == 0);
+            }
+        }
+
+        if (originalData.stackLevelSprites != null && originalData.stackLevelSprites.Length > 0)
+        {
+            for (int i = 0; i < basePlacementData.stackedItems.Count; i++)
+            {
+                var item = basePlacementData.stackedItems[i];
+                if (item != null)
+                {
+                    SpriteRenderer sr = item.GetComponentInChildren<SpriteRenderer>();
+                    if (sr != null)
+                    {
+                        sr.enabled = (i == basePlacementData.stackedItems.Count - 1);
+                    }
+                }
+            }
+        }
+
         OnPlaceFurniture?.Invoke(furnitureData.originalData);
         return true;
+    }
+
+    private bool IsStackLimitReachedAtPosition(List<Vector2> potentialOccupiedCells, FurnitureOriginalData originalData)
+    {
+        foreach (var cell in potentialOccupiedCells)
+        {
+            if (PlacementDatasInPosition.TryGetValue(cell, out var existingData) &&
+                existingData.instantiatedFurniture is FurnitureObjectBase baseObj)
+            {
+                bool baseIsSameStackable = baseObj.Data.originalData.isStackable &&
+                                           baseObj.Data.originalData == originalData;
+
+                bool isStackTarget = baseObj.Data.originalData.isStackReceiver ||
+                                     baseIsSameStackable ||
+                                     (existingData.stackedItems != null && existingData.stackedItems.Count > 0);
+
+                if (isStackTarget)
+                {
+                    int currentTotalCount = (baseIsSameStackable ? 1 : 0) +
+                                            (existingData.stackedItems != null ? existingData.stackedItems.Count : 0);
+
+                    int maxAllowed = Mathf.Min(baseObj.Data.originalData.maxStackLevel, originalData.maxStackLevel);
+
+                    if (currentTotalCount >= maxAllowed)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private PlacementDetails DetermineNonStackedPlacementDetails(Vector2 worldPosition, FurnitureData furnitureData, FurnitureOriginalData originalData, List<Vector2> cellsToOccupy, bool isItem)

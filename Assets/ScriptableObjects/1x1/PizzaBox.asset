@@ -28,10 +28,13 @@ MonoBehaviour:
   indicatorSprite: {fileID: 0}
   hasComboSprite: 0
   comboTriggerFurniture: {fileID: 0}
-  isStackReceiver: 0
-  isStackable: 0
-  maxStackLevel: 1
-  stackLevelSprites: []
+  isStackReceiver: 1
+  isStackable: 1
+  maxStackLevel: 3
+  stackLevelSprites:
+  - {fileID: 1364092285, guid: f104e5b2d84fd8f44bea3bbffccffab0, type: 3}
+  - {fileID: -1096245465, guid: f104e5b2d84fd8f44bea3bbffccffab0, type: 3}
+  - {fileID: -1091125020, guid: f104e5b2d84fd8f44bea3bbffccffab0, type: 3}
   wallObject: 0
   furnitureTag: 1
   tagMatchBonusPoints: 20

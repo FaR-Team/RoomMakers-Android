@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -84,23 +84,43 @@ public class PlacementData
             return null;
         
         FurnitureObjectBase topItem = stackedItems[stackedItems.Count - 1];
-        
         stackedItems.RemoveAt(stackedItems.Count - 1);
         
-        if (instantiatedFurniture is BottomFurnitureObject bottomObj)
+        if (instantiatedFurniture is FurnitureObjectBase baseObj)
         {
-            bottomObj.Data.currentStackLevel--;
-        
+            bool baseIsSameStackable = baseObj.Data.originalData.isStackable && 
+                                       topItem != null && 
+                                       baseObj.Data.originalData == topItem.Data.originalData;
+
+            int remainingTotalCount = (baseIsSameStackable ? 1 : 0) + stackedItems.Count;
+
+            baseObj.Data.currentStackLevel = remainingTotalCount;
+
             if (stackedItems.Count > 0 && stackedItems[stackedItems.Count - 1] is TopFurnitureObject newTopObj)
             {
-                newTopObj.Data.currentStackLevel = bottomObj.Data.currentStackLevel;
+                newTopObj.Data.currentStackLevel = remainingTotalCount;
             
                 SpriteRenderer spriteRenderer = newTopObj.GetComponentInChildren<SpriteRenderer>();
-                if (spriteRenderer != null && 
-                    newTopObj.Data.originalData.stackLevelSprites != null && 
-                    newTopObj.Data.originalData.stackLevelSprites.Length > bottomObj.Data.currentStackLevel - 1)
+                if (spriteRenderer != null)
                 {
-                    spriteRenderer.sprite = newTopObj.Data.originalData.stackLevelSprites[bottomObj.Data.currentStackLevel - 1];
+                    spriteRenderer.enabled = true;
+                    if (newTopObj.Data.originalData.stackLevelSprites != null && 
+                        newTopObj.Data.originalData.stackLevelSprites.Length > remainingTotalCount - 1)
+                    {
+                        spriteRenderer.sprite = newTopObj.Data.originalData.stackLevelSprites[remainingTotalCount - 1];
+                    }
+                }
+            }
+            else if (baseIsSameStackable)
+            {
+                SpriteRenderer baseSr = baseObj.GetComponentInChildren<SpriteRenderer>();
+                if (baseSr != null)
+                {
+                    baseSr.enabled = true;
+                    if (baseObj.Data.originalData.sprites != null && baseObj.Data.originalData.sprites.Length > 0)
+                    {
+                        baseSr.sprite = baseObj.Data.originalData.sprites[0];
+                    }
                 }
             }
         }
