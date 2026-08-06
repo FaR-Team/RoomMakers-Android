@@ -89,6 +89,7 @@ public class PackagesGenerator : MonoBehaviour
             tutorialObjects.RemoveAt(0);
 
             packageGO.SetActive(true);
+            AudioManager.instance.PlaySfx(GlobalSfx.Doorbell);
 
             return;
         }
@@ -112,6 +113,7 @@ public class PackagesGenerator : MonoBehaviour
             Debug.Log("[PackagesGenerator] Generating regular package.");
             TimerManager.StartTimer();
             packageGO.SetActive(true);
+            AudioManager.instance.PlaySfx(GlobalSfx.Doorbell);
 
             FurnitureOriginalData regularPackageData = GetRandomFurniture();
             if (regularPackageData == null)

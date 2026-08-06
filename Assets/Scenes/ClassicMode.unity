@@ -11544,6 +11544,7 @@ MonoBehaviour:
   errorClip: {fileID: 8300000, guid: 09dbd978f5915b04d98f319b71ad075d, type: 3}
   grabClip: {fileID: 8300000, guid: 196605b6950721a41b93780fb013badf, type: 3}
   restockClip: {fileID: 8300000, guid: 6fcb5ed296dd97d40b55f360edaec093, type: 3}
+  doorbelClip: {fileID: 8300000, guid: 6192956dd192f7926a6935a4a0a5773e, type: 3}
   audioMixer: {fileID: 24100000, guid: 8ca7b6b4ab3c78f4e9ba735375e950eb, type: 2}
   lowpassParameterName: Lowpass
   muffledLowPassCutoff: 500
