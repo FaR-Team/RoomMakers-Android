@@ -3,8 +3,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.Layouts;
 using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.UI;
+#if UNITY_ANDROID
 using CandyCoded.HapticFeedback;
-
+#endif
 
 public enum VirtualDPadDirection { Both, Horizontal, Vertical }
 
@@ -138,8 +139,9 @@ public class VirtualDPad : OnScreenControl, IPointerDownHandler, IPointerUpHandl
         else if (direction.x < -0.1f) directionImages[1].gameObject.SetActive(true);
         else if (direction.y > 0.1f) directionImages[2].gameObject.SetActive(true);
         else if (direction.y < -0.1f) directionImages[3].gameObject.SetActive(true);
-
+#if UNITY_ANDROID
         if (direction != Vector2.zero)
             HapticFeedback.LightFeedback();
+#endif
     }
 }

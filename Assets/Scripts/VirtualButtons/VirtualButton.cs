@@ -3,7 +3,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.InputSystem.Layouts;
 using UnityEngine.InputSystem.OnScreen;
+#if UNITY_ANDROID
 using CandyCoded.HapticFeedback;
+#endif
 
 public class VirtualButton : OnScreenControl, IPointerDownHandler, IPointerUpHandler
 {
@@ -44,7 +46,9 @@ public class VirtualButton : OnScreenControl, IPointerDownHandler, IPointerUpHan
     {
         pressed = true;
         SendValueToControl(1.0f);
+        #if UNITY_ANDROID
         HapticFeedback.LightFeedback();
+        #endif
     }
 
     public void OnPointerUp(PointerEventData pointerEventData)

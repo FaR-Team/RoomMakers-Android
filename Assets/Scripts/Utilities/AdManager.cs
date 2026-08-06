@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_ANDROID || UNITY_IOS
 using GoogleMobileAds.Api;
+#endif
 using UnityEngine.SceneManagement;
 using UnityEngine;
 
@@ -9,6 +11,7 @@ public class AdManager : MonoBehaviour
 {
     public static AdManager Instance { get; private set; }
 
+#if UNITY_ANDROID || UNITY_IOS
 #if UNITY_EDITOR
     private string _adUnitId = "ca-app-pub-3940256099942544/6300978111"; // TEST ID
 #elif UNITY_ANDROID
@@ -20,6 +23,7 @@ public class AdManager : MonoBehaviour
 #endif
 
     private BannerView _bannerView;
+#endif
     private bool _isInitialized = false;
     private int _retryCount = 0;
     private const int MaxRetryCount = 3;
@@ -33,6 +37,7 @@ public class AdManager : MonoBehaviour
 
             SceneManager.sceneLoaded += OnSceneLoaded;
 
+#if UNITY_ANDROID || UNITY_IOS
             MobileAds.RaiseAdEventsOnUnityMainThread = true;
 
             Debug.Log("AdManager: Initializing MobileAds SDK...");
@@ -50,6 +55,7 @@ public class AdManager : MonoBehaviour
                 
                 LoadAd();
             });
+#endif
         }
         else if (Instance != this)
         {
@@ -61,6 +67,7 @@ public class AdManager : MonoBehaviour
 
     public void LoadAd()
     {
+#if UNITY_ANDROID || UNITY_IOS
         if (!_isInitialized)
         {
             Debug.LogWarning("AdManager: Attempted to load ad before initialization. Deferring.");
@@ -76,10 +83,12 @@ public class AdManager : MonoBehaviour
 
         Debug.Log("AdManager: Loading banner ad...");
         _bannerView.LoadAd(adRequest);
+#endif
     }
 
     public void CreateBannerView()
     {
+#if UNITY_ANDROID || UNITY_IOS
         Debug.Log("AdManager: Creating banner view");
 
         if (_bannerView != null)
@@ -90,16 +99,19 @@ public class AdManager : MonoBehaviour
         _bannerView = new BannerView(_adUnitId, AdSize.GetPortraitAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.FullWidth), AdPosition.Bottom);
         
         ListenToAdEvents();
+#endif
     }
 
     public void DestroyAd()
     {
+#if UNITY_ANDROID || UNITY_IOS
         if (_bannerView != null)
         {
             Debug.Log("AdManager: Destroying banner view.");
             _bannerView.Destroy();
             _bannerView = null;
         }
+#endif
     }
 
     void OnDestroy()
@@ -114,19 +126,11 @@ public class AdManager : MonoBehaviour
         
         _retryCount = 0;
 
-        if (_bannerView != null)
-        {
-            Debug.Log("AdManager: BannerView exists. Destroying and reloading for new scene.");
-            DestroyAd();
-            LoadAd();
-        }
-        else
-        {
-            Debug.Log("AdManager: BannerView is null. Attempting to load.");
-            LoadAd();
-        }
+        DestroyAd();
+        LoadAd();
     }
 
+#if UNITY_ANDROID || UNITY_IOS
     private void ListenToAdEvents()
     {
         _bannerView.OnBannerAdLoaded += () =>
@@ -184,4 +188,5 @@ public class AdManager : MonoBehaviour
         yield return new WaitForSeconds(delay);
         LoadAd();
     }
+#endif
 }
