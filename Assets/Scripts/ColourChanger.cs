@@ -12,7 +12,7 @@ public class ColourChanger : MonoBehaviour
   private MeshRenderer renderer;
   public int num;
 
-  void Start()
+  void Awake()
   {
     if (instance == null || instance != this)
     {
@@ -20,7 +20,12 @@ public class ColourChanger : MonoBehaviour
     }
     
     renderer = this.gameObject.GetComponent<MeshRenderer>();
+  }
+
+  void Start()
+  {
     GlobalRainbowMode = false;
+    ChangeColour(num);
   }
 
   public static bool GlobalRainbowMode = false;
@@ -46,6 +51,8 @@ public class ColourChanger : MonoBehaviour
       }
   }
 
+  public static System.Action<ColorPalette> OnPaletteChanged;
+
   public void ChangeColour(int n)
   {
     num = n;
@@ -53,10 +60,20 @@ public class ColourChanger : MonoBehaviour
     if (palettesDatabase != null && palettesDatabase.palettes != null && num >= 0 && num < palettesDatabase.palettes.Count)
     {
         ColorPalette palette = palettesDatabase.palettes[num];
-        renderer.material.SetColor("_Darkest", palette.Darkest);
-        renderer.material.SetColor("_Dark", palette.Dark);
-        renderer.material.SetColor("_Light", palette.Light);
-        renderer.material.SetColor("_Lightest", palette.Lightest);
+        Darkest = palette.Darkest;
+        Dark = palette.Dark;
+        Light = palette.Light;
+        Lightest = palette.Lightest;
+
+        if (renderer != null && renderer.material != null)
+        {
+            renderer.material.SetColor("_Darkest", palette.Darkest);
+            renderer.material.SetColor("_Dark", palette.Dark);
+            renderer.material.SetColor("_Light", palette.Light);
+            renderer.material.SetColor("_Lightest", palette.Lightest);
+        }
+
+        OnPaletteChanged?.Invoke(palette);
     }
     else
     {
